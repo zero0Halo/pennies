@@ -1,0 +1,15 @@
+{
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"quickfix.biome": "explicit",
+		"source.fixAll": "explicit",
+		"source.fix": "explicit"
+	},
+	"editor.defaultFormatter": "biomejs.biome",
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"files.associations": {
+		"*.css": "tailwindcss"
+	}
+}
