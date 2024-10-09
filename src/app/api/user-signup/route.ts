@@ -2,15 +2,10 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
-// import { Database } from '@/types/supabase'; // Assuming you have types defined for your Supabase schema
-
-// Supabase environment variables (set these in your .env.local file)
-// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-// const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export async function POST(req: Request) {
 	try {
-		const { email, password } = await req.json();
+		const { email, firstname, lastname, password } = await req.json();
 
 		// Create a Supabase client instance for the server-side
 		const cookieStore = cookies();
@@ -30,9 +25,11 @@ export async function POST(req: Request) {
 		const { data: userData, error: userError } = await supabase
 			.from('users')
 			.insert({
-				uid: authData.user?.id,
-				email: authData.user?.email,
 				created_at: new Date(),
+				email: authData.user?.email,
+				first_name: firstname,
+				last_name: lastname,
+				uid: authData.user?.id,
 			});
 
 		if (userError) {
