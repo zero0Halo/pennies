@@ -36,10 +36,20 @@ export async function POST(req: Request) {
 			return NextResponse.json({ message: userError.message }, { status: 400 });
 		}
 
-		return NextResponse.json(
-			{ message: 'User created successfully', user: userData },
-			{ status: 201 },
+		const response = NextResponse.json(
+			{
+				message: 'Signup Successful! Redirecting...',
+			},
+			{ status: 200 },
 		);
+
+		response.cookies.set('isLoggedIn', 'true', {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 60 * 24 * 7, // 1 week
+		});
+
+		return response;
 	} catch (error: unknown) {
 		const errorMessage =
 			error instanceof Error ? error.message : 'Unknown error';
