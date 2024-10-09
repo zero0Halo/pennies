@@ -1,10 +1,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 
 export default function Home() {
+	const cookieStore = cookies();
+	const isLoggedIn = cookieStore.get('isLoggedIn')?.value ?? false;
+
 	return (
 		<div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-			<Link href="signup">Signup!</Link>
+			{isLoggedIn !== 'true' && <Link href="signup">Signup!</Link>}
 
 			<main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
 				<Image
