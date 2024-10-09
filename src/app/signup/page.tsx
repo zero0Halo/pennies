@@ -1,12 +1,11 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import useIsLoggedIn from '../hooks/useIsLoggedIn';
 import SignUpForm from '../components/SignUpForm';
 
 export default function SignUp() {
-	const cookieStore = cookies();
-	const isLoggedIn = cookieStore.get('isLoggedIn')?.value ?? false;
+	const isLoggedIn = useIsLoggedIn();
 
-	if (isLoggedIn === 'true') {
+	if (isLoggedIn) {
 		redirect('/');
 	}
 

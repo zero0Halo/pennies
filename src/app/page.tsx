@@ -1,14 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
+import useIsLoggedIn from './hooks/useIsLoggedIn';
 
 export default function Home() {
-	const cookieStore = cookies();
-	const isLoggedIn = cookieStore.get('isLoggedIn')?.value ?? false;
+	const isLoggedIn = useIsLoggedIn();
 
 	return (
 		<div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-			{isLoggedIn !== 'true' && (
+			{!isLoggedIn && (
 				<Link href="signup" className="btn btn-primary">
 					Signup!
 				</Link>
