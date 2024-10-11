@@ -8,7 +8,7 @@ export default function LoginBar() {
 	const isLoggedIn = useIsLoggedIn();
 
 	return (
-		<nav className="navbar">
+		<nav className="navbar px-8 bg-neutral">
 			<div className="flex-1">
 				<Link href="/">
 					<Image
@@ -19,7 +19,7 @@ export default function LoginBar() {
 						width="32"
 					/>
 				</Link>
-				<h1 className="my-0">Pennies</h1>
+				<h1 className="my-0 pl-2 text-2xl">Pennies</h1>
 			</div>
 
 			{isLoggedIn && <SignOut />}
