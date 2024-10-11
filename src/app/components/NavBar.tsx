@@ -1,6 +1,8 @@
 import Image from 'next/image';
-import useIsLoggedIn from '../hooks/useIsLoggedIn';
 import Link from 'next/link';
+import useIsLoggedIn from '../hooks/useIsLoggedIn';
+import SignIn from './SignIn';
+import SignOut from './SignOut';
 
 export default function LoginBar() {
 	const isLoggedIn = useIsLoggedIn();
@@ -20,7 +22,8 @@ export default function LoginBar() {
 				<h1 className="my-0">Pennies</h1>
 			</div>
 
-			{isLoggedIn && <div className="flex-none">Logged In</div>}
+			{isLoggedIn && <SignOut />}
+			{!isLoggedIn && <SignIn />}
 		</nav>
 	);
 }

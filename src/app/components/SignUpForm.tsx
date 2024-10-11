@@ -1,7 +1,6 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 interface SignUp {
@@ -12,7 +11,6 @@ interface SignUp {
 }
 
 function SignUpForm() {
-	const router = useRouter();
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
 	const {
@@ -40,7 +38,7 @@ function SignUpForm() {
 		if (response.ok) {
 			setSuccess(result.message);
 			setTimeout(() => {
-				router.push('/');
+				window.location.href = '/';
 			}, 2000);
 		} else {
 			setError(result.message || 'Sign up failed');
@@ -53,44 +51,41 @@ function SignUpForm() {
 			{error.length > 0 && <h3>{error}</h3>}
 
 			{success.length === 0 && (
-				<form onSubmit={handleSubmit(handleSignUp)}>
-					<label htmlFor="email">eMail</label>
+				<form
+					className="form-control p-8"
+					onSubmit={handleSubmit(handleSignUp)}
+				>
 					<input
 						type="text"
-						className="mr-8 p-2"
-						placeholder="email"
+						className="input input-md mb-4"
+						placeholder="Email"
 						{...register('email', { required: true })}
 					/>
-					<br />
 
-					<label htmlFor="password">Password</label>
 					<input
 						type="text"
-						className="mr-8 p-2"
+						className="input input-md mb-4"
 						placeholder="Password"
 						{...register('password', { required: true })}
 					/>
-					<br />
 
-					<label htmlFor="firstname">Firstname</label>
 					<input
 						type="text"
-						className="mr-8 p-2"
-						placeholder="firstname"
+						className="input input-md mb-4"
+						placeholder="First Name"
 						{...register('firstname', { required: true })}
 					/>
-					<br />
 
-					<label htmlFor="lastname">Lastname</label>
 					<input
 						type="text"
-						className="mr-8 p-2"
-						placeholder="lastname"
+						className="input input-md mb-4"
+						placeholder="Last Name"
 						{...register('lastname', { required: true })}
 					/>
-					<br />
 
-					<button type="submit">Submit</button>
+					<button className="btn btn-primary" type="submit">
+						Submit
+					</button>
 				</form>
 			)}
 		</div>

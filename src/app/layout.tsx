@@ -1,7 +1,7 @@
 import type React from 'react';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import LoginBar from './components/LoginBar';
+import NavBar from './components/NavBar';
 import './globals.css';
 
 const geistSans = localFont({
@@ -30,7 +30,7 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased prose`}
 			>
-				<LoginBar />
+				<NavBar />
 
 				{children}
 			</body>
