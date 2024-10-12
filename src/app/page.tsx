@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import useIsLoggedIn from './hooks/useIsLoggedIn';
+import CsvUpload from './components/CsvUpload';
 
 export default function Home() {
 	const isLoggedIn = useIsLoggedIn();
@@ -12,6 +13,8 @@ export default function Home() {
 					Signup!
 				</Link>
 			)}
+
+			{isLoggedIn && <CsvUpload />}
 
 			<div className="flex gap-4 items-center flex-col sm:flex-row">
 				<a
@@ -38,7 +41,6 @@ export default function Home() {
 					Read our docs
 				</a>
 			</div>
-
 			<footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
 				<a
 					href="https://iconscout.com/icons/savings"
