@@ -1,10 +1,11 @@
+import dayjs from 'dayjs';
 import fauxAsync from './fauxAsync';
 import findRecurring from './findRecurring';
 
 export default async function parseCsv(fileData: File) {
 	try {
 		const parsedData = await fauxAsync(fileData);
-		const formattedData = parsedData.map((d: string[], i: number) => {
+		const formattedData = parsedData.map((d: string[]) => {
 			const filteredRow = d.filter((f) => f.length > 1);
 			const amount = +(filteredRow?.at(1) ?? 0);
 			const date = filteredRow?.at(0) ?? '';
@@ -15,6 +16,7 @@ export default async function parseCsv(fileData: File) {
 				date,
 				description,
 				timestamp,
+				timestampDayjs: dayjs(timestamp),
 			};
 		});
 		const recurring = findRecurring(formattedData);

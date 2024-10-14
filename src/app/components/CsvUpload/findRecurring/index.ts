@@ -1,10 +1,13 @@
+import getDateScore from './getDateScore';
 import getDescriptionScore from './getDescriptionScore';
 
-type FormattedDataProps = {
+export type FormattedDataProps = {
 	amount: number;
 	date: string;
 	description: string;
 	timestamp: number;
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	timestampDayjs: any;
 };
 
 export default function findRecurring(data: FormattedDataProps[]) {
@@ -13,6 +16,7 @@ export default function findRecurring(data: FormattedDataProps[]) {
 	data.forEach((row) => {
 		if (row?.description) {
 			const rowArr = row.description.split(' ');
+			const { timestampDayjs: rowTimestamp } = row;
 
 			if (map.size === 0) {
 				map.set(row.description, [row]);
@@ -21,9 +25,10 @@ export default function findRecurring(data: FormattedDataProps[]) {
 
 				map.forEach((value, key) => {
 					const keyArr = key.split(' ');
-					const descriptionConfidence = getDescriptionScore(keyArr, rowArr);
+					const dateScore = getDateScore(value, rowTimestamp);
+					const descriptionScore = getDescriptionScore(keyArr, rowArr);
 
-					if (descriptionConfidence.md) {
+					if (descriptionScore.md) {
 						value.push(row);
 						map.set(key, value);
 						matchesFound = true;

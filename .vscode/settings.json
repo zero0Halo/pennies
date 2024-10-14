@@ -11,5 +11,18 @@
 	},
 	"files.associations": {
 		"*.css": "tailwindcss"
+	},
+	"workbench.editor.labelFormat": "short",
+	"tabsColor.activeTab": {
+		"backgroundColor": "black",
+		"fontColor": "white"
+	},
+	"workbench.colorCustomizations": {
+		"editorUnnecessaryCode.border": "#f6ff00",
+		"editorUnnecessaryCode.opacity": "#ffffff70",
+		"tab.inactiveBackground": "#2d2d2d", // Background color of inactive tabs
+		"tab.inactiveForeground": "#888888", // Text color of inactive tabs
+		"tab.unfocusedInactiveForeground": "#666666", // Text color of inactive tabs when unfocused
+		"tab.unfocusedInactiveBackground": "#252526" // Background when the window is unfocused
 	}
 }
