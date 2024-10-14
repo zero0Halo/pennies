@@ -5,9 +5,17 @@ export default function getDateScore(
 	mapValue: FormattedDataProps[],
 	timestamp: Dayjs,
 ) {
-	const entryTimestamps = mapValue.map((mapValue) => mapValue.timestamp);
+	const { timestamp: lastTimestamp } = mapValue.at(mapValue.length - 1) ?? {};
 
-	console.log({ entryTimestamps, timestamp });
+	if (lastTimestamp && timestamp) {
+		const difference = lastTimestamp.diff(timestamp, 'd');
+		const weekly = 8 >= difference && difference >= 6;
+		const biWeekly = 15 >= difference && difference >= 13;
+		const monthly = 31 >= difference && difference >= 28;
+		const none = !weekly && !biWeekly && !monthly;
 
-	return true;
+		return { weekly, biWeekly, monthly, none };
+	}
+
+	return { none: true };
 }

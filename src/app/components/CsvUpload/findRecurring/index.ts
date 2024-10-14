@@ -27,7 +27,7 @@ export default function findRecurring(data: FormattedDataProps[]) {
 					const dateScore = getDateScore(mapValue, timestamp);
 					const descriptionScore = getDescriptionScore(keyArr, rowArr);
 
-					if (descriptionScore.md) {
+					if (descriptionScore.md && !dateScore.none) {
 						mapValue.push(row);
 						map.set(key, mapValue);
 						matchesFound = true;

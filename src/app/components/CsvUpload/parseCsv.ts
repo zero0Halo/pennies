@@ -10,7 +10,7 @@ export default async function parseCsv(fileData: File) {
 			const amount = +(filteredRow?.at(1) ?? 0);
 			const date = filteredRow?.at(0) ?? '';
 			const description = filteredRow?.at(2)?.toLowerCase() ?? '';
-			const timestamp = new Date(date).getTime() / 1000;
+			const timestamp = new Date(date).getTime();
 			return {
 				amount,
 				date,
