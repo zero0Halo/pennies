@@ -1,7 +1,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import Papa from 'papaparse';
+import parseCsv from './parseCsv';
 
 interface CsvUploadProps {
 	csvfile: FileList;
@@ -10,7 +10,7 @@ interface CsvUploadProps {
 export default function CsvUpload() {
 	const { handleSubmit, register } = useForm<CsvUploadProps>();
 
-	function handleCsvUpload(formData: CsvUploadProps) {
+	async function handleCsvUpload(formData: CsvUploadProps) {
 		const fileData: File = formData.csvfile[0];
 
 		if (!fileData) {
@@ -18,19 +18,9 @@ export default function CsvUpload() {
 			return;
 		}
 
-		Papa.parse<string[]>(fileData, {
-			complete: ({ data }) => {
-				const x = data.map((d: string[]) => {
-					const filteredData = d.filter((f) => f.length > 2);
-					return {
-						date: filteredData?.at(0),
-						amount: filteredData?.at(1),
-						description: filteredData?.at(2)?.toLowerCase(),
-					};
-				});
-				console.log(x);
-			},
-		});
+		const parsedData = await parseCsv(fileData);
+
+		console.log(parsedData);
 	}
 
 	return (
