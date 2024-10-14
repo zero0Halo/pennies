@@ -15,8 +15,7 @@ export default async function parseCsv(fileData: File) {
 				amount,
 				date,
 				description,
-				timestamp,
-				timestampDayjs: dayjs(timestamp),
+				timestamp: dayjs(timestamp),
 			};
 		});
 		const recurring = findRecurring(formattedData);

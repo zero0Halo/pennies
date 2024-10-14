@@ -1,13 +1,13 @@
+import type { Dayjs } from 'dayjs';
 import type { FormattedDataProps } from '.';
 
 export default function getDateScore(
-	mapEntries: FormattedDataProps[],
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	rowTimestamp: any,
+	mapValue: FormattedDataProps[],
+	timestamp: Dayjs,
 ) {
-	const entriesDayjsTS = mapEntries.map((mapEntry) => mapEntry.timestampDayjs);
+	const entryTimestamps = mapValue.map((mapValue) => mapValue.timestamp);
 
-	console.log({ entriesDayjsTS, rowTimestamp });
+	console.log({ entryTimestamps, timestamp });
 
 	return true;
 }
