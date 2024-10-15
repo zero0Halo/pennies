@@ -17,7 +17,7 @@ export interface FormattedDataProps {
 	terms: string[];
 	timestamp: Dayjs;
 }
-export interface FindRecurringProps {
+export interface FindGroupsProps {
 	description: string;
 	id: string;
 	prime: FormattedDataProps;
@@ -25,7 +25,7 @@ export interface FindRecurringProps {
 }
 
 export default function CsvUpload() {
-	const [data, setData] = useState<FindRecurringProps[] | undefined>();
+	const [data, setData] = useState<FindGroupsProps[] | undefined>();
 	const { handleSubmit, register } = useForm<CsvUploadProps>();
 
 	async function handleCsvUpload(formData: CsvUploadProps) {
@@ -36,7 +36,7 @@ export default function CsvUpload() {
 			return;
 		}
 
-		const parsedData: FindRecurringProps[] = await parseCsv(fileData);
+		const parsedData: FindGroupsProps[] = await parseCsv(fileData);
 
 		setData(parsedData);
 	}

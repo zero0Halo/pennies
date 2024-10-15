@@ -1,7 +1,7 @@
 import getDescriptionScore from './getDescriptionScore';
-import type { FindRecurringProps, FormattedDataProps } from '../index';
+import type { FindGroupsProps, FormattedDataProps } from '../index';
 
-export default function findRecurring(data: FormattedDataProps[]) {
+export default function findGroups(data: FormattedDataProps[]) {
 	const map = new Map<string, FormattedDataProps[]>();
 
 	data.forEach((row) => {
@@ -29,7 +29,7 @@ export default function findRecurring(data: FormattedDataProps[]) {
 		}
 	});
 
-	const asArray: FindRecurringProps[] = Array.from(map)
+	const asArray: FindGroupsProps[] = Array.from(map)
 		.map(([description, transactions]: [string, FormattedDataProps[]]) => {
 			if (!description && !transactions.length && !Array.isArray(transactions))
 				return false;
