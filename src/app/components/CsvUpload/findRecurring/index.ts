@@ -1,45 +1,51 @@
-import type { Dayjs } from 'dayjs';
-import getDateScore from './getDateScore';
 import getDescriptionScore from './getDescriptionScore';
-
-export type FormattedDataProps = {
-	amount: number;
-	date: string;
-	description: string;
-	timestamp: Dayjs;
-};
+import type { FindRecurringProps, FormattedDataProps } from '../index';
 
 export default function findRecurring(data: FormattedDataProps[]) {
 	const map = new Map<string, FormattedDataProps[]>();
 
 	data.forEach((row) => {
-		if (row?.description) {
-			const rowArr = row.description.split(' ');
-			const { timestamp } = row;
+		if (map.size === 0) {
+			map.set(row.description, [row]);
+		} else {
+			let matchesFound = false;
 
-			if (map.size === 0) {
-				map.set(row.description, [row]);
-			} else {
-				let matchesFound = false;
+			map.forEach((mapValue: FormattedDataProps[], key: string) => {
+				const descriptionScore = getDescriptionScore(
+					mapValue.at(0)?.terms ?? [],
+					row.terms,
+				);
 
-				map.forEach((mapValue, key) => {
-					const keyArr = key.split(' ');
-					const dateScore = getDateScore(mapValue, timestamp);
-					const descriptionScore = getDescriptionScore(keyArr, rowArr);
-
-					if (descriptionScore.md && !dateScore.none) {
-						mapValue.push(row);
-						map.set(key, mapValue);
-						matchesFound = true;
-					}
-				});
-
-				if (!matchesFound) {
-					map.set(row.description, [row]);
+				if (descriptionScore > 75) {
+					mapValue.push(row);
+					map.set(key, mapValue);
+					matchesFound = true;
 				}
+			});
+
+			if (!matchesFound) {
+				map.set(row.description, [row]);
 			}
 		}
 	});
 
-	return map;
+	const asArray: FindRecurringProps[] = Array.from(map)
+		.map(([description, transactions]: [string, FormattedDataProps[]]) => {
+			if (!description && !transactions.length && !Array.isArray(transactions))
+				return false;
+
+			const prime = transactions.shift();
+
+			if (!prime) return false;
+
+			return {
+				description,
+				id: prime.id,
+				prime,
+				transactions,
+			};
+		})
+		.filter((f) => f !== false);
+
+	return asArray;
 }
