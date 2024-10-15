@@ -1,5 +1,5 @@
 import type { Dayjs } from 'dayjs';
-import type { FormattedDataProps } from '.';
+import type { FormattedDataProps } from '../types';
 
 export default function getDateScore(
 	mapValue: FormattedDataProps[],

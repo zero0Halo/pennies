@@ -1,5 +1,5 @@
 import getDescriptionScore from './getDescriptionScore';
-import type { FindGroupsProps, FormattedDataProps } from '../index';
+import type { FormattedDataProps, FindGroupsProps } from '../types';
 
 export default function findGroups(data: FormattedDataProps[]) {
 	const map = new Map<string, FormattedDataProps[]>();

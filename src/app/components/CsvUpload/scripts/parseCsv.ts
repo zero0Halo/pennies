@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import type { FindGroupsProps } from '.';
+import type { FindGroupsProps } from '../types';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 

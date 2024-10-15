@@ -1,28 +1,9 @@
 'use client';
 
-import type { Dayjs } from 'dayjs';
 import { useForm } from 'react-hook-form';
-import parseCsv from './parseCsv';
 import { useState } from 'react';
-
-interface CsvUploadProps {
-	csvfile: FileList;
-}
-
-export interface FormattedDataProps {
-	amount: number;
-	date: string;
-	description: string;
-	id: string;
-	terms: string[];
-	timestamp: Dayjs;
-}
-export interface FindGroupsProps {
-	description: string;
-	id: string;
-	prime: FormattedDataProps;
-	transactions: FormattedDataProps[];
-}
+import type { CsvUploadProps, FindGroupsProps } from './types';
+import parseCsv from './scripts/parseCsv';
 
 export default function CsvUpload() {
 	const [data, setData] = useState<FindGroupsProps[] | undefined>();
