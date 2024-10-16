@@ -15,7 +15,8 @@ export interface FormattedDataProps {
 export interface FindGroupsProps {
 	description: string;
 	id: string;
+	possiblyRecurring: boolean | string;
 	prime: FormattedDataProps;
-	recurring: boolean;
+	recurring: boolean | string;
 	transactions: FormattedDataProps[];
 }

@@ -5,6 +5,10 @@ import { useState } from 'react';
 import type { CsvUploadProps, FindGroupsProps } from './types';
 import parseCsv from './scripts/parseCsv';
 
+export const WEEKLY = 'Weekly';
+export const BIWEEKLY = 'BiWeekly';
+export const MONTHLY = 'Monthly';
+
 export default function CsvUpload() {
 	const [data, setData] = useState<FindGroupsProps[] | undefined>();
 	const { handleSubmit, register } = useForm<CsvUploadProps>();
@@ -39,57 +43,74 @@ export default function CsvUpload() {
 				</button>
 			</form>
 
-			{data?.map(({ id, description, prime, recurring, transactions }) => (
-				<div className="px-4" key={id}>
-					<h4 className="mb-0">
-						<span>{description}</span>
+			{data?.map(
+				({
+					id,
+					description,
+					possiblyRecurring,
+					prime,
+					recurring,
+					transactions,
+				}) => (
+					<div className="px-4" key={id}>
+						<h4 className="mb-0">
+							<span>{description}</span>
 
-						<span className="badge badge-secondary ml-2">
-							{transactions.length + 1}
-						</span>
+							<span className="badge badge-secondary ml-2">
+								{transactions.length + 1}
+							</span>
 
-						{recurring && (
-							<span className="badge badge-accent ml-2">Recurring</span>
-						)}
-					</h4>
+							{possiblyRecurring && !recurring && (
+								<span className="badge badge-accent ml-2">
+									Possibly Recurring {possiblyRecurring}
+								</span>
+							)}
 
-					<div>({prime.terms.join(', ')})</div>
+							{recurring && (
+								<span className="badge badge-accent ml-2">
+									Recurring {recurring}
+								</span>
+							)}
+						</h4>
 
-					<div className="overflow-x-auto">
-						<table className="table table-zebra">
-							<thead>
-								<tr>
-									<th />
-									<th>Description</th>
-									<th>Amount</th>
-									<th>Date</th>
-								</tr>
-							</thead>
+						<div>({prime.terms.join(', ')})</div>
 
-							<tbody>
-								<tr className="bg-primary">
-									<th>1</th>
-									<td>{prime.description}</td>
-									<td>{prime.amount}</td>
-									<td>{prime.date}</td>
-								</tr>
+						<div className="overflow-x-auto">
+							<table className="table table-zebra">
+								<thead>
+									<tr>
+										<th />
+										<th>Description</th>
+										<th>Amount</th>
+										<th>Date</th>
+									</tr>
+								</thead>
 
-								{transactions.length > 1 &&
-									transactions.map((transaction, i) => (
-										<tr key={transaction.id}>
-											<th>{i + 2}</th>
-											<td>{transaction.description}</td>
-											<td>{transaction.amount}</td>
-											<td>{transaction.date}</td>
-										</tr>
-									))}
-							</tbody>
-						</table>
+								<tbody>
+									<tr className="bg-primary">
+										<th>1</th>
+										<td>{prime.description}</td>
+										<td>{prime.amount}</td>
+										<td>{prime.date}</td>
+									</tr>
+
+									{transactions.length > 1 &&
+										transactions.map((transaction, i) => (
+											<tr key={transaction.id}>
+												<th>{i + 2}</th>
+												<td>{transaction.description}</td>
+												<td>{transaction.amount}</td>
+												<td>{transaction.date}</td>
+											</tr>
+										))}
+								</tbody>
+							</table>
+						</div>
+
+						<div className="divider" />
 					</div>
-
-					<div className="divider" />
-				</div>
-			))}
+				),
+			)}
 		</section>
 	);
 }

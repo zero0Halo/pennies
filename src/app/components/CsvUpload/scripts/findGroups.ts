@@ -41,6 +41,7 @@ export default function findGroups(data: FormattedDataProps[]) {
 			return {
 				description,
 				id: prime.id,
+				possiblyRecurring: false,
 				prime,
 				recurring: false,
 				transactions,

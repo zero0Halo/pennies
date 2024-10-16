@@ -62,7 +62,7 @@ export default async function parseCsv(fileData: File) {
 		const groups: FindGroupsProps[] = findGroups(formattedData);
 		const groupsRecurring: FindGroupsProps[] = groups.map((group) => ({
 			...group,
-			recurring: getDateScore(group),
+			...getDateScore(group),
 		}));
 
 		return groupsRecurring;

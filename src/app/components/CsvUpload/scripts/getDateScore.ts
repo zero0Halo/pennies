@@ -1,5 +1,5 @@
-// import dayjs, { type Dayjs } from 'dayjs';
 import type { FindGroupsProps } from '../types';
+import { BIWEEKLY, MONTHLY, WEEKLY } from '..';
 
 export default function getDateScore(group: FindGroupsProps) {
 	const { prime, transactions } = group;
@@ -7,51 +7,35 @@ export default function getDateScore(group: FindGroupsProps) {
 	if (transactions.length === 0) return false;
 
 	const all = [prime, ...transactions];
-	let matches = 0;
+	const matches = {
+		[WEEKLY]: 0,
+		[BIWEEKLY]: 0,
+		[MONTHLY]: 0,
+	};
 
 	for (let i = 0; i < all.length; i++) {
 		const current = all[i];
 		const last = i === all.length - 1;
 		const next = !last ? all[i + 1] : false;
 
-		if (!last && next) {
+		if (next) {
 			const diff = current.timestamp.diff(next.timestamp, 'd');
-			const weekly = 8 >= diff && diff >= 6;
-			const biweekly = 16 >= diff && diff >= 12;
-			const monthly = 34 >= diff && diff >= 25;
-			const none = !weekly && !biweekly && !monthly;
-			if (!none) matches++;
+			matches[WEEKLY] += 8 >= diff && diff >= 6 ? 1 : 0;
+			matches[BIWEEKLY] += 16 >= diff && diff >= 12 ? 1 : 0;
+			matches[MONTHLY] += 34 >= diff && diff >= 25 ? 1 : 0;
 		}
 	}
 
-	return Math.ceil((matches / transactions.length) * 100) >= 75;
+	const [maxInterval] = Object.entries(matches)
+		.map(([name, count]) => ({ name, count }))
+		.sort((a, b) => b.count - a.count);
+	const checkRecurring = (threshold: number) =>
+		Math.ceil((maxInterval.count / all.length) * 100) >= threshold
+			? maxInterval.name
+			: false;
 
-	// const { timestamp: primeTimestamp } = prime;
-
-	// const interval = transactions.reduce<Dayjs | number | boolean>(
-	// 	(acc, { timestamp }, index) => {
-	// 		if (dayjs.isDayjs(acc)) {
-	// 			const diff = acc.diff(timestamp, 'd');
-	// 			const weekly = 8 >= diff && diff >= 6;
-	// 			const biweekly = 16 >= diff && diff >= 12;
-	// 			const monthly = 34 >= diff && diff >= 25;
-	// 			const none = !weekly && !biweekly && !monthly;
-	// 			const last = index === transactions.length - 1;
-	// 			if (!none && last) return diff;
-	// 			if (!none) return timestamp;
-	// 			if (none) return false;
-	// 		}
-	// 		return false;
-	// 	},
-	// 	primeTimestamp,
-	// );
-
-	// if (!interval) {
-	// 	console.log(group.description);
-	// 	console.log(group.transactions.length, group);
-	// 	console.log(interval);
-	// 	console.log('\n');
-	// }
-
-	// return interval;
+	return {
+		possiblyRecurring: checkRecurring(50),
+		recurring: checkRecurring(75),
+	};
 }
