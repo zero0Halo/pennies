@@ -39,7 +39,7 @@ export default function CsvUpload() {
 				</button>
 			</form>
 
-			{data?.map(({ id, description, prime, transactions }) => (
+			{data?.map(({ id, description, prime, recurring, transactions }) => (
 				<div className="px-4" key={id}>
 					<h4 className="mb-0">
 						<span>{description}</span>
@@ -47,6 +47,10 @@ export default function CsvUpload() {
 						<span className="badge badge-secondary ml-2">
 							{transactions.length + 1}
 						</span>
+
+						{recurring && (
+							<span className="badge badge-accent ml-2">Recurring</span>
+						)}
 					</h4>
 
 					<div>({prime.terms.join(', ')})</div>

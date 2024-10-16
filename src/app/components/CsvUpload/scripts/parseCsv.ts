@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import type { FindGroupsProps } from '../types';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
+import getDateScore from './getDateScore';
 
 const regex = {
 	creditCard: /card \d+/g,
@@ -59,8 +60,12 @@ export default async function parseCsv(fileData: File) {
 		});
 
 		const groups: FindGroupsProps[] = findGroups(formattedData);
+		const groupsRecurring: FindGroupsProps[] = groups.map((group) => ({
+			...group,
+			recurring: getDateScore(group),
+		}));
 
-		return groups;
+		return groupsRecurring;
 	} catch (err) {
 		console.error(err);
 		return [];

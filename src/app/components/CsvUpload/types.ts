@@ -16,5 +16,6 @@ export interface FindGroupsProps {
 	description: string;
 	id: string;
 	prime: FormattedDataProps;
+	recurring: boolean;
 	transactions: FormattedDataProps[];
 }
