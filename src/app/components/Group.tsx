@@ -3,13 +3,19 @@ import { useState } from 'react';
 import type { GroupProps } from '../types';
 import { GroupName } from './GroupName';
 
-export default function Group({ data }: GroupProps) {
+export default function Group({ data, setCSVData }: GroupProps) {
 	const [editing, setEditing] = useState(false);
 
 	return (
 		<div className="px-4">
 			{data.name && <h3 className="mb-0">{data.name}</h3>}
-			{editing && <GroupName data={data} setEditing={setEditing} />}
+			{editing && (
+				<GroupName
+					data={data}
+					setCSVData={setCSVData}
+					setEditing={setEditing}
+				/>
+			)}
 
 			<h4 className="mb-0">
 				{!data.name && (

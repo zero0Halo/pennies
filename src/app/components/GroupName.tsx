@@ -1,15 +1,28 @@
 import { useForm } from 'react-hook-form';
-import type { GroupNameProps } from '../types';
+import type { GroupData, GroupNameProps } from '../types';
 
-export function GroupName({ data, setEditing }: GroupNameProps) {
-	const { register, handleSubmit, reset } = useForm();
+interface SetGroupNameData {
+	name: string;
+}
 
-	function handleSetGroupName() {
+export function GroupName({ data, setEditing, setCSVData }: GroupNameProps) {
+	const { register, handleSubmit, reset } = useForm<SetGroupNameData>();
+
+	function handleSetGroupName({ name }: SetGroupNameData) {
+		const { id } = data;
+
+		setCSVData((state: GroupData[]) => {
+			const entryIndex = state.findIndex((f: GroupData) => f.id === id);
+			const newState = [...state];
+
+			newState[entryIndex] = { ...newState[entryIndex], name };
+
+			return newState;
+		});
+
 		reset();
 		setEditing(false);
 	}
-
-	console.log(data);
 
 	return (
 		<form

@@ -11,7 +11,7 @@ export const BIWEEKLY = 'BiWeekly';
 export const MONTHLY = 'Monthly';
 
 export default function CsvUpload() {
-	const [data, setCSVData] = useState<GroupData[] | undefined>();
+	const [data, setCSVData] = useState<GroupData[]>([]);
 	const { handleSubmit, register } = useForm<CsvUploadData>();
 
 	async function handleCsvUpload(formData: CsvUploadData) {
@@ -45,7 +45,7 @@ export default function CsvUpload() {
 			</form>
 
 			{data?.map((group) => (
-				<Group data={group} key={group.id} />
+				<Group data={group} key={group.id} setCSVData={setCSVData} />
 			))}
 		</section>
 	);
