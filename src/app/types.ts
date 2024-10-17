@@ -1,5 +1,4 @@
 import type { Dayjs } from 'dayjs';
-import type React from 'react';
 
 export interface CsvUploadData {
 	csvfile: FileList;
@@ -13,6 +12,7 @@ export interface FormattedRowData {
 	terms: string[];
 	timestamp: Dayjs;
 }
+
 export type GroupData = {
 	description: string;
 	id: string;

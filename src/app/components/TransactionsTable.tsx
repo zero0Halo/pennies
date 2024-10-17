@@ -1,10 +1,10 @@
 import type { GroupData } from '../types';
 
 interface TransactionsTableProps {
-	data: GroupData;
+	groupData: GroupData;
 }
 
-export function TransactionsTable({ data }: TransactionsTableProps) {
+export function TransactionsTable({ groupData }: TransactionsTableProps) {
 	return (
 		<div className="overflow-x-auto">
 			<table className="table table-zebra">
@@ -20,13 +20,13 @@ export function TransactionsTable({ data }: TransactionsTableProps) {
 				<tbody>
 					<tr className="bg-primary">
 						<th>1</th>
-						<td>{data.prime.description}</td>
-						<td>{data.prime.amount}</td>
-						<td>{data.prime.date}</td>
+						<td>{groupData.prime.description}</td>
+						<td>{groupData.prime.amount}</td>
+						<td>{groupData.prime.date}</td>
 					</tr>
 
-					{data.transactions.length > 1 &&
-						data.transactions.map((transaction, i) => (
+					{groupData.transactions.length > 1 &&
+						groupData.transactions.map((transaction, i) => (
 							<tr key={transaction.id}>
 								<th>{i + 2}</th>
 								<td>{transaction.description}</td>

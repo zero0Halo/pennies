@@ -1,30 +1,31 @@
 import type React from 'react';
 import { useState } from 'react';
-import { GroupName } from './GroupName';
+import { EditGroupName } from './EditGroupName';
 import { TransactionsTable } from './TransactionsTable';
 import type { GroupData } from '../types';
 
 interface GroupProps {
-	data: GroupData;
+	groupData: GroupData;
 	setCSVData: React.Dispatch<React.SetStateAction<GroupData[]>>;
 }
 
-export default function Group({ data, setCSVData }: GroupProps) {
+export default function Group({ groupData, setCSVData }: GroupProps) {
 	const [editing, setEditing] = useState(false);
 
 	return (
 		<div className="px-4">
-			{data.name && <h3 className="mb-0">{data.name}</h3>}
+			{groupData.name && <h3 className="mb-0">{groupData.name}</h3>}
+
 			{editing && (
-				<GroupName
-					data={data}
+				<EditGroupName
+					groupData={groupData}
 					setCSVData={setCSVData}
 					setEditing={setEditing}
 				/>
 			)}
 
 			<h4 className="mb-0">
-				{!data.name && (
+				{!groupData.name && (
 					<div
 						className="tooltip tooltip-right tooltip-warning"
 						data-tip="Click here to add a name for this group!"
@@ -39,28 +40,28 @@ export default function Group({ data, setCSVData }: GroupProps) {
 					</div>
 				)}
 
-				<span>{data.description}</span>
+				<span>{groupData.description}</span>
 
 				<span className="badge badge-secondary ml-2">
-					{data.transactions.length + 1}
+					{groupData.transactions.length + 1}
 				</span>
 
-				{data.possiblyRecurring && !data.recurring && (
+				{groupData.possiblyRecurring && !groupData.recurring && (
 					<span className="badge badge-accent ml-2">
-						Possibly Recurring {data.possiblyRecurring}
+						Possibly Recurring {groupData.possiblyRecurring}
 					</span>
 				)}
 
-				{data.recurring && (
+				{groupData.recurring && (
 					<span className="badge badge-accent ml-2">
-						Recurring {data.recurring}
+						Recurring {groupData.recurring}
 					</span>
 				)}
 			</h4>
 
-			<div>({data.prime.terms.join(', ')})</div>
+			<div>({groupData.prime.terms.join(', ')})</div>
 
-			<TransactionsTable data={data} />
+			<TransactionsTable groupData={groupData} />
 
 			<div className="divider" />
 		</div>
