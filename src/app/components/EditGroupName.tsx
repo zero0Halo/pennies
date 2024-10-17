@@ -4,8 +4,8 @@ import type { GroupData, SetEditingFn, SetGroupNameData } from '../types';
 
 export interface EditGroupNameProps {
 	groupData: GroupData;
-	setEditing: SetEditingFn;
 	setCSVData: React.Dispatch<React.SetStateAction<GroupData[]>>;
+	setEditing: SetEditingFn;
 }
 
 export function EditGroupName({
