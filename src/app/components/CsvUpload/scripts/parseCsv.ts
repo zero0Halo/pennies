@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import type { FindGroupsProps } from '../types';
+import type { GroupData } from '../../../types';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 import getDateScore from './getDateScore';
@@ -59,8 +59,8 @@ export default async function parseCsv(fileData: File) {
 			};
 		});
 
-		const groups: FindGroupsProps[] = findGroups(formattedData);
-		const groupsRecurring: FindGroupsProps[] = groups.map((group) => ({
+		const groups: GroupData[] = findGroups(formattedData);
+		const groupsRecurring: GroupData[] = groups.map((group) => ({
 			...group,
 			...getDateScore(group),
 		}));

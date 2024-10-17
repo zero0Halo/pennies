@@ -1,8 +1,8 @@
 import getDescriptionScore from './getDescriptionScore';
-import type { FormattedDataProps, FindGroupsProps } from '../types';
+import type { FormattedRowData, GroupData } from '../../../types';
 
-export default function findGroups(data: FormattedDataProps[]) {
-	const map = new Map<string, FormattedDataProps[]>();
+export default function findGroups(data: FormattedRowData[]) {
+	const map = new Map<string, FormattedRowData[]>();
 
 	data.forEach((row) => {
 		if (map.size === 0) {
@@ -10,7 +10,7 @@ export default function findGroups(data: FormattedDataProps[]) {
 		} else {
 			let matchesFound = false;
 
-			map.forEach((mapValue: FormattedDataProps[], key: string) => {
+			map.forEach((mapValue: FormattedRowData[], key: string) => {
 				const descriptionScore = getDescriptionScore(
 					mapValue.at(0)?.terms ?? [],
 					row.terms,
@@ -29,8 +29,8 @@ export default function findGroups(data: FormattedDataProps[]) {
 		}
 	});
 
-	const asArray: FindGroupsProps[] = Array.from(map)
-		.map(([description, transactions]: [string, FormattedDataProps[]]) => {
+	const asArray: GroupData[] = Array.from(map)
+		.map(([description, transactions]: [string, FormattedRowData[]]) => {
 			if (!description && !transactions.length && !Array.isArray(transactions))
 				return false;
 
@@ -41,6 +41,7 @@ export default function findGroups(data: FormattedDataProps[]) {
 			return {
 				description,
 				id: prime.id,
+				name: false,
 				possiblyRecurring: false,
 				prime,
 				recurring: false,

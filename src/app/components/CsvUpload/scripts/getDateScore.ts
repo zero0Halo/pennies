@@ -1,7 +1,7 @@
-import type { FindGroupsProps } from '../types';
+import type { Group } from '../../../types';
 import { BIWEEKLY, MONTHLY, WEEKLY } from '..';
 
-export default function getDateScore(group: FindGroupsProps) {
+export default function getDateScore(group: Group) {
 	const { prime, transactions } = group;
 
 	if (transactions.length === 0) return false;

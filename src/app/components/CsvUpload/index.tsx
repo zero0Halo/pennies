@@ -2,7 +2,8 @@
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import type { CsvUploadProps, FindGroupsProps } from './types';
+import type { CsvUploadData, GroupData } from '../../types';
+import Group from '../Group';
 import parseCsv from './scripts/parseCsv';
 
 export const WEEKLY = 'Weekly';
@@ -10,10 +11,10 @@ export const BIWEEKLY = 'BiWeekly';
 export const MONTHLY = 'Monthly';
 
 export default function CsvUpload() {
-	const [data, setData] = useState<FindGroupsProps[] | undefined>();
-	const { handleSubmit, register } = useForm<CsvUploadProps>();
+	const [data, setCSVData] = useState<GroupData[] | undefined>();
+	const { handleSubmit, register } = useForm<CsvUploadData>();
 
-	async function handleCsvUpload(formData: CsvUploadProps) {
+	async function handleCsvUpload(formData: CsvUploadData) {
 		const fileData: File = formData.csvfile[0];
 
 		if (!fileData) {
@@ -21,9 +22,9 @@ export default function CsvUpload() {
 			return;
 		}
 
-		const parsedData: FindGroupsProps[] = await parseCsv(fileData);
+		const parsedData: GroupData[] = await parseCsv(fileData);
 
-		setData(parsedData);
+		setCSVData(parsedData);
 	}
 
 	return (
@@ -43,74 +44,9 @@ export default function CsvUpload() {
 				</button>
 			</form>
 
-			{data?.map(
-				({
-					id,
-					description,
-					possiblyRecurring,
-					prime,
-					recurring,
-					transactions,
-				}) => (
-					<div className="px-4" key={id}>
-						<h4 className="mb-0">
-							<span>{description}</span>
-
-							<span className="badge badge-secondary ml-2">
-								{transactions.length + 1}
-							</span>
-
-							{possiblyRecurring && !recurring && (
-								<span className="badge badge-accent ml-2">
-									Possibly Recurring {possiblyRecurring}
-								</span>
-							)}
-
-							{recurring && (
-								<span className="badge badge-accent ml-2">
-									Recurring {recurring}
-								</span>
-							)}
-						</h4>
-
-						<div>({prime.terms.join(', ')})</div>
-
-						<div className="overflow-x-auto">
-							<table className="table table-zebra">
-								<thead>
-									<tr>
-										<th />
-										<th>Description</th>
-										<th>Amount</th>
-										<th>Date</th>
-									</tr>
-								</thead>
-
-								<tbody>
-									<tr className="bg-primary">
-										<th>1</th>
-										<td>{prime.description}</td>
-										<td>{prime.amount}</td>
-										<td>{prime.date}</td>
-									</tr>
-
-									{transactions.length > 1 &&
-										transactions.map((transaction, i) => (
-											<tr key={transaction.id}>
-												<th>{i + 2}</th>
-												<td>{transaction.description}</td>
-												<td>{transaction.amount}</td>
-												<td>{transaction.date}</td>
-											</tr>
-										))}
-								</tbody>
-							</table>
-						</div>
-
-						<div className="divider" />
-					</div>
-				),
-			)}
+			{data?.map((group) => (
+				<Group data={group} key={group.id} />
+			))}
 		</section>
 	);
 }
