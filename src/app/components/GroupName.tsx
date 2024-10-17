@@ -1,8 +1,11 @@
+import type React from 'react';
 import { useForm } from 'react-hook-form';
-import type { GroupData, GroupNameProps } from '../types';
+import type { GroupData, SetEditingFn, SetGroupNameData } from '../types';
 
-interface SetGroupNameData {
-	name: string;
+export interface GroupNameProps {
+	data: GroupData;
+	setEditing: SetEditingFn;
+	setCSVData: React.Dispatch<React.SetStateAction<GroupData[]>>;
 }
 
 export function GroupName({ data, setEditing, setCSVData }: GroupNameProps) {

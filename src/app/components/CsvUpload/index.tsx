@@ -11,26 +11,31 @@ export const BIWEEKLY = 'BiWeekly';
 export const MONTHLY = 'Monthly';
 
 export default function CsvUpload() {
+	const [error, setError] = useState<string | null>();
 	const [data, setCSVData] = useState<GroupData[]>([]);
 	const { handleSubmit, register } = useForm<CsvUploadData>();
 
 	async function handleCsvUpload(formData: CsvUploadData) {
-		const fileData: File = formData.csvfile[0];
+		try {
+			const fileData: File = formData.csvfile[0];
 
-		if (!fileData) {
-			console.log('Error!!!');
-			return;
+			if (!fileData) {
+				console.log('Error!!!');
+				return;
+			}
+
+			const parsedData: GroupData[] = await parseCsv(fileData);
+
+			setCSVData(parsedData);
+		} catch (err) {
+			setError((err as Error).message);
 		}
-
-		const parsedData: GroupData[] = await parseCsv(fileData);
-
-		setCSVData(parsedData);
 	}
 
 	return (
-		<section>
+		<section className="px-4">
 			<form
-				className="form-control p-4 join join-horizontal"
+				className="form-control py-4 join join-horizontal"
 				onSubmit={handleSubmit(handleCsvUpload)}
 			>
 				<input
@@ -44,9 +49,17 @@ export default function CsvUpload() {
 				</button>
 			</form>
 
-			{data?.map((group) => (
-				<Group data={group} key={group.id} setCSVData={setCSVData} />
-			))}
+			{error && <div className="alert alert-error">{error}</div>}
+
+			{data.length > 0 && (
+				<>
+					<div className="divider" />
+
+					{data?.map((group) => (
+						<Group data={group} key={group.id} setCSVData={setCSVData} />
+					))}
+				</>
+			)}
 		</section>
 	);
 }

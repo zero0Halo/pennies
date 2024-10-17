@@ -23,16 +23,7 @@ export type GroupData = {
 	transactions: FormattedRowData[];
 };
 
-export type GroupProps = {
-	data: GroupData;
-	setCSVData: React.Dispatch<React.SetStateAction<GroupData[]>>;
-};
-
-type SetEditingFn = (arg: boolean) => void;
-// type SetCSVDataFn = (arg: GroupData[]) => void;
-
-export interface GroupNameProps {
-	data: GroupData;
-	setEditing: SetEditingFn;
-	setCSVData: React.Dispatch<React.SetStateAction<GroupData[]>>;
+export type SetEditingFn = (arg: boolean) => void;
+export interface SetGroupNameData {
+	name: string;
 }

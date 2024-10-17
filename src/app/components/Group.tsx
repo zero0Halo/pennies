@@ -1,7 +1,13 @@
+import type React from 'react';
 import { useState } from 'react';
-
-import type { GroupProps } from '../types';
 import { GroupName } from './GroupName';
+import { TransactionsTable } from './TransactionsTable';
+import type { GroupData } from '../types';
+
+interface GroupProps {
+	data: GroupData;
+	setCSVData: React.Dispatch<React.SetStateAction<GroupData[]>>;
+}
 
 export default function Group({ data, setCSVData }: GroupProps) {
 	const [editing, setEditing] = useState(false);
@@ -54,37 +60,7 @@ export default function Group({ data, setCSVData }: GroupProps) {
 
 			<div>({data.prime.terms.join(', ')})</div>
 
-			<div className="overflow-x-auto">
-				<table className="table table-zebra">
-					<thead>
-						<tr>
-							<th />
-							<th>Description</th>
-							<th>Amount</th>
-							<th>Date</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						<tr className="bg-primary">
-							<th>1</th>
-							<td>{data.prime.description}</td>
-							<td>{data.prime.amount}</td>
-							<td>{data.prime.date}</td>
-						</tr>
-
-						{data.transactions.length > 1 &&
-							data.transactions.map((transaction, i) => (
-								<tr key={transaction.id}>
-									<th>{i + 2}</th>
-									<td>{transaction.description}</td>
-									<td>{transaction.amount}</td>
-									<td>{transaction.date}</td>
-								</tr>
-							))}
-					</tbody>
-				</table>
-			</div>
+			<TransactionsTable data={data} />
 
 			<div className="divider" />
 		</div>
