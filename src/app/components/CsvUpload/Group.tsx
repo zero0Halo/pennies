@@ -1,8 +1,7 @@
 import type React from 'react';
-import { useState } from 'react';
-import { EditGroupName } from './EditGroupName';
 import { TransactionsTable } from './TransactionsTable';
-import type { GroupData } from '../types';
+import type { GroupData } from '../../types';
+import DisplayGroupName from './DisplayGroupName';
 
 interface GroupProps {
 	groupData: GroupData;
@@ -10,36 +9,11 @@ interface GroupProps {
 }
 
 export default function Group({ groupData, setCSVData }: GroupProps) {
-	const [editing, setEditing] = useState(false);
-
 	return (
 		<div className="px-4">
-			{groupData.name && <h3 className="mb-0">{groupData.name}</h3>}
+			<DisplayGroupName groupData={groupData} setCSVData={setCSVData} />
 
-			{editing && (
-				<EditGroupName
-					groupData={groupData}
-					setCSVData={setCSVData}
-					setEditing={setEditing}
-				/>
-			)}
-
-			<h4 className="mb-0">
-				{!groupData.name && (
-					<div
-						className="tooltip tooltip-right tooltip-warning"
-						data-tip="Click here to add a name for this group!"
-					>
-						<button
-							className="btn btn-warning btn-xs btn-circle mr-2"
-							onClick={() => setEditing(true)}
-							type="button"
-						>
-							<span className="font-bold">!!!</span>
-						</button>
-					</div>
-				)}
-
+			<h4 className="mb-0 mt-2">
 				<span>{groupData.description}</span>
 
 				<span className="badge badge-secondary ml-2">

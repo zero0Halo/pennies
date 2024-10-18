@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import type { CsvUploadData, GroupData } from '../../types';
-import Group from '../Group';
+import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 
 export const WEEKLY = 'Weekly';

@@ -25,5 +25,5 @@ export type GroupData = {
 
 export type SetEditingFn = (arg: boolean) => void;
 export interface SetGroupNameData {
-	name: string;
+	name: string | boolean;
 }

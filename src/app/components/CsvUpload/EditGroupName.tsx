@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useForm } from 'react-hook-form';
-import type { GroupData, SetEditingFn, SetGroupNameData } from '../types';
+import type { GroupData, SetEditingFn, SetGroupNameData } from '../../types';
 
 export interface EditGroupNameProps {
 	groupData: GroupData;
@@ -39,7 +39,9 @@ export function EditGroupName({
 			<input
 				type="text"
 				className="input input-sm input-bordered join-item w-3/4"
-				placeholder="Group Name"
+				placeholder={
+					typeof groupData?.name === 'string' ? groupData.name : 'Group Name'
+				}
 				{...register('name', { required: true })}
 			/>
 			<button type="submit" className="btn btn-sm btn-accent join-item">
@@ -47,13 +49,20 @@ export function EditGroupName({
 			</button>
 			<button
 				type="button"
-				className="btn btn-sm btn-error join-item"
+				className="btn btn-sm btn-warning join-item"
 				onClick={() => {
 					reset();
 					setEditing(false);
 				}}
 			>
 				Cancel
+			</button>
+			<button
+				className="btn btn-error btn-sm text-white join-item"
+				onClick={() => handleSetGroupName({ name: false })}
+				type="button"
+			>
+				X
 			</button>
 		</form>
 	);
