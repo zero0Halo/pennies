@@ -1,7 +1,7 @@
-import type { Group } from '../../../types';
+import type { GroupData } from '../../../types';
 import { BIWEEKLY, MONTHLY, WEEKLY } from '..';
 
-export default function getDateScore(group: Group) {
+export default function getDateScore(group: GroupData) {
 	const { prime, transactions } = group;
 
 	if (transactions.length === 0) return false;

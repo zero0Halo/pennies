@@ -2,6 +2,7 @@ import type React from 'react';
 import { TransactionsTable } from './TransactionsTable';
 import type { GroupData } from '../../types';
 import DisplayGroupName from './DisplayGroupName';
+import RecurringStatus from './RecurringStatus';
 
 interface GroupProps {
 	groupData: GroupData;
@@ -13,24 +14,14 @@ export default function Group({ groupData, setCSVData }: GroupProps) {
 		<div className="px-4">
 			<DisplayGroupName groupData={groupData} setCSVData={setCSVData} />
 
-			<h4 className="mb-0 mt-2">
+			<h4 className="mb-0 mt-2 flex align-center">
 				<span>{groupData.description}</span>
 
-				<span className="badge badge-secondary ml-2">
+				<div className="badge badge-secondary ml-2 h-6 text-xs">
 					{groupData.transactions.length + 1}
-				</span>
+				</div>
 
-				{groupData.possiblyRecurring && !groupData.recurring && (
-					<span className="badge badge-accent ml-2">
-						Possibly Recurring {groupData.possiblyRecurring}
-					</span>
-				)}
-
-				{groupData.recurring && (
-					<span className="badge badge-accent ml-2">
-						Recurring {groupData.recurring}
-					</span>
-				)}
+				<RecurringStatus groupData={groupData} setCSVData={setCSVData} />
 			</h4>
 
 			<div>({groupData.prime.terms.join(', ')})</div>
