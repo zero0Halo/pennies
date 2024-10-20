@@ -30,7 +30,7 @@ export function TransactionsTable({ groupData }: TransactionsTableProps) {
 						<td>{groupData.prime.date}</td>
 					</tr>
 
-					{groupData.transactions.length > 1 &&
+					{groupData.transactions.length >= 1 &&
 						groupData.transactions.map((transaction, i) => (
 							<tr key={transaction.id}>
 								<th>{i + 2}</th>

@@ -1,3 +1,5 @@
+// DEPRECATED
+
 import type { GroupData } from '@/app/types';
 import type React from 'react';
 import { useEffect, useState } from 'react';
