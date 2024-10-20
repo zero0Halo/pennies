@@ -19,6 +19,7 @@ export async function POST() {
 		{ status: 200 },
 	);
 	response.cookies.set('isLoggedIn', '', { maxAge: -1 });
+	response.cookies.set('user', '', { maxAge: -1 });
 
 	return response;
 }

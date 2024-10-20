@@ -22,13 +22,34 @@ export async function POST(req: Request) {
 			);
 		}
 
+		const { data: userData, error: userError } = await supabase
+			.from('users')
+			.select('*')
+			.eq('uid', authData.user.id)
+			.single();
+
+		if (userError) {
+			return NextResponse.json(
+				{ message: 'Error Logging In', data: userError },
+				{ status: 400 },
+			);
+		}
+
 		// Create a response and set the 'isLoggedIn' cookie
 		const response = NextResponse.json(
-			{ message: 'Sign In Successful! Redirecting...', data: authData },
+			{
+				message: 'Sign In Successful! Redirecting...',
+				data: { authData, userData },
+			},
 			{ status: 200 },
 		);
+
 		response.cookies.set('isLoggedIn', 'true', {
 			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 60 * 24 * 7, // 1 week
+		});
+		response.cookies.set('user', JSON.stringify(userData), {
 			secure: process.env.NODE_ENV === 'production',
 			maxAge: 60 * 60 * 24 * 7, // 1 week
 		});
