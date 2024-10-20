@@ -2,18 +2,14 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-
-interface FormDataProps {
-	email: string;
-	password: string;
-}
+import type { SignInData } from '../types';
 
 export default function Login() {
-	const { handleSubmit, register } = useForm<FormDataProps>();
+	const { handleSubmit, register } = useForm<SignInData>();
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
 
-	async function handleSignIn(formData: FormDataProps) {
+	async function handleSignIn(formData: SignInData) {
 		const response = await fetch('/api/user-signin', {
 			method: 'POST',
 			headers: {

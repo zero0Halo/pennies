@@ -1,15 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-
-interface SignOutProps {
-	preventDefault: () => void;
-}
+import type { SignOutData } from '../types';
 
 export default function SignOut() {
 	const [error, setError] = useState('');
 
-	async function handleSignOut(event: SignOutProps) {
+	async function handleSignOut(event: SignOutData) {
 		event.preventDefault();
 
 		const response = await fetch('/api/user-signout', {

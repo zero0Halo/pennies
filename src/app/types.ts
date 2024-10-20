@@ -27,3 +27,17 @@ export type SetEditingFn = (arg: boolean) => void;
 export interface SetGroupNameData {
 	name: string | boolean;
 }
+
+export type SignInData = {
+	email: string;
+	password: string;
+};
+
+export interface SignOutData {
+	preventDefault: () => void;
+}
+
+export interface SignUpData extends SignInData {
+	firstname?: string;
+	lastname?: string;
+}

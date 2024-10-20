@@ -2,13 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-
-interface SignUp {
-	email: string;
-	firstname?: string;
-	lastname?: string;
-	password: string;
-}
+import type { SignUpData } from '../types';
 
 function SignUpForm() {
 	const [success, setSuccess] = useState('');
@@ -17,9 +11,9 @@ function SignUpForm() {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<SignUp>();
+	} = useForm<SignUpData>();
 
-	const handleSignUp = async (formData: SignUp) => {
+	const handleSignUp = async (formData: SignUpData) => {
 		const response = await fetch('/api/user-signup', {
 			method: 'POST',
 			headers: {
