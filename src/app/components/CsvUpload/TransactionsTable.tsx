@@ -26,7 +26,7 @@ export function TransactionsTable({ groupData }: TransactionsTableProps) {
 					<tr className="bg-primary">
 						<th>1</th>
 						<td>{groupData.prime.description}</td>
-						<td>{groupData.prime.amount}</td>
+						<td>{displayAmount.format(groupData.prime.amount)}</td>
 						<td>{groupData.prime.date}</td>
 					</tr>
 
