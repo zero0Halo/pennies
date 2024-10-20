@@ -1,11 +1,7 @@
 import type { GroupData } from '../../../types';
 import { BIWEEKLY, MONTHLY, WEEKLY } from '..';
 
-<<<<<<< HEAD:src/app/components/CsvUpload/scripts/getDateScore.ts
-export default function getDateScore(group: GroupData) {
-=======
 export default function findRecurring(group: GroupData) {
->>>>>>> 65d1a15f57a5497781a8c2dcf0c29f064df53daa:src/app/components/CsvUpload/scripts/findRecurring.ts
 	const { prime, transactions } = group;
 
 	if (transactions.length === 0) return false;
