@@ -4,6 +4,11 @@ interface TransactionsTableProps {
 	groupData: GroupData;
 }
 
+const USDollar = new Intl.NumberFormat('en-US', {
+	style: 'currency',
+	currency: 'USD',
+});
+
 export function TransactionsTable({ groupData }: TransactionsTableProps) {
 	return (
 		<div className="overflow-x-auto">
@@ -21,7 +26,7 @@ export function TransactionsTable({ groupData }: TransactionsTableProps) {
 					<tr className="bg-primary">
 						<th>1</th>
 						<td>{groupData.prime.description}</td>
-						<td>{groupData.prime.amount}</td>
+						<td>{USDollar.format(groupData.prime.amount)}</td>
 						<td>{groupData.prime.date}</td>
 					</tr>
 
@@ -30,7 +35,7 @@ export function TransactionsTable({ groupData }: TransactionsTableProps) {
 							<tr key={transaction.id}>
 								<th>{i + 2}</th>
 								<td>{transaction.description}</td>
-								<td>{transaction.amount}</td>
+								<td>{USDollar.format(transaction.amount)}</td>
 								<td>{transaction.date}</td>
 							</tr>
 						))}
