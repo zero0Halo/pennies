@@ -1,20 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Cookie from 'js-cookie';
-import type { SignOutData, UserData } from '../types';
+import type { SignOutData } from '../types';
 
 export default function SignOut() {
 	const [error, setError] = useState('');
-	const userCookie: string | object = Cookie.get('user') ?? '';
-	let user: UserData | boolean;
-
-	try {
-		user = JSON.parse(userCookie);
-	} catch {
-		user = false;
-		setError('Error parsing User JSON');
-	}
 
 	async function handleSignOut(event: SignOutData) {
 		event.preventDefault();
@@ -38,8 +28,7 @@ export default function SignOut() {
 					onClick={handleSignOut}
 					type="button"
 				>
-					Logout{' '}
-					{typeof user !== 'boolean' && `${user.first_name} ${user.last_name}`}
+					Logout
 				</button>
 			) : (
 				<div>{error}</div>

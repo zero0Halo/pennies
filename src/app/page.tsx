@@ -1,10 +1,19 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import useIsLoggedIn from './hooks/useIsLoggedIn';
 import CsvUpload from './components/CsvUpload';
 
 export default function Home() {
 	const isLoggedIn = useIsLoggedIn();
+	const cookieStore = cookies();
+	const userCookie = cookieStore.get('user')?.value ?? '';
+	const userData = JSON.parse(userCookie);
+
+	if (userData && !userData?.accounts) {
+		redirect('/accounts');
+	}
 
 	return (
 		<main>

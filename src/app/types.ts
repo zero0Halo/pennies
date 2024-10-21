@@ -43,8 +43,9 @@ export interface SignUpData extends SignInData {
 }
 
 export interface UserData {
+	accounts: string[] | null;
+	email: string;
 	first_name?: string;
 	last_name?: string;
-	email: string;
-	accounts: string[] | null;
+	uid: string;
 }
