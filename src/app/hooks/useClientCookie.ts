@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 export default function useClientCookie<T>(
 	name: string,
-): T | boolean | undefined {
+): [T | boolean | undefined, boolean] {
 	const [cookieValue, setCookieValue] = useState<T | boolean | undefined>(
 		undefined,
 	);
@@ -22,5 +22,8 @@ export default function useClientCookie<T>(
 		}
 	}, [name]);
 
-	return cookieValue;
+	const cookieDataValid =
+		cookieValue !== undefined && typeof cookieValue !== 'boolean';
+
+	return [cookieValue, cookieDataValid];
 }

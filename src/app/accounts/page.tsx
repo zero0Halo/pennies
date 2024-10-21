@@ -4,8 +4,10 @@ import CreateAccount from './components/CreateAccount';
 export default function Accounts() {
 	const cookieStore = cookies();
 	const userCookie = cookieStore.get('user')?.value ?? '';
-	const userData = JSON.parse(userCookie);
+	const userData = userCookie.length ? JSON.parse(userCookie) : false;
 	const noAccounts = userData && !userData?.accounts;
+
+	console.log(userData);
 
 	return (
 		<section className="container mx-auto pt-4">

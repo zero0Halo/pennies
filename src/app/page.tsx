@@ -9,7 +9,7 @@ export default function Home() {
 	const isLoggedIn = useIsLoggedIn();
 	const cookieStore = cookies();
 	const userCookie = cookieStore.get('user')?.value ?? '';
-	const userData = JSON.parse(userCookie);
+	const userData = userCookie.length ? JSON.parse(userCookie) : false;
 
 	if (userData && !userData?.accounts) {
 		redirect('/accounts');
