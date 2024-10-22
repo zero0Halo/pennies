@@ -10,3 +10,8 @@ export const CHECKING = 'Checking';
 export const CREDIT_CARD = 'Credit Card';
 export const INVESTMENT = 'Cnvestment';
 export const SAVINGS = 'Cavings';
+
+export const USERS = 'users';
+export const USER = 'user';
+export const ACCOUNTS = 'accounts';
+export const TRANSACTIONS = 'transactions';

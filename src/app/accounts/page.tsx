@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import CreateAccount from './components/CreateAccount';
+import AccountCreate from './components/AccountCreate';
 
 export default function Accounts() {
 	const cookieStore = cookies();
@@ -16,7 +16,7 @@ export default function Accounts() {
 			{noAccounts && (
 				<div className="prose">
 					<h2>Create an Account</h2>
-					<CreateAccount />
+					<AccountCreate />
 				</div>
 			)}
 		</section>

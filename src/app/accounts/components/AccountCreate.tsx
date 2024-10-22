@@ -12,7 +12,7 @@ interface AccountData {
 	type: string;
 }
 
-export default function CreateAccount() {
+export default function AccountCreate() {
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 	const [userData, userDataValid] = useClientCookie<UserData>('user');
@@ -24,6 +24,8 @@ export default function CreateAccount() {
 	const firstAccount = userDataValid && !(userData as UserData)?.accounts;
 
 	async function handleCreateAccount({ is_default, name, type }: AccountData) {
+		setError('');
+
 		const uid = uuidv4();
 
 		const response = await fetch('/api/account-create', {
@@ -47,7 +49,7 @@ export default function CreateAccount() {
 			}, 2000);
 		} else {
 			const body = await response.json();
-			setError(`${body.message}: ${body.data.message}`);
+			setError(`${body.message}: ${body?.data?.message ?? ''}`);
 		}
 	}
 
