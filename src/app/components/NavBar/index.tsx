@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import useIsLoggedIn from '../hooks/useIsLoggedIn';
-import SignIn from './SignIn';
-import SignOut from './SignOut';
+import useIsLoggedIn from '../../hooks/useIsLoggedIn';
+import SignIn from '../SignIn';
+import SignOut from '../SignOut';
+import NavLink from './NavLink';
 
 export default function LoginBar() {
 	const isLoggedIn = useIsLoggedIn();
@@ -19,7 +20,14 @@ export default function LoginBar() {
 						width="32"
 					/>
 				</Link>
+
 				<h1 className="my-0 pl-2 text-2xl">Pennies</h1>
+
+				<NavLink exact href="/">
+					Home
+				</NavLink>
+
+				<NavLink href="/accounts">Accounts</NavLink>
 			</div>
 
 			{isLoggedIn && <SignOut />}
