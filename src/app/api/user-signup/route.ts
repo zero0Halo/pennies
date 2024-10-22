@@ -1,7 +1,7 @@
 // src/app/api/signup/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
+import { createServerClient } from '@/utils/supabase/server';
 
 export async function POST(req: Request) {
 	try {
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
 		// Create a Supabase client instance for the server-side
 		const cookieStore = cookies();
-		const supabase = createClient(cookieStore);
+		const supabase = createServerClient(cookieStore);
 
 		// Create a new user using Supabase Auth
 		const { data: authData, error: authError } = await supabase.auth.signUp({

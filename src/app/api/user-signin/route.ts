@@ -1,12 +1,12 @@
 // src/app/api/user-signin/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
+import { createServerClient } from '@/utils/supabase/server';
 
 export async function POST(req: Request) {
 	try {
 		const cookieStore = cookies();
-		const supabase = createClient(cookieStore);
+		const supabase = createServerClient(cookieStore);
 		const { email, password } = await req.json();
 
 		const { data: authData, error: authError } =

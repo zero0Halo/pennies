@@ -5,14 +5,15 @@ import useClientCookie from '@/app/hooks/useClientCookie';
 import { CHECKING, CREDIT_CARD, INVESTMENT, SAVINGS } from '../../constants';
 import type { UserData } from '@/app/types';
 import { useState } from 'react';
+import type { AccountData } from '@/app/types';
 
-interface AccountData {
-	is_default: boolean;
-	name: string;
-	type: string;
+interface AccountCreateProps {
+	setCreatingAccount: (arg: boolean) => void;
 }
 
-export default function AccountCreate() {
+export default function AccountCreate({
+	setCreatingAccount,
+}: AccountCreateProps) {
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 	const [userData, userDataValid] = useClientCookie<UserData>('user');
@@ -56,7 +57,10 @@ export default function AccountCreate() {
 	if (!userDataValid) return null;
 
 	return (
-		<form className="form-control" onSubmit={handleSubmit(handleCreateAccount)}>
+		<form
+			className="form-control mb-4"
+			onSubmit={handleSubmit(handleCreateAccount)}
+		>
 			{error.length > 0 && (
 				<div className="alert alert-error mb-6"> {error}</div>
 			)}
@@ -67,14 +71,14 @@ export default function AccountCreate() {
 			{success.length === 0 && (
 				<>
 					<input
-						className={`input input-bordered mb-2 ${errors?.name && 'input-error'}`}
+						className={`input input-sm input-bordered mb-2 ${errors?.name && 'input-error'}`}
 						placeholder="Account Name"
 						type="text"
 						{...register('name', { required: true })}
 					/>
 
 					<select
-						className={`select select-bordered mb-2 ${errors?.type && 'select-error'}`}
+						className={`select select-sm select-bordered mb-2 ${errors?.type && 'select-error'}`}
 						{...register('type', { required: true })}
 					>
 						<option />
@@ -84,7 +88,7 @@ export default function AccountCreate() {
 						<option value={CREDIT_CARD}>Savings</option>
 					</select>
 
-					<div className="flex flex-wrap items-center pl-3 pb-2">
+					<div className="flex flex-wrap items-center pl-3 pb-4">
 						<input
 							type="checkbox"
 							className="checkbox checkbox-sm"
@@ -98,11 +102,26 @@ export default function AccountCreate() {
 						</label>
 					</div>
 
-					<button type="submit" className="btn btn-accent">
-						Submit
-					</button>
+					<div className="join join-horizontal">
+						<button
+							className="btn btn-warning btn-sm join-item w-1/4"
+							onClick={() => setCreatingAccount(false)}
+							type="submit"
+						>
+							Cancel
+						</button>
+
+						<button
+							type="submit"
+							className="btn btn-accent btn-sm join-item w-3/4"
+						>
+							Submit
+						</button>
+					</div>
 				</>
 			)}
+
+			<div className="divider" />
 		</form>
 	);
 }

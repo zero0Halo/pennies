@@ -1,11 +1,11 @@
 // src/app/api/user-signout/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
+import { createServerClient } from '@/utils/supabase/server';
 
 export async function POST() {
 	const cookieStore = cookies();
-	const supabase = createClient(cookieStore);
+	const supabase = createServerClient(cookieStore);
 
 	const { error } = await supabase.auth.signOut();
 	console.log(error);

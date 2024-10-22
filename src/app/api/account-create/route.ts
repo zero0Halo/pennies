@@ -1,21 +1,14 @@
 // src/app/api/account-create/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
+import { createServerClient } from '@/utils/supabase/server';
+import responseFactory from '../utils/responseFactory';
 import { ACCOUNTS, USER, USERS } from '@/app/constants';
-
-function responseFactory(
-	message: string,
-	data?: object | null | undefined,
-	status?: number | undefined,
-) {
-	return NextResponse.json({ message, data }, { status: status ?? 400 });
-}
 
 export async function POST(req: Request) {
 	try {
 		const cookieStore = cookies();
-		const supabase = createClient(cookieStore);
+		const supabase = createServerClient(cookieStore);
 		const { is_default, name, type, uid, user_uid } = await req.json();
 
 		// Get the user's accounts. If there is an error or the account already exists, stop.

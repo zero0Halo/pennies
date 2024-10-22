@@ -1,5 +1,16 @@
 import type { Dayjs } from 'dayjs';
 
+export type AccountData = {
+	is_default: boolean;
+	name: string;
+	type: string;
+};
+
+// The UID automatically is created in supabase when a new account is inserted
+export interface AccountDataDB extends AccountData {
+	uid: string;
+}
+
 export interface CsvUploadData {
 	csvfile: FileList;
 }
