@@ -15,3 +15,5 @@ export const USERS = 'users';
 export const USER = 'user';
 export const ACCOUNTS = 'accounts';
 export const TRANSACTIONS = 'transactions';
+
+export const IS_LOGGED_IN = 'isLoggedIn';

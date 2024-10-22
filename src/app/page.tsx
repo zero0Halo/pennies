@@ -1,17 +1,17 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
 import useIsLoggedIn from './hooks/useIsLoggedIn';
+import useServerCookie from './hooks/useServerCookie';
 import CsvUpload from './components/CsvUpload';
+import { USER } from '@/app/constants';
+import type { UserData } from './types';
 
 export default function Home() {
 	const isLoggedIn = useIsLoggedIn();
-	const cookieStore = cookies();
-	const userCookie = cookieStore.get('user')?.value ?? '';
-	const userData = userCookie.length ? JSON.parse(userCookie) : false;
+	const [userData] = useServerCookie<UserData>(USER);
 
-	if (userData && !userData?.accounts) {
+	if (userData && !(userData as UserData)?.accounts) {
 		redirect('/accounts');
 	}
 

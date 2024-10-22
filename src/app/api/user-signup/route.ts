@@ -22,15 +22,13 @@ export async function POST(req: Request) {
 		}
 
 		// Insert additional user info into your custom users table
-		const { data: userData, error: userError } = await supabase
-			.from('users')
-			.insert({
-				created_at: new Date(),
-				email: authData.user?.email,
-				first_name: firstname,
-				last_name: lastname,
-				uid: authData.user?.id,
-			});
+		const { error: userError } = await supabase.from('users').insert({
+			created_at: new Date(),
+			email: authData.user?.email,
+			first_name: firstname,
+			last_name: lastname,
+			uid: authData.user?.id,
+		});
 
 		if (userError) {
 			return NextResponse.json({ message: userError.message }, { status: 400 });

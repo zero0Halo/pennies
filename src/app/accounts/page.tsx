@@ -1,13 +1,11 @@
-import { cookies } from 'next/headers';
 import AccountCreate from './components/AccountCreate';
+import useServerCookie from '../hooks/useServerCookie';
+import { USER } from '@/app/constants';
+import type { UserData } from '../types';
 
 export default function Accounts() {
-	const cookieStore = cookies();
-	const userCookie = cookieStore.get('user')?.value ?? '';
-	const userData = userCookie.length ? JSON.parse(userCookie) : false;
-	const noAccounts = userData && !userData?.accounts;
-
-	console.log(userData);
+	const [userData, userDataValid] = useServerCookie<UserData>(USER);
+	const noAccounts = userDataValid && !(userData as UserData)?.accounts;
 
 	return (
 		<section className="container mx-auto pt-4">
