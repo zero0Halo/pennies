@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { SignOutData } from '../types';
+import type { SignOutData } from '../../types';
 
 export default function SignOut() {
 	const [error, setError] = useState('');

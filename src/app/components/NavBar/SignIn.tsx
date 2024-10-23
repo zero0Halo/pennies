@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import type { SignInData } from '../types';
+import type { SignInData } from '../../types';
 
 export default function Login() {
 	const { handleSubmit, register } = useForm<SignInData>();
@@ -29,18 +29,30 @@ export default function Login() {
 				window.location.href = '/';
 			}, 2000);
 		} else {
-			setError(result.message || 'Sign in failed');
+			const dataMessage = result?.data?.message
+				? ` (${result.data.message})`
+				: '';
+			setError(`${result.message}${dataMessage}`);
+			console.error(result);
 		}
 	}
 
 	return (
 		<div>
-			{success.length > 0 && <h3>{success}</h3>}
-			{error.length > 0 && <h3>{error}</h3>}
+			{success.length > 0 && (
+				<div className="alert alert-success px-y py-2 font-bold text-white">
+					{success}
+				</div>
+			)}
+			{error.length > 0 && (
+				<div className="alert alert-error px-y py-2 font-bold text-white">
+					{error}
+				</div>
+			)}
 
 			{success.length === 0 && (
 				<form
-					className="form-control join join-horizontal"
+					className="form-control join join-horizontal ml-2"
 					onSubmit={handleSubmit(handleSignIn)}
 				>
 					<input

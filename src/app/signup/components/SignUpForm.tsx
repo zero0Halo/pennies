@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import type { SignUpData } from '../types';
+import type { SignUpData } from '../../types';
 
 function SignUpForm() {
 	const [success, setSuccess] = useState('');
@@ -46,38 +46,38 @@ function SignUpForm() {
 
 			{success.length === 0 && (
 				<form
-					className="form-control p-8"
+					className="form-control py-8"
 					onSubmit={handleSubmit(handleSignUp)}
 				>
 					<input
 						type="text"
-						className="input input-md mb-4"
+						className="input input-sm input-bordered mb-4"
 						placeholder="Email"
 						{...register('email', { required: true })}
 					/>
 
 					<input
 						type="text"
-						className="input input-md mb-4"
+						className="input input-sm input-bordered mb-4"
 						placeholder="Password"
 						{...register('password', { required: true })}
 					/>
 
 					<input
 						type="text"
-						className="input input-md mb-4"
+						className="input input-sm input-bordered mb-4"
 						placeholder="First Name"
 						{...register('firstname', { required: true })}
 					/>
 
 					<input
 						type="text"
-						className="input input-md mb-4"
+						className="input input-sm input-bordered mb-4"
 						placeholder="Last Name"
 						{...register('lastname', { required: true })}
 					/>
 
-					<button className="btn btn-primary" type="submit">
+					<button className="btn btn-primary btn-sm" type="submit">
 						Submit
 					</button>
 				</form>

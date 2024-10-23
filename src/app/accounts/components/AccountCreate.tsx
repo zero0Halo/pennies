@@ -2,7 +2,14 @@
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import useClientCookie from '@/app/hooks/useClientCookie';
-import { CHECKING, CREDIT_CARD, INVESTMENT, SAVINGS } from '../../constants';
+import {
+	ACCOUNTS,
+	CHECKING,
+	CREDIT_CARD,
+	INVESTMENT,
+	SAVINGS,
+	USER,
+} from '../../constants';
 import type { UserData } from '@/app/types';
 import { useState } from 'react';
 import type { AccountData } from '@/app/types';
@@ -16,13 +23,14 @@ export default function AccountCreate({
 }: AccountCreateProps) {
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
-	const [userData, userDataValid] = useClientCookie<UserData>('user');
+	const [userCookieData] = useClientCookie<UserData>(USER);
+	const [accountsCookieData] = useClientCookie<AccountData[]>(ACCOUNTS);
 	const {
 		formState: { errors },
 		register,
 		handleSubmit,
 	} = useForm<AccountData>();
-	const firstAccount = userDataValid && !(userData as UserData)?.accounts;
+	const firstAccount = !Array.isArray(accountsCookieData);
 
 	async function handleCreateAccount({ is_default, name, type }: AccountData) {
 		setError('');
@@ -39,7 +47,7 @@ export default function AccountCreate({
 				name,
 				type,
 				uid,
-				user_uid: (userData as UserData).uid,
+				user_uid: (userCookieData as UserData).uid,
 			}),
 		});
 
@@ -54,7 +62,7 @@ export default function AccountCreate({
 		}
 	}
 
-	if (!userDataValid) return null;
+	if (!userCookieData) return null;
 
 	return (
 		<form
@@ -62,10 +70,14 @@ export default function AccountCreate({
 			onSubmit={handleSubmit(handleCreateAccount)}
 		>
 			{error.length > 0 && (
-				<div className="alert alert-error mb-6"> {error}</div>
+				<div className="alert alert-error mb-6 text-white font-bold">
+					{error}
+				</div>
 			)}
 			{success.length > 0 && (
-				<div className="alert alert-success"> {success}</div>
+				<div className="alert alert-success mb-6 text-white font-bold">
+					{success}
+				</div>
 			)}
 
 			{success.length === 0 && (

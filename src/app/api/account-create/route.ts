@@ -3,68 +3,50 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
 import responseFactory from '../utils/responseFactory';
-import { ACCOUNTS, USER, USERS } from '@/app/constants';
+import { ACCOUNTS } from '@/app/constants';
+import useServerCookie from '@/app/hooks/useServerCookie';
+import type { AccountData } from '@/app/types';
 
 export async function POST(req: Request) {
 	try {
 		const cookieStore = cookies();
 		const supabase = createServerClient(cookieStore);
 		const { is_default, name, type, uid, user_uid } = await req.json();
-
-		// Get the user's accounts. If there is an error or the account already exists, stop.
-		const { data: userAccountsData, error: userSelectError } = await supabase
-			.from(USERS)
-			.select(ACCOUNTS)
-			.eq('uid', user_uid)
-			.single();
-
-		if (userSelectError)
-			return responseFactory('Error Getting User Accounts', userSelectError);
-
-		if (
-			Array.isArray(userAccountsData) &&
-			userAccountsData.accounts.includes(uid)
-		)
-			return responseFactory('Account already exists for user');
+		const [accountsCookieData] = useServerCookie<AccountData[]>(ACCOUNTS);
+		let accountsForCookie: string;
 
 		// Insert the account data into the accounts table. If there is an error, stop.
-		const { error: accountInsertError } = await supabase.from(ACCOUNTS).insert({
-			is_default,
-			name,
-			type,
-			uid,
-			user_uid,
-		});
+		const { data: accountData, error: accountInsertError } = await supabase
+			.from(ACCOUNTS)
+			.insert({
+				is_default,
+				name,
+				type,
+				uid,
+				user_uid,
+			});
 
 		if (accountInsertError)
 			return responseFactory('Error Inserting Account', accountInsertError);
 
-		// Add the new account uid to the existing array of accounts, or create a new array with that uid
-		const updatedAccounts = Array.isArray(userAccountsData)
-			? [...userAccountsData.accounts, uid]
-			: [uid];
-
-		// Update the user in the users table with the new accounts array. If there is an error, stop.
-		const { data: userUpdateData, error: userUpdateError } = await supabase
-			.from(USERS)
-			.update({
-				accounts: updatedAccounts,
-			})
-			.eq('uid', user_uid);
-
-		if (userUpdateError)
-			return responseFactory('Error Updating User Accounts', userUpdateError);
-
-		// Create a response and set the 'isLoggedIn' cookie
 		const response = NextResponse.json(
 			{
-				message: 'Update Successful',
-				data: userUpdateData,
+				message: 'Account Created',
+				data: accountData,
 			},
 			{ status: 200 },
 		);
 
-		response.cookies.set(USER, JSON.stringify(userUpdateData), {
+		if (!accountsCookieData) {
+			accountsForCookie = JSON.stringify([accountData]);
+		} else {
+			accountsForCookie = JSON.stringify([
+				...(accountsCookieData as AccountData[]),
+				accountData,
+			]);
+		}
+
+		response.cookies.set(ACCOUNTS, accountsForCookie, {
 			secure: process.env.NODE_ENV === 'production',
 			maxAge: 60 * 60 * 24 * 7, // 1 week
 		});

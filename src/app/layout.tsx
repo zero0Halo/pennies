@@ -17,8 +17,7 @@ export default function RootLayout({
 		<html lang="en" data-theme="pastel">
 			<body className="prose !max-w-none">
 				<NavBar />
-
-				{children}
+				<main className="container mx-auto pt-4">{children}</main>
 			</body>
 		</html>
 	);

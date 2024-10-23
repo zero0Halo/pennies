@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import useIsLoggedIn from '../../hooks/useIsLoggedIn';
-import SignIn from '../SignIn';
-import SignOut from '../SignOut';
+import SignIn from './SignIn';
+import SignOut from './SignOut';
 import NavLink from './NavLink';
 
 export default function LoginBar() {

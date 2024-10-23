@@ -1,9 +1,9 @@
 'use client';
 
-import type { AccountDataDB } from '../../types';
+import type { AccountDBData } from '../../types';
 
 interface AccountsTableProps {
-	accountsData: AccountDataDB[];
+	accountsData: AccountDBData[];
 }
 
 export default function AccountsTable({ accountsData }: AccountsTableProps) {

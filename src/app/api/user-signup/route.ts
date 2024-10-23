@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
+import { USER } from '@/app/constants';
 
 export async function POST(req: Request) {
 	try {
@@ -22,13 +23,15 @@ export async function POST(req: Request) {
 		}
 
 		// Insert additional user info into your custom users table
-		const { error: userError } = await supabase.from('users').insert({
-			created_at: new Date(),
-			email: authData.user?.email,
-			first_name: firstname,
-			last_name: lastname,
-			uid: authData.user?.id,
-		});
+		const { data: userData, error: userError } = await supabase
+			.from('users')
+			.insert({
+				created_at: new Date(),
+				email: authData.user?.email,
+				first_name: firstname,
+				last_name: lastname,
+				uid: authData.user?.id,
+			});
 
 		if (userError) {
 			return NextResponse.json({ message: userError.message }, { status: 400 });
@@ -42,6 +45,12 @@ export async function POST(req: Request) {
 		);
 
 		response.cookies.set('isLoggedIn', 'true', {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 60 * 24 * 7, // 1 week
+		});
+
+		response.cookies.set(USER, JSON.stringify(userData), {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
 			maxAge: 60 * 60 * 24 * 7, // 1 week

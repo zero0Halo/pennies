@@ -1,17 +1,17 @@
 'use client';
 
-import type { AccountDataDB } from '@/app/types';
+import type { AccountDBData } from '@/app/types';
 import AccountCreate from './AccountCreate';
 import AccountsTable from './AccountsTable';
 import { useState } from 'react';
 
 interface AccountsProps {
-	accountsData: AccountDataDB[];
+	accountsData: AccountDBData[];
 }
 
 export default function Accounts({ accountsData }: AccountsProps) {
 	const [creatingAccount, setCreatingAccount] = useState(false);
-
+	console.log(accountsData);
 	return (
 		<div>
 			{(accountsData.length === 0 || creatingAccount) && (

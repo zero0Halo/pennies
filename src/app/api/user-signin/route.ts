@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
+import { ACCOUNTS, IS_LOGGED_IN, USER, USERS } from '@/app/constants';
+import responseFactory from '../utils/responseFactory';
 
 export async function POST(req: Request) {
 	try {
@@ -15,27 +17,26 @@ export async function POST(req: Request) {
 				password,
 			});
 
-		if (authError) {
-			return NextResponse.json(
-				{ message: 'Error Logging In', data: authError },
-				{ status: 400 },
-			);
-		}
+		if (authError)
+			return responseFactory('Error Authorizing User Account', authError);
 
 		const { data: userData, error: userError } = await supabase
-			.from('users')
+			.from(USERS)
 			.select('*')
 			.eq('uid', authData.user.id)
 			.single();
 
-		if (userError) {
-			return NextResponse.json(
-				{ message: 'Error Logging In', data: userError },
-				{ status: 400 },
-			);
-		}
+		if (userError)
+			return responseFactory('Error Retrieving User Data', userError);
 
-		// Create a response and set the 'isLoggedIn' cookie
+		const { data: accountsData, error: accountsError } = await supabase
+			.from(ACCOUNTS)
+			.select('*')
+			.eq('user_uid', authData.user.id);
+
+		if (accountsError)
+			return responseFactory('Error Retrieving Accounts Data', accountsData);
+
 		const response = NextResponse.json(
 			{
 				message: 'Sign In Successful! Redirecting...',
@@ -44,12 +45,16 @@ export async function POST(req: Request) {
 			{ status: 200 },
 		);
 
-		response.cookies.set('isLoggedIn', 'true', {
+		response.cookies.set(IS_LOGGED_IN, 'true', {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
 			maxAge: 60 * 60 * 24 * 7, // 1 week
 		});
-		response.cookies.set('user', JSON.stringify(userData), {
+		response.cookies.set(USER, JSON.stringify(userData), {
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 60 * 24 * 7, // 1 week
+		});
+		response.cookies.set(ACCOUNTS, JSON.stringify(accountsData), {
 			secure: process.env.NODE_ENV === 'production',
 			maxAge: 60 * 60 * 24 * 7, // 1 week
 		});

@@ -1,119 +1,49 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import useIsLoggedIn from './hooks/useIsLoggedIn';
 import useServerCookie from './hooks/useServerCookie';
+import { ACCOUNTS } from '@/app/constants';
+import type { AccountData } from './types';
 import CsvUpload from './components/CsvUpload';
-import { USER } from '@/app/constants';
-import type { UserData } from './types';
+import NextCruft from './components/NextCruft';
 
 export default function Home() {
 	const isLoggedIn = useIsLoggedIn();
-	const [userData] = useServerCookie<UserData>(USER);
-
-	if (userData && !(userData as UserData)?.accounts) {
-		redirect('/accounts');
-	}
+	const [accountsCookieData] = useServerCookie<AccountData[]>(ACCOUNTS);
 
 	return (
-		<main>
+		<div>
 			{!isLoggedIn && (
-				<Link href="signup" className="btn btn-primary">
-					Signup!
-				</Link>
+				<div className="hero bg-accent">
+					<div className="hero-content text-center pb-8">
+						<div className="max-w-md">
+							<h2>Don't Have an Signin?</h2>
+							<h3>Click the Signup Button Below!</h3>
+
+							<Link href="signup" className="btn btn-primary">
+								Signup!
+							</Link>
+						</div>
+					</div>
+				</div>
 			)}
 
-			{isLoggedIn && <CsvUpload />}
+			{!accountsCookieData && isLoggedIn && (
+				<div className="hero bg-accent">
+					<div className="hero-content text-center pb-8">
+						<div className="max-w-md">
+							<h2>You Need An Account To Start Saving Pennies!</h2>
 
-			<div className="flex gap-4 items-center flex-col sm:flex-row">
-				<a
-					className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-					href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						className="dark:invert"
-						src="https://nextjs.org/icons/vercel.svg"
-						alt="Vercel logomark"
-						width={20}
-						height={20}
-					/>
-					Deploy now
-				</a>
-				<a
-					className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-					href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Read our docs
-				</a>
-			</div>
-			<footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-				<a
-					href="https://iconscout.com/icons/savings"
-					className="text-underline font-size-sm"
-					target="_blank"
-					rel="noreferrer"
-				>
-					savings
-				</a>{' '}
-				by{' '}
-				<a
-					href="https://iconscout.com/contributors/iconscout"
-					className="text-underline font-size-sm"
-					target="_blank"
-					rel="noreferrer"
-				>
-					IconScout Store
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="https://nextjs.org/icons/file.svg"
-						alt="File icon"
-						width={16}
-						height={16}
-					/>
-					Learn
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="https://nextjs.org/icons/window.svg"
-						alt="Window icon"
-						width={16}
-						height={16}
-					/>
-					Examples
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="https://nextjs.org/icons/globe.svg"
-						alt="Globe icon"
-						width={16}
-						height={16}
-					/>
-					Go to nextjs.org →
-				</a>
-			</footer>
-		</main>
+							<Link href="accounts" className="btn btn-primary">
+								Go To Accounts
+							</Link>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{isLoggedIn && accountsCookieData && <CsvUpload />}
+
+			{false && <NextCruft />}
+		</div>
 	);
 }
