@@ -11,7 +11,7 @@ import {
 	USER,
 } from '../../constants';
 import type { UserData } from '@/app/types';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { AccountData } from '@/app/types';
 
 interface AccountCreateProps {
@@ -22,6 +22,7 @@ export default function AccountCreate({
 	setCreatingAccount,
 }: AccountCreateProps) {
 	const [error, setError] = useState('');
+	const [defaultWarning, setDefaultWarning] = useState(false);
 	const [success, setSuccess] = useState('');
 	const [userCookieData] = useClientCookie<UserData>(USER);
 	const [accountsCookieData] = useClientCookie<AccountData[]>(ACCOUNTS);
@@ -30,10 +31,21 @@ export default function AccountCreate({
 		register,
 		handleSubmit,
 	} = useForm<AccountData>();
-	const firstAccount = !Array.isArray(accountsCookieData);
+
+	const defaultAccount =
+		Array.isArray(accountsCookieData) && accountsCookieData.length > 0
+			? accountsCookieData.find((f) => f.is_default)
+			: false;
+	const noAccounts =
+		Array.isArray(accountsCookieData) && accountsCookieData.length === 0;
 
 	async function handleCreateAccount({ is_default, name, type }: AccountData) {
 		setError('');
+
+		if (is_default && defaultAccount && !defaultWarning) {
+			setDefaultWarning(true);
+			return;
+		}
 
 		const uid = uuidv4();
 
@@ -43,7 +55,7 @@ export default function AccountCreate({
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				is_default: is_default ?? firstAccount,
+				is_default: is_default ?? noAccounts,
 				name,
 				type,
 				uid,
@@ -105,14 +117,22 @@ export default function AccountCreate({
 							type="checkbox"
 							className="checkbox checkbox-sm"
 							{...register('is_default')}
-							defaultChecked={firstAccount}
-							disabled={firstAccount}
+							defaultChecked={noAccounts}
+							disabled={noAccounts}
 						/>
 
 						<label className="pl-2" htmlFor="is_default">
 							Default Account
 						</label>
 					</div>
+
+					{defaultWarning && (
+						<div className="alert alert-warning mb-8">
+							You've set this account to be your default, but there is already a
+							default account. If you wish to proceed anyways, click the
+							"Submit" button again.
+						</div>
+					)}
 
 					<div className="join join-horizontal">
 						<button

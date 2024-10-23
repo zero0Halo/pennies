@@ -15,6 +15,32 @@ export async function POST(req: Request) {
 		const [accountsCookieData] = useServerCookie<AccountData[]>(ACCOUNTS);
 		let accountsForCookie: string;
 
+		const { data: accountsSelectData, error: accountsSelectError } =
+			await supabase.from(ACCOUNTS).select('*').eq('user_uid', user_uid);
+
+		if (accountsSelectError)
+			return responseFactory(
+				'Error Retrieving Accounts Data',
+				accountsSelectError,
+			);
+
+		const defaultAccount = accountsSelectData
+			? accountsSelectData.find((f) => f.is_default)
+			: false;
+
+		if (defaultAccount) {
+			const { error: accountUpdateError } = await supabase
+				.from(ACCOUNTS)
+				.update({ is_default: false })
+				.eq('user_uid', user_uid);
+
+			if (accountUpdateError)
+				return responseFactory(
+					'Error Updating Original Default Account',
+					accountUpdateError,
+				);
+		}
+
 		// Insert the account data into the accounts table. If there is an error, stop.
 		const { data: accountData, error: accountInsertError } = await supabase
 			.from(ACCOUNTS)

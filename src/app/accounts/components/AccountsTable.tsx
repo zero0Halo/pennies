@@ -9,13 +9,13 @@ interface AccountsTableProps {
 export default function AccountsTable({ accountsData }: AccountsTableProps) {
 	return (
 		<div className="overflow-x-auto">
-			<table className="table table-zebra">
+			<table className="table table-zebra border-2">
 				<thead>
-					<tr>
+					<tr className="bg-neutral">
 						<th />
-						<th>Name</th>
-						<th>Type</th>
-						<th>Default</th>
+						<th className="text-white text-base">Name</th>
+						<th className="text-white text-base">Type</th>
+						<th className="text-white text-base">Default</th>
 					</tr>
 				</thead>
 
@@ -23,7 +23,7 @@ export default function AccountsTable({ accountsData }: AccountsTableProps) {
 					{accountsData.length > 0 &&
 						accountsData.map((account, i) => (
 							<tr
-								className={account.is_default ? 'bg-primary' : ''}
+								className={account.is_default ? '!bg-primary' : ''}
 								key={account.uid}
 							>
 								<th>{i + 1}</th>

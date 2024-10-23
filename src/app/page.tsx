@@ -9,6 +9,8 @@ import NextCruft from './components/NextCruft';
 export default function Home() {
 	const isLoggedIn = useIsLoggedIn();
 	const [accountsCookieData] = useServerCookie<AccountData[]>(ACCOUNTS);
+	const noAccounts =
+		Array.isArray(accountsCookieData) && accountsCookieData.length === 0;
 
 	return (
 		<div>
@@ -27,7 +29,7 @@ export default function Home() {
 				</div>
 			)}
 
-			{!accountsCookieData && isLoggedIn && (
+			{noAccounts && isLoggedIn && (
 				<div className="hero bg-accent">
 					<div className="hero-content text-center pb-8">
 						<div className="max-w-md">
@@ -41,7 +43,7 @@ export default function Home() {
 				</div>
 			)}
 
-			{isLoggedIn && accountsCookieData && <CsvUpload />}
+			{isLoggedIn && !noAccounts && <CsvUpload />}
 
 			{false && <NextCruft />}
 		</div>

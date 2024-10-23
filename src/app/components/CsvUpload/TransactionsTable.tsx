@@ -14,11 +14,11 @@ export function TransactionsTable({ groupData }: TransactionsTableProps) {
 		<div className="overflow-x-auto">
 			<table className="table table-zebra">
 				<thead>
-					<tr>
+					<tr className="bg-neutral">
 						<th />
-						<th>Description</th>
-						<th>Amount</th>
-						<th>Date</th>
+						<th className="text-white text-base">Description</th>
+						<th className="text-white text-base">Amount</th>
+						<th className="text-white text-base">Date</th>
 					</tr>
 				</thead>
 
