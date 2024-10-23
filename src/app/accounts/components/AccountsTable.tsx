@@ -1,6 +1,7 @@
 'use client';
 
 import type { AccountDBData } from '../../types';
+import AccountRow from './AccountRow';
 
 interface AccountsTableProps {
 	accountsData: AccountDBData[];
@@ -12,25 +13,18 @@ export default function AccountsTable({ accountsData }: AccountsTableProps) {
 			<table className="table table-zebra border-2">
 				<thead>
 					<tr className="bg-neutral">
-						<th />
-						<th className="text-white text-base">Name</th>
-						<th className="text-white text-base">Type</th>
-						<th className="text-white text-base">Default</th>
+						<th className="w-1/12" />
+						<th className="text-white text-base w-6/12">Name</th>
+						<th className="text-white text-base w-2/12">Type</th>
+						<th className="text-white text-base w-1/12 text-center">Default</th>
+						<th className="w-2/12" />
 					</tr>
 				</thead>
 
 				<tbody>
 					{accountsData.length > 0 &&
 						accountsData.map((account, i) => (
-							<tr
-								className={account.is_default ? '!bg-primary' : ''}
-								key={account.uid}
-							>
-								<th>{i + 1}</th>
-								<td>{account.name}</td>
-								<td>{account.type}</td>
-								<td>{account.is_default && 'Yes'}</td>
-							</tr>
+							<AccountRow account={account} index={i} key={account.uid} />
 						))}
 				</tbody>
 			</table>
