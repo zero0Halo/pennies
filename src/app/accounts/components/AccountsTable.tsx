@@ -13,7 +13,7 @@ export default function AccountsTable({
 	accountsData,
 	creatingAccount,
 }: AccountsTableProps) {
-	const [editingRow, setEditingRow] = useState<number | undefined>();
+	const [editingRow, setEditingRow] = useState<number | false>(false);
 
 	const disabled =
 		" after:content[''] after:absolute after:w-full after:h-full after:z-50 after:bg-white after:opacity-60 after:top-0 after:left-0";

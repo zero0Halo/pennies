@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useClientCookie from '@/app/hooks/useClientCookie';
-import type { AccountData, AccountDBData, UserData } from '@/app/types';
+import type { AccountDBData, UserData } from '@/app/types';
 import TypeSelect from './SelectType';
 import { USER } from '@/app/constants';
+import Messages from './Mesasages';
 
 interface AccountRowProps {
 	account: AccountDBData;
-	editingRow: boolean | undefined;
+	editingRow: boolean;
 	index: number;
-	setEditingRow: (arg: number | undefined) => void;
+	setEditingRow: (arg: number | false) => void;
 }
 
 export default function AccountRow({
@@ -44,7 +45,7 @@ export default function AccountRow({
 
 	async function handleUpdateAccount() {
 		if (Object.keys(errors).length) return;
-		if (!isDirty) setEditingRow(undefined);
+		if (!isDirty) setEditingRow(false);
 
 		const is_default = getValues('is_default');
 		const name = getValues('name');
@@ -150,7 +151,7 @@ export default function AccountRow({
 							</button>
 							<button
 								className="btn btn-warning btn-sm join-item w-1/2"
-								onClick={() => setEditingRow(undefined)}
+								onClick={() => setEditingRow(false)}
 								type="button"
 							>
 								Cancel
@@ -159,26 +160,14 @@ export default function AccountRow({
 					)}
 				</td>
 			</tr>
-			{(defaultWarning || success || error) && (
+			{editingRow && (defaultWarning || success || error) && (
 				<tr className={rowClasses}>
 					<td colSpan={5}>
-						{defaultWarning && (
-							<div className="alert alert-warning font-bold my-1">
-								You've set this account to be your default, but there is already
-								a default account. If you wish to proceed anyways, click the
-								"Submit" button again.
-							</div>
-						)}
-						{success && (
-							<div className="alert alert-success font-bold my-1 text-white">
-								{success}
-							</div>
-						)}
-						{error && (
-							<div className="alert alert-error font-bold my-1 text-white">
-								{error}
-							</div>
-						)}
+						<Messages
+							defaultWarning={defaultWarning}
+							error={error}
+							success={success}
+						/>
 					</td>
 				</tr>
 			)}
