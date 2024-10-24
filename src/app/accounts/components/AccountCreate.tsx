@@ -1,17 +1,11 @@
 'use client';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import useClientCookie from '@/app/hooks/useClientCookie';
-import {
-	CHECKING,
-	CREDIT_CARD,
-	INVESTMENT,
-	SAVINGS,
-	USER,
-} from '../../constants';
-import type { UserData } from '@/app/types';
-import { useState } from 'react';
-import type { AccountData, AccountDBData } from '@/app/types';
+import { USER } from '../../constants';
+import type { AccountData, AccountDBData, UserData } from '@/app/types';
+import SelectType from './SelectType';
 
 interface AccountCreateProps {
 	accountsData: AccountDBData[];
@@ -100,16 +94,11 @@ export default function AccountCreate({
 						{...register('name', { required: true })}
 					/>
 
-					<select
-						className={`select select-sm select-bordered mb-2 ${errors?.type && 'select-error'}`}
-						{...register('type', { required: true })}
-					>
-						<option />
-						<option value={CHECKING}>Checking</option>
-						<option value={CREDIT_CARD}>Credit Card</option>
-						<option value={INVESTMENT}>Investment</option>
-						<option value={SAVINGS}>Savings</option>
-					</select>
+					<SelectType
+						className="mb-2"
+						error={errors?.type}
+						register={register}
+					/>
 
 					<div className="flex flex-wrap items-center pl-3 pb-4">
 						<input

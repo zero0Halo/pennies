@@ -1,4 +1,6 @@
+import { useForm } from 'react-hook-form';
 import type { AccountDBData } from '@/app/types';
+import TypeSelect from './SelectType';
 
 interface AccountRowProps {
 	account: AccountDBData;
@@ -13,6 +15,17 @@ export default function AccountRow({
 	setEditingRow,
 	index,
 }: AccountRowProps) {
+	const {
+		formState: { errors },
+		register,
+	} = useForm({
+		defaultValues: {
+			is_default: account.is_default,
+			name: account.name,
+			type: account.type,
+		},
+	});
+
 	const zebraColor = index % 2 ? 'bg-slate-100' : 'bg-white';
 	const rowClasses = editingRow
 		? 'bg-accent'
@@ -29,8 +42,9 @@ export default function AccountRow({
 					account.name
 				) : (
 					<input
-						type="text"
 						className="input input-text input-sm input-bordered w-full border-black"
+						type="text"
+						{...register('type', { required: true })}
 					/>
 				)}
 			</td>
@@ -39,9 +53,10 @@ export default function AccountRow({
 				{!editingRow ? (
 					account.type
 				) : (
-					<input
-						type="text"
-						className="input input-text input-sm input-bordered w-full border-black"
+					<TypeSelect
+						className="w-full border-black"
+						error={errors?.type}
+						register={register}
 					/>
 				)}
 			</td>
@@ -51,10 +66,10 @@ export default function AccountRow({
 					account.is_default && 'Yes'
 				) : (
 					<input
-						type="checkbox"
-						name="is_default"
 						className="checkbox border-black bg-white"
 						defaultChecked={account.is_default}
+						type="checkbox"
+						{...register('is_default')}
 					/>
 				)}
 			</td>
@@ -63,7 +78,7 @@ export default function AccountRow({
 				{!editingRow ? (
 					<div className="join join-horizontal">
 						<button
-							className="btn btn-secondary btn-sm mr-1 join-item w-1/2"
+							className="btn btn-secondary btn-sm join-item w-1/2 mr-1"
 							onClick={() => setEditingRow(index)}
 							type="button"
 						>

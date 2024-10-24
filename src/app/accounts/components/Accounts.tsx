@@ -34,7 +34,10 @@ export default function Accounts({ accountsData }: AccountsProps) {
 					>
 						Create an Account
 					</button>
-					<AccountsTable accountsData={accountsData} />
+					<AccountsTable
+						accountsData={accountsData}
+						creatingAccount={creatingAccount}
+					/>
 				</>
 			)}
 		</div>

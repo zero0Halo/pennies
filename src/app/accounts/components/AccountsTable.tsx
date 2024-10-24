@@ -6,13 +6,22 @@ import AccountRow from './AccountRow';
 
 interface AccountsTableProps {
 	accountsData: AccountDBData[];
+	creatingAccount: boolean;
 }
 
-export default function AccountsTable({ accountsData }: AccountsTableProps) {
+export default function AccountsTable({
+	accountsData,
+	creatingAccount,
+}: AccountsTableProps) {
 	const [editingRow, setEditingRow] = useState<number | undefined>();
 
+	const disabled =
+		" after:content[''] after:absolute after:w-full after:h-full after:z-50 after:bg-white after:opacity-60 after:top-0 after:left-0";
+
 	return (
-		<div className="overflow-x-auto">
+		<div
+			className={`overflow-x-auto relative${creatingAccount ? disabled : ''}`}
+		>
 			<table className="table border-2">
 				<thead>
 					<tr className="bg-neutral">
