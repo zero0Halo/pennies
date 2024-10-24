@@ -11,13 +11,16 @@ interface AccountsProps {
 
 export default function Accounts({ accountsData }: AccountsProps) {
 	const [creatingAccount, setCreatingAccount] = useState(false);
-	console.log(accountsData);
+
 	return (
 		<div>
 			{(accountsData.length === 0 || creatingAccount) && (
 				<div className="prose">
 					<h2>Create an Account</h2>
-					<AccountCreate setCreatingAccount={setCreatingAccount} />
+					<AccountCreate
+						accountsData={accountsData}
+						setCreatingAccount={setCreatingAccount}
+					/>
 				</div>
 			)}
 

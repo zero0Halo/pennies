@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import useClientCookie from '@/app/hooks/useClientCookie';
 import {
-	ACCOUNTS,
 	CHECKING,
 	CREDIT_CARD,
 	INVESTMENT,
@@ -11,21 +10,22 @@ import {
 	USER,
 } from '../../constants';
 import type { UserData } from '@/app/types';
-import { useEffect, useMemo, useState } from 'react';
-import type { AccountData } from '@/app/types';
+import { useState } from 'react';
+import type { AccountData, AccountDBData } from '@/app/types';
 
 interface AccountCreateProps {
+	accountsData: AccountDBData[];
 	setCreatingAccount: (arg: boolean) => void;
 }
 
 export default function AccountCreate({
+	accountsData,
 	setCreatingAccount,
 }: AccountCreateProps) {
 	const [error, setError] = useState('');
 	const [defaultWarning, setDefaultWarning] = useState(false);
 	const [success, setSuccess] = useState('');
 	const [userCookieData] = useClientCookie<UserData>(USER);
-	const [accountsCookieData] = useClientCookie<AccountData[]>(ACCOUNTS);
 	const {
 		formState: { errors },
 		register,
@@ -33,11 +33,10 @@ export default function AccountCreate({
 	} = useForm<AccountData>();
 
 	const defaultAccount =
-		Array.isArray(accountsCookieData) && accountsCookieData.length > 0
-			? accountsCookieData.find((f) => f.is_default)
+		Array.isArray(accountsData) && accountsData.length > 0
+			? accountsData.find((f) => f.is_default)
 			: false;
-	const noAccounts =
-		Array.isArray(accountsCookieData) && accountsCookieData.length === 0;
+	const noAccounts = Array.isArray(accountsData) && accountsData.length === 0;
 
 	async function handleCreateAccount({ is_default, name, type }: AccountData) {
 		setError('');
@@ -107,9 +106,9 @@ export default function AccountCreate({
 					>
 						<option />
 						<option value={CHECKING}>Checking</option>
-						<option value={INVESTMENT}>Credit Card</option>
-						<option value={SAVINGS}>Investment</option>
-						<option value={CREDIT_CARD}>Savings</option>
+						<option value={CREDIT_CARD}>Credit Card</option>
+						<option value={INVESTMENT}>Investment</option>
+						<option value={SAVINGS}>Savings</option>
 					</select>
 
 					<div className="flex flex-wrap items-center pl-3 pb-4">

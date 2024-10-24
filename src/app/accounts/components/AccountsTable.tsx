@@ -13,7 +13,7 @@ export default function AccountsTable({ accountsData }: AccountsTableProps) {
 
 	return (
 		<div className="overflow-x-auto">
-			<table className="table table-zebra border-2">
+			<table className="table border-2">
 				<thead>
 					<tr className="bg-neutral">
 						<th className="w-1/12" />

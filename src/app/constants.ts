@@ -8,8 +8,8 @@ export const WEEKLY = 'Weekly';
 // Account Types
 export const CHECKING = 'Checking';
 export const CREDIT_CARD = 'Credit Card';
-export const INVESTMENT = 'Cnvestment';
-export const SAVINGS = 'Cavings';
+export const INVESTMENT = 'Investment';
+export const SAVINGS = 'Savings';
 
 export const USERS = 'users';
 export const USER = 'user';

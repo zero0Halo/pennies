@@ -4,17 +4,14 @@ import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
 import responseFactory from '../utils/responseFactory';
 import { ACCOUNTS } from '@/app/constants';
-import useServerCookie from '@/app/hooks/useServerCookie';
-import type { AccountData } from '@/app/types';
 
 export async function POST(req: Request) {
 	try {
 		const cookieStore = cookies();
 		const supabase = createServerClient(cookieStore);
 		const { is_default, name, type, uid, user_uid } = await req.json();
-		const [accountsCookieData] = useServerCookie<AccountData[]>(ACCOUNTS);
-		let accountsForCookie: string;
 
+		// Get all of the accounts
 		const { data: accountsSelectData, error: accountsSelectError } =
 			await supabase.from(ACCOUNTS).select('*').eq('user_uid', user_uid);
 
@@ -24,11 +21,16 @@ export async function POST(req: Request) {
 				accountsSelectError,
 			);
 
+		console.log('1. ', { accountsSelectData });
+
+		// Find out if there is a default account
 		const defaultAccount = accountsSelectData
 			? accountsSelectData.find((f) => f.is_default)
 			: false;
 
-		if (defaultAccount) {
+		// If there is a default account and the account being inserted is a default account, update the
+		// existing account to no longer be the default
+		if (defaultAccount && is_default) {
 			const { error: accountUpdateError } = await supabase
 				.from(ACCOUNTS)
 				.update({ is_default: false })
@@ -39,9 +41,11 @@ export async function POST(req: Request) {
 					'Error Updating Original Default Account',
 					accountUpdateError,
 				);
+
+			console.log('1a. ', { defaultAccount, is_default });
 		}
 
-		// Insert the account data into the accounts table. If there is an error, stop.
+		// Insert the account data into the accounts table
 		const { data: accountData, error: accountInsertError } = await supabase
 			.from(ACCOUNTS)
 			.insert({
@@ -52,9 +56,24 @@ export async function POST(req: Request) {
 				user_uid,
 			});
 
+		console.log('2. ', { accountData });
+
 		if (accountInsertError)
 			return responseFactory('Error Inserting Account', accountInsertError);
 
+		// Get all of the accounts
+		const { data: accountsCookieData, error: accountsCookieError } =
+			await supabase.from(ACCOUNTS).select('*').eq('user_uid', user_uid);
+
+		if (accountsCookieError)
+			return responseFactory(
+				'Error Retrieving Accounts Data',
+				accountsCookieError,
+			);
+
+		console.log('3. ', { accountsCookieData });
+
+		// Create a response and put the updated accounts data into the accounts cookie
 		const response = NextResponse.json(
 			{
 				message: 'Account Created',
@@ -63,16 +82,7 @@ export async function POST(req: Request) {
 			{ status: 200 },
 		);
 
-		if (!accountsCookieData) {
-			accountsForCookie = JSON.stringify([accountData]);
-		} else {
-			accountsForCookie = JSON.stringify([
-				...(accountsCookieData as AccountData[]),
-				accountData,
-			]);
-		}
-
-		response.cookies.set(ACCOUNTS, accountsForCookie, {
+		response.cookies.set(ACCOUNTS, JSON.stringify(accountsCookieData), {
 			secure: process.env.NODE_ENV === 'production',
 			maxAge: 60 * 60 * 24 * 7, // 1 week
 		});

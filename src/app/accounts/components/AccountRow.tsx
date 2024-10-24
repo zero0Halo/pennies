@@ -13,11 +13,12 @@ export default function AccountRow({
 	setEditingRow,
 	index,
 }: AccountRowProps) {
+	const zebraColor = index % 2 ? 'bg-slate-100' : 'bg-white';
 	const rowClasses = editingRow
-		? '!bg-blue-200'
+		? 'bg-accent'
 		: account.is_default
 			? '!bg-primary'
-			: '';
+			: zebraColor;
 
 	return (
 		<tr className={rowClasses} key={account.uid}>
@@ -29,7 +30,7 @@ export default function AccountRow({
 				) : (
 					<input
 						type="text"
-						className="input input-text input-sm input-bordered w-full"
+						className="input input-text input-sm input-bordered w-full border-black"
 					/>
 				)}
 			</td>
@@ -40,7 +41,7 @@ export default function AccountRow({
 				) : (
 					<input
 						type="text"
-						className="input input-text input-sm input-bordered w-full"
+						className="input input-text input-sm input-bordered w-full border-black"
 					/>
 				)}
 			</td>
@@ -52,7 +53,7 @@ export default function AccountRow({
 					<input
 						type="checkbox"
 						name="is_default"
-						className="checkbox"
+						className="checkbox border-black bg-white"
 						defaultChecked={account.is_default}
 					/>
 				)}
@@ -78,7 +79,7 @@ export default function AccountRow({
 				) : (
 					<div className="join join-horizontal">
 						<button
-							className="btn btn-success btn-sm mr-1 join-item w-1/2"
+							className="btn btn-success btn-sm mr-1 join-item w-1/2 text-white"
 							onClick={() => setEditingRow(undefined)}
 							type="button"
 						>
