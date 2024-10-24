@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import type { AccountDBData } from '../../types';
 import AccountRow from './AccountRow';
 
@@ -8,6 +9,8 @@ interface AccountsTableProps {
 }
 
 export default function AccountsTable({ accountsData }: AccountsTableProps) {
+	const [editingRow, setEditingRow] = useState<number | undefined>();
+
 	return (
 		<div className="overflow-x-auto">
 			<table className="table table-zebra border-2">
@@ -24,7 +27,13 @@ export default function AccountsTable({ accountsData }: AccountsTableProps) {
 				<tbody>
 					{accountsData.length > 0 &&
 						accountsData.map((account, i) => (
-							<AccountRow account={account} index={i} key={account.uid} />
+							<AccountRow
+								account={account}
+								editingRow={editingRow === i}
+								index={i}
+								setEditingRow={setEditingRow}
+								key={account.uid}
+							/>
 						))}
 				</tbody>
 			</table>
