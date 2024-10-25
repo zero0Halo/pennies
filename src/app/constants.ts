@@ -17,3 +17,6 @@ export const ACCOUNTS = 'accounts';
 export const TRANSACTIONS = 'transactions';
 
 export const IS_LOGGED_IN = 'isLoggedIn';
+
+export const EDIT = 'edit';
+export const DELETE = 'delete';
