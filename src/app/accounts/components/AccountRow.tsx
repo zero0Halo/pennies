@@ -49,11 +49,14 @@ export default function AccountRow({
 
 	async function handleSubmitEdit() {
 		if (Object.keys(errors).length) return;
-		if (!isDirty) setActiveRow({ mode: false, index: false });
-
+		if (!isDirty) {
+			setActiveRow({ mode: false, index: false });
+			return;
+		}
 		const is_default = getValues('is_default');
 		const name = getValues('name');
 		const type = getValues('type');
+		console.log({ isDirty, is_default, name, type });
 
 		if (is_default && !account.is_default && !defaultWarning) {
 			setDefaultWarning(true);
