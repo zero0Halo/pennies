@@ -5,6 +5,7 @@ import type { AccountDBData, ActiveRowData, UserData } from '@/app/types';
 import { DELETE, EDIT, USER } from '@/app/constants';
 import Messages from './Mesasages';
 import TypeSelect from './SelectType';
+import ButtonGroup from './ButtonGroup';
 
 interface AccountRowProps {
 	account: AccountDBData;
@@ -46,7 +47,7 @@ export default function AccountRow({
 				? '!bg-primary'
 				: zebraColor;
 
-	async function handleUpdateAccount() {
+	async function handleSubmitEdit() {
 		if (Object.keys(errors).length) return;
 		if (!isDirty) setActiveRow({ mode: false, index: false });
 
@@ -127,54 +128,31 @@ export default function AccountRow({
 				</td>
 
 				<td className="text-right ">
-					{isEditing ? (
-						<div className="join join-horizontal">
-							<button
-								className="btn btn-success btn-sm mr-1 join-item w-1/2 text-white"
-								onClick={handleUpdateAccount}
-								type="button"
-							>
-								Submit
-							</button>
-							<button
-								className="btn btn-warning btn-sm join-item w-1/2"
-								onClick={() => setActiveRow({ mode: false, index: false })}
-								type="button"
-							>
-								Cancel
-							</button>
-						</div>
-					) : (
-						<div className="join join-horizontal">
-							<button
-								className="btn btn-secondary btn-sm join-item w-1/2 mr-1"
-								onClick={() => setActiveRow({ mode: EDIT, index })}
-								type="button"
-							>
-								Edit
-							</button>
-							<button
-								className="btn btn-error btn-sm join-item w-1/2"
-								onClick={() => setActiveRow({ mode: DELETE, index })}
-								type="button"
-							>
-								Delete
-							</button>
-						</div>
-					)}
+					<ButtonGroup
+						isDeleting={isDeleting}
+						isEditing={isEditing}
+						handleCancel={() => setActiveRow({ mode: false, index: false })}
+						handleDelete={() => setActiveRow({ mode: DELETE, index })}
+						handleEdit={() => setActiveRow({ mode: EDIT, index })}
+						handleSubmitDelete={() => {}}
+						handleSubmitEdit={handleSubmitEdit}
+					/>
 				</td>
 			</tr>
-			{(isEditing || isDeleting) && (defaultWarning || success || error) && (
-				<tr className={rowClasses}>
-					<td colSpan={5}>
-						<Messages
-							defaultWarning={defaultWarning}
-							error={error}
-							success={success}
-						/>
-					</td>
-				</tr>
-			)}
+
+			{(isEditing || isDeleting) &&
+				(defaultWarning || success || error || isDeleting) && (
+					<tr className={rowClasses}>
+						<td colSpan={5}>
+							<Messages
+								defaultWarning={defaultWarning}
+								error={error}
+								isDeleting={isDeleting}
+								success={success}
+							/>
+						</td>
+					</tr>
+				)}
 		</>
 	);
 }
