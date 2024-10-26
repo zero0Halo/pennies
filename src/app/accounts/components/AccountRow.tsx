@@ -3,9 +3,10 @@ import { useForm } from 'react-hook-form';
 import useClientCookie from '@/app/hooks/useClientCookie';
 import type { AccountDBData, ActiveRowData, UserData } from '@/app/types';
 import { DELETE, EDIT, USER } from '@/app/constants';
-import Messages from './Mesasages';
+import AlertMessages from './AlertMessages';
 import TypeSelect from './SelectType';
 import ButtonGroup from './ButtonGroup';
+import apiCall from '../scripts/apiCall';
 
 interface AccountRowProps {
 	account: AccountDBData;
@@ -47,6 +48,18 @@ export default function AccountRow({
 				? '!bg-primary'
 				: zebraColor;
 
+	async function handleSubmitDelete() {
+		apiCall('/api/account-delete', {
+			onError: (msg) => setError(msg),
+			onSuccess: (msg) => setSuccess(msg),
+			payload: {
+				uid: account.uid,
+				user_uid: (userCookieData as UserData).uid,
+			},
+			reload: '/accounts',
+		});
+	}
+
 	async function handleSubmitEdit() {
 		if (Object.keys(errors).length) return;
 		if (!isDirty) {
@@ -56,36 +69,24 @@ export default function AccountRow({
 		const is_default = getValues('is_default');
 		const name = getValues('name');
 		const type = getValues('type');
-		console.log({ isDirty, is_default, name, type });
 
 		if (is_default && !account.is_default && !defaultWarning) {
 			setDefaultWarning(true);
 			return;
 		}
 
-		const response = await fetch('/api/account-update', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
+		apiCall('/api/account-update', {
+			onError: (msg) => setError(msg),
+			onSuccess: (msg) => setSuccess(msg),
+			payload: {
 				is_default,
 				name,
 				type,
 				uid: account.uid,
 				user_uid: (userCookieData as UserData).uid,
-			}),
+			},
+			reload: '/accounts',
 		});
-
-		if (response.ok) {
-			setSuccess('Account Updated Successfully. Refreshing...');
-			setTimeout(() => {
-				window.location.href = '/accounts';
-			}, 2000);
-		} else {
-			const body = await response.json();
-			setError(`${body.message}: ${body?.data?.message ?? ''}`);
-		}
 	}
 
 	return (
@@ -137,7 +138,7 @@ export default function AccountRow({
 						handleCancel={() => setActiveRow({ mode: false, index: false })}
 						handleDelete={() => setActiveRow({ mode: DELETE, index })}
 						handleEdit={() => setActiveRow({ mode: EDIT, index })}
-						handleSubmitDelete={() => {}}
+						handleSubmitDelete={handleSubmitDelete}
 						handleSubmitEdit={handleSubmitEdit}
 					/>
 				</td>
@@ -147,7 +148,7 @@ export default function AccountRow({
 				(defaultWarning || success || error || isDeleting) && (
 					<tr className={rowClasses}>
 						<td colSpan={5}>
-							<Messages
+							<AlertMessages
 								defaultWarning={defaultWarning}
 								error={error}
 								isDeleting={isDeleting}

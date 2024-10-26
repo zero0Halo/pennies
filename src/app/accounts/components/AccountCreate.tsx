@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import useClientCookie from '@/app/hooks/useClientCookie';
+import apiCall from '../scripts/apiCall';
 import { USER } from '../../constants';
 import type { AccountData, AccountDBData, UserData } from '@/app/types';
 import SelectType from './SelectType';
@@ -40,31 +41,18 @@ export default function AccountCreate({
 			return;
 		}
 
-		const uid = uuidv4();
-
-		const response = await fetch('/api/account-create', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
+		apiCall('/api/account-create', {
+			onError: (msg) => setError(msg),
+			onSuccess: (msg) => setSuccess(msg),
+			payload: {
 				is_default: is_default ?? noAccounts,
 				name,
 				type,
-				uid,
+				uid: uuidv4(),
 				user_uid: (userCookieData as UserData).uid,
-			}),
+			},
+			reload: '/accounts',
 		});
-
-		if (response.ok) {
-			setSuccess('Account Created Successfully. Refreshing...');
-			setTimeout(() => {
-				window.location.href = '/accounts';
-			}, 2000);
-		} else {
-			const body = await response.json();
-			setError(`${body.message}: ${body?.data?.message ?? ''}`);
-		}
 	}
 
 	if (!userCookieData) return null;
