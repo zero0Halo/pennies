@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useClientCookie from '@/app/hooks/useClientCookie';
+import apiCall from '../scripts/apiCall';
 import type { AccountDBData, ActiveRowData, UserData } from '@/app/types';
 import { DELETE, EDIT, USER } from '@/app/constants';
 import AlertMessages from './AlertMessages';
-import TypeSelect from './SelectType';
+import SelectType from './SelectType';
 import ButtonGroup from './ButtonGroup';
-import apiCall from '../scripts/apiCall';
 
 interface AccountRowProps {
 	account: AccountDBData;
@@ -53,6 +53,7 @@ export default function AccountRow({
 			onError: (msg) => setError(msg),
 			onSuccess: (msg) => setSuccess(msg),
 			payload: {
+				is_default: account.is_default,
 				uid: account.uid,
 				user_uid: (userCookieData as UserData).uid,
 			},
@@ -108,7 +109,7 @@ export default function AccountRow({
 
 				<td>
 					{isEditing ? (
-						<TypeSelect
+						<SelectType
 							className="w-full border-black"
 							error={errors?.type}
 							register={register}

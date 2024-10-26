@@ -16,15 +16,15 @@ export default function AlertMessages({
 	error,
 	success,
 }: AlertMessagesProps) {
+	let classes: string[] | string = ['alert font-bold my-1'];
+	const isError = error.length > 0;
+	const isSuccess = success.length > 0;
+	const restMessage = isError ? error : isSuccess ? success : false;
 	const warningMessage = defaultWarning
 		? defaultMsg
 		: isDeleting
 			? deleteMsg
 			: false;
-	const isSuccess = success.length > 0;
-	const isError = error.length > 0;
-	const restMessage = isError ? error : isSuccess ? success : false;
-	let classes: string[] | string = ['alert font-bold my-1'];
 
 	if (warningMessage && !restMessage) classes.push('alert-warning');
 	if (restMessage && isSuccess) classes.push('alert-success text-white');

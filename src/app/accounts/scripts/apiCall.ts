@@ -21,7 +21,9 @@ export default async function apiCall(
 
 	const body = await response.json();
 	let msg: string[] | string = [body.message];
+
 	if (body?.data?.message) msg.push(body?.data?.message);
+
 	msg = msg.join(': ');
 
 	if (response.ok) {

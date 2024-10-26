@@ -21,8 +21,6 @@ export async function POST(req: Request) {
 				accountsSelectError,
 			);
 
-		console.log('1. ', { accountsSelectData });
-
 		// Find out if there is a default account
 		const defaultAccount = accountsSelectData
 			? accountsSelectData.find((f) => f.is_default)
@@ -41,8 +39,6 @@ export async function POST(req: Request) {
 					'Error Updating Original Default Account',
 					accountUpdateError,
 				);
-
-			console.log('1a. ', { defaultAccount, is_default });
 		}
 
 		// Insert the account data into the accounts table
@@ -56,22 +52,22 @@ export async function POST(req: Request) {
 				user_uid,
 			});
 
-		console.log('2. ', { accountData });
-
 		if (accountInsertError)
 			return responseFactory('Error Inserting Account', accountInsertError);
 
 		// Get all of the accounts
 		const { data: accountsCookieData, error: accountsCookieError } =
-			await supabase.from(ACCOUNTS).select('*').eq('user_uid', user_uid);
+			await supabase
+				.from(ACCOUNTS)
+				.select('*')
+				.eq('user_uid', user_uid)
+				.order('is_default', { ascending: false });
 
 		if (accountsCookieError)
 			return responseFactory(
 				'Error Retrieving Accounts Data',
 				accountsCookieError,
 			);
-
-		console.log('3. ', { accountsCookieData });
 
 		// Create a response and put the updated accounts data into the accounts cookie
 		const response = NextResponse.json(

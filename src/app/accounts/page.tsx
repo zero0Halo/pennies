@@ -15,7 +15,8 @@ async function getAccountsData(userData: UserData) {
 		const { data: userAccountsData, error: userAccountsError } = await supabase
 			.from(ACCOUNTS)
 			.select('*')
-			.eq('user_uid', userData.uid);
+			.eq('user_uid', userData.uid)
+			.order('is_default', { ascending: false });
 
 		if (userAccountsError) throw new Error('Failed to fetch accounts');
 
