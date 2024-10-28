@@ -40,7 +40,7 @@ export default async function AccountsPage() {
 
 	return (
 		<>
-			<h1>Accounts</h1>
+			<h2>Accounts</h2>
 
 			<Accounts accountsData={accounts} />
 		</>

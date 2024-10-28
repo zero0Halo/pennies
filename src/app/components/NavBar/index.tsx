@@ -28,6 +28,8 @@ export default function LoginBar() {
 				</NavLink>
 
 				<NavLink href="/accounts">Accounts</NavLink>
+
+				<NavLink href="/csv-upload">CSV Upload</NavLink>
 			</div>
 
 			{isLoggedIn && <SignOut />}

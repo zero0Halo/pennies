@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import type { GroupData } from '../../../types';
+import type { GroupData } from '@/app/types';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 import findRecurring from './findRecurring';
@@ -64,6 +64,23 @@ export default async function parseCsv(fileData: File) {
 			...group,
 			...findRecurring(group),
 		}));
+
+		const total = formattedData.length;
+		const numGroups = groups.length;
+		const recurringGroups = groups.filter((f) => f.transactions.length);
+		const singletons = groups.filter((f) => !f.transactions.length);
+		const numGroupTransactions = recurringGroups.reduce(
+			(acc, current) => acc + current.transactions.length + 1,
+			0,
+		);
+
+		console.log({
+			total,
+			numGroups,
+			recurringGroups,
+			singletons,
+			numGroupTransactions,
+		});
 
 		return groupsRecurring;
 	} catch (err) {

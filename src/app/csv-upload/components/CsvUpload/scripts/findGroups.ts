@@ -1,5 +1,5 @@
 import getDescriptionScore from './getDescriptionScore';
-import type { FormattedRowData, GroupData } from '../../../types';
+import type { FormattedRowData, GroupData } from '@/app/types';
 
 export default function findGroups(data: FormattedRowData[]) {
 	const map = new Map<string, FormattedRowData[]>();
@@ -39,12 +39,13 @@ export default function findGroups(data: FormattedRowData[]) {
 			if (!prime) return false;
 
 			return {
+				count: 0,
 				description,
 				id: prime.id,
 				name: false,
-				possiblyRecurring: false,
 				prime,
 				recurring: false,
+				stillRecurring: false,
 				transactions,
 			};
 		})

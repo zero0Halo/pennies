@@ -29,12 +29,13 @@ export interface FormattedRowData {
 }
 
 export type GroupData = {
+	count: number;
 	description: string;
 	id: string;
 	name: boolean | string;
-	possiblyRecurring: boolean | string;
 	prime: FormattedRowData;
 	recurring: boolean | string;
+	stillRecurring: boolean | string;
 	transactions: FormattedRowData[];
 };
 

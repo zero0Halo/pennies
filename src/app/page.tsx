@@ -3,7 +3,6 @@ import useIsLoggedIn from './hooks/useIsLoggedIn';
 import useServerCookie from './hooks/useServerCookie';
 import { ACCOUNTS } from '@/app/constants';
 import type { AccountData } from './types';
-import CsvUpload from './components/CsvUpload';
 import NextCruft from './components/NextCruft';
 
 export default function Home() {
@@ -43,7 +42,18 @@ export default function Home() {
 				</div>
 			)}
 
-			{isLoggedIn && !noAccounts && <CsvUpload />}
+			{isLoggedIn && !noAccounts && (
+				<div className="hero bg-accent">
+					<div className="hero-content text-center pb-8">
+						<div className="max-w-md">
+							<h2>Import Your Bank Data!</h2>
+
+							<Link href="csv-upload" className="btn btn-primary">
+								Go To CSV Upload
+							</Link>
+						</div>
+					</div>
+				</div>)}
 
 			{false && <NextCruft />}
 		</div>

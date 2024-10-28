@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 		const cookieStore = cookies();
 		const supabase = createServerClient(cookieStore);
 		const { is_default, uid, user_uid } = await req.json();
-		console.log({ is_default, uid, user_uid });
+
 		// Delete the specified account.
 		const { data: accountsDeleteData, error: accountsDeleteError } =
 			await supabase
