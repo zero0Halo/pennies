@@ -1,4 +1,4 @@
-import type { GroupData } from '../../types';
+import type { GroupData } from '@/app/types';
 
 interface TransactionsTableProps {
 	groupData: GroupData;

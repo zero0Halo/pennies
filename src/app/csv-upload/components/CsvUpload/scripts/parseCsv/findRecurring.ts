@@ -1,5 +1,5 @@
 import type { GroupData } from '@/app/types';
-import { BIWEEKLY, MONTHLY, WEEKLY } from '..';
+import { BIWEEKLY, MONTHLY, WEEKLY } from '../..';
 import dayjs from 'dayjs';
 
 const isBiWeekly = (diff: number) => (8 >= diff && diff >= 6 ? 1 : 0);

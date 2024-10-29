@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useState } from 'react';
 import { EditGroupName } from './EditGroupName';
-import type { GroupData } from '../../types';
+import type { GroupData } from '@/app/types';
 
 interface DisplayGroupNameProps {
 	groupData: GroupData;

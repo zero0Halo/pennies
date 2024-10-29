@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useForm } from 'react-hook-form';
-import type { GroupData, SetEditingFn, SetGroupNameData } from '../../types';
+import type { GroupData, SetEditingFn, SetGroupNameData } from '@/app/types';
 
 export interface EditGroupNameProps {
 	groupData: GroupData;
