@@ -32,7 +32,7 @@ export function TransactionsTable({ groupData }: TransactionsTableProps) {
 
 					{groupData.transactions.length >= 1 &&
 						groupData.transactions.map((transaction, i) => (
-							<tr key={transaction.id}>
+							<tr key={transaction.uid}>
 								<th>{i + 2}</th>
 								<td>{transaction.description}</td>
 								<td>{displayAmount.format(transaction.amount)}</td>

@@ -100,7 +100,7 @@ export default function CsvUpload() {
 					<div className="divider" />
 
 					{data?.map((group) => (
-						<Group groupData={group} key={group.id} setCSVData={setCSVData} />
+						<Group groupData={group} key={group.uid} setCSVData={setCSVData} />
 					))}
 				</>
 			)}

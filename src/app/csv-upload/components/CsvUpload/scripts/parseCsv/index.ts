@@ -60,8 +60,8 @@ export default async function parseCsv(fileData: File) {
 			};
 		});
 
-		const groups: GroupData[] = findGroups(formattedData);
-		const groupsRecurring: GroupData[] = groups.map((group) => ({
+		let groups: GroupData[] = findGroups(formattedData);
+		groups = groups.slice().map((group) => ({
 			...group,
 			...findRecurring(group),
 		}));
@@ -83,7 +83,7 @@ export default async function parseCsv(fileData: File) {
 			numGroupTransactions,
 		});
 
-		return groupsRecurring;
+		return groups;
 	} catch (err) {
 		console.error(err);
 		return [];
