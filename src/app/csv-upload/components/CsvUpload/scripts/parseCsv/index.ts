@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
-import type { GroupData } from '@/app/types';
+import type { FindGroupData, GroupData } from '@/app/types';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 import findRecurring from './findRecurring';
@@ -54,36 +54,41 @@ export default async function parseCsv(fileData: File) {
 				amount,
 				date,
 				description,
+				group_uid: '',
+				prime: false,
 				uid,
 				terms,
 				timestamp,
 			};
 		});
 
-		let groups: GroupData[] = findGroups(formattedData);
-		groups = groups.slice().map((group) => ({
-			...group,
-			...findRecurring(group),
+		const { groups, singletons }: FindGroupData = findGroups(formattedData);
+		const updatedGroups = groups.map(({ group, transactions }) => ({
+			transactions,
+			group: { ...group, ...findRecurring(transactions) },
 		}));
 
-		const total = formattedData.length;
-		const numGroups = groups.length;
-		const recurringGroups = groups.filter((f) => f.transactions.length);
-		const singletons = groups.filter((f) => !f.transactions.length);
-		const numGroupTransactions = recurringGroups.reduce(
-			(acc, current) => acc + current.transactions.length + 1,
+		const expectedTotal = formattedData.length;
+		const numGroups = updatedGroups.length;
+		const recurringGroups = updatedGroups.filter(
+			({ group }) => group.recurring,
+		);
+		const numSingletons = singletons.length;
+		const numGroupTransactions = updatedGroups.reduce(
+			(acc, current) => acc + current.transactions.length,
 			0,
 		);
 
 		console.log({
-			total,
+			actualTotal: numSingletons + numGroupTransactions,
+			expectedTotal,
 			numGroups,
 			recurringGroups,
-			singletons,
+			numSingletons,
 			numGroupTransactions,
 		});
 
-		return groups;
+		return [];
 	} catch (err) {
 		console.error(err);
 		return [];

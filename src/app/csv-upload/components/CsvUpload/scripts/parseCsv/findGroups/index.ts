@@ -1,55 +1,71 @@
+import { v4 as uuidv4 } from 'uuid';
+import clone from './clone';
 import getDescriptionScore from './getDescriptionScore';
-import type { FormattedRowData, GroupData } from '@/app/types';
+import type {
+	FindGroupData,
+	FormattedRowData,
+	GroupData,
+	GroupsData,
+} from '@/app/types';
 
-export default function findGroups(data: FormattedRowData[]) {
-	const map = new Map<string, FormattedRowData[]>();
+export default function findGroups(rowData: FormattedRowData[]): FindGroupData {
+	const groups: GroupsData[] = [];
+	const singletons: FormattedRowData[] = [];
+	let transactionsPool: FormattedRowData[] = rowData.map(
+		(row) => clone(row) as FormattedRowData,
+	);
 
-	data.forEach((row) => {
-		if (map.size === 0) {
-			map.set(row.description, [row]);
-		} else {
-			let matchesFound = false;
+	// Continually remove the first item from the pool so the choices to match against get smaller
+	while (transactionsPool.length) {
+		console.log(
+			'start',
+			transactionsPool.length,
+			rowData.length - transactionsPool.length,
+		);
+		const transaction = transactionsPool.shift() as FormattedRowData;
+		let matches = transactionsPool.filter(
+			(f) => getDescriptionScore(transaction.terms, f.terms) > 75,
+		);
+		const uids = matches.map(({ uid }) => uid);
+		uids.push(transaction.uid);
 
-			map.forEach((mapValue: FormattedRowData[], key: string) => {
-				const descriptionScore = getDescriptionScore(
-					mapValue.at(0)?.terms ?? [],
-					row.terms,
-				);
+		transactionsPool = transactionsPool.filter(
+			({ uid }) => !uids.includes(uid),
+		);
 
-				if (descriptionScore > 75) {
-					mapValue.push(row);
-					map.set(key, mapValue);
-					matchesFound = true;
-				}
-			});
-
-			if (!matchesFound) {
-				map.set(row.description, [row]);
-			}
-		}
-	});
-
-	const asArray: GroupData[] = Array.from(map)
-		.map(([description, transactions]: [string, FormattedRowData[]]) => {
-			if (!description && !transactions.length && !Array.isArray(transactions))
-				return false;
-
-			const prime = transactions.shift();
-
-			if (!prime) return false;
-
-			return {
-				count: 0,
-				description,
-				uid: prime.uid,
-				name: false,
-				prime,
+		if (matches.length) {
+			const groupUid = uuidv4();
+			const group: GroupData = {
+				count: matches.length + 1,
+				description: transaction.description,
+				name: '',
+				prime: transaction.uid,
 				recurring: false,
 				stillRecurring: false,
-				transactions,
+				uid: groupUid,
 			};
-		})
-		.filter((f) => f !== false);
 
-	return asArray;
+			transaction.prime = true;
+			transaction.group_uid = groupUid;
+
+			matches = matches.map((match) => {
+				match.prime = false;
+				match.group_uid = groupUid;
+				return match;
+			});
+			groups.push({ group, transactions: [transaction, ...matches] });
+		} else {
+			singletons.push(transaction);
+		}
+
+		console.log('end', transactionsPool.length, '\n\n');
+	}
+
+	let count = 0;
+	groups.map(({ transactions }) => {
+		count += transactions.length;
+	});
+	console.log(count + singletons.length);
+
+	return { groups, singletons };
 }

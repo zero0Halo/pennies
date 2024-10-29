@@ -19,13 +19,25 @@ export interface CsvUploadData {
 	csvfile: FileList;
 }
 
+export interface FindGroupData {
+	groups: GroupsData[];
+	singletons: FormattedRowData[];
+}
+
+export interface GroupsData {
+	transactions: FormattedRowData[];
+	group: GroupData;
+}
+
 export interface FormattedRowData {
 	amount: number;
 	date: string;
 	description: string;
-	uid: string;
+	group_uid: string;
+	prime: boolean;
 	terms: string[];
 	timestamp: Dayjs;
+	uid: string;
 }
 
 export type GroupData = {
@@ -33,10 +45,9 @@ export type GroupData = {
 	description: string;
 	uid: string;
 	name: boolean | string;
-	prime: FormattedRowData;
+	prime: string;
 	recurring: boolean | string;
 	stillRecurring: boolean | string;
-	transactions: FormattedRowData[];
 };
 
 export type SetEditingFn = (arg: boolean) => void;
