@@ -41,7 +41,7 @@ export default function findGroups(data: FormattedRowData[]) {
 			return {
 				count: 0,
 				description,
-				id: prime.id,
+				uid: prime.uid,
 				name: false,
 				prime,
 				recurring: false,

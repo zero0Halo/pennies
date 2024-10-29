@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 import type { GroupData } from '@/app/types';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
@@ -34,12 +35,12 @@ const blacklist = [
 export default async function parseCsv(fileData: File) {
 	try {
 		const parsedData = await fauxAsync(fileData);
-		const formattedData = parsedData.map((d: string[], i: number) => {
+		const formattedData = parsedData.map((d: string[]) => {
 			const filteredRow = d.filter((f) => f && f.length > 1);
 			const amount = +(filteredRow?.at(1) ?? 0);
 			const date = filteredRow?.at(0) ?? '';
 			const description = filteredRow?.at(2)?.toLowerCase() ?? '';
-			const id = `entry-${i}`;
+			const uid = uuidv4();
 			const terms = description
 				.replace(regex.creditCard, '')
 				.replace(regex.date, '')
@@ -53,7 +54,7 @@ export default async function parseCsv(fileData: File) {
 				amount,
 				date,
 				description,
-				id,
+				uid,
 				terms,
 				timestamp,
 			};

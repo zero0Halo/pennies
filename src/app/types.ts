@@ -23,7 +23,7 @@ export interface FormattedRowData {
 	amount: number;
 	date: string;
 	description: string;
-	id: string;
+	uid: string;
 	terms: string[];
 	timestamp: Dayjs;
 }
@@ -31,7 +31,7 @@ export interface FormattedRowData {
 export type GroupData = {
 	count: number;
 	description: string;
-	id: string;
+	uid: string;
 	name: boolean | string;
 	prime: FormattedRowData;
 	recurring: boolean | string;
