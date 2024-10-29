@@ -1,30 +1,51 @@
 import type React from 'react';
 import { useForm } from 'react-hook-form';
-import type { GroupData, SetEditingFn, SetGroupNameData } from '@/app/types';
+import type {
+	FindGroupsData,
+	GroupData,
+	SetEditingFn,
+	SetGroupNameData,
+} from '@/app/types';
 
 export interface EditGroupNameProps {
-	groupData: GroupData;
-	setCSVData: React.Dispatch<React.SetStateAction<GroupData[]>>;
+	group: GroupData;
+	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	setEditing: SetEditingFn;
 }
 
 export function EditGroupName({
-	groupData,
+	group,
 	setEditing,
 	setCSVData,
 }: EditGroupNameProps) {
 	const { register, handleSubmit, reset } = useForm<SetGroupNameData>();
 
 	function handleSetGroupName({ name }: SetGroupNameData) {
-		const { id } = groupData;
+		const { uid } = group;
 
-		setCSVData((state: GroupData[]) => {
-			const entryIndex = state.findIndex((f: GroupData) => f.id === id);
-			const newState = [...state];
+		setCSVData((state) => {
+			if (state) {
+				const { groups } = state;
+				const groupEntryIndex = groups.findIndex(
+					({ group }) => group.uid === uid,
+				);
+				const newState = {
+					groups: [...state.groups],
+					singletons: [...state.singletons],
+				};
+				const newGroup = groups[groupEntryIndex].group;
+				const newTransactions = groups[groupEntryIndex].transactions;
+				newGroup.name = name;
 
-			newState[entryIndex] = { ...newState[entryIndex], name };
+				newState.groups.splice(groupEntryIndex, 1, {
+					group: newGroup,
+					transactions: newTransactions,
+				});
 
-			return newState;
+				return newState;
+			}
+
+			return undefined;
 		});
 
 		reset();
@@ -40,7 +61,7 @@ export function EditGroupName({
 				type="text"
 				className="input input-sm input-bordered join-item w-3/4"
 				placeholder={
-					typeof groupData?.name === 'string' ? groupData.name : 'Group Name'
+					typeof group?.name === 'string' ? group.name : 'Group Name'
 				}
 				{...register('name', { required: true })}
 			/>

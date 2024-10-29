@@ -19,7 +19,7 @@ export interface CsvUploadData {
 	csvfile: FileList;
 }
 
-export interface FindGroupData {
+export interface FindGroupsData {
 	groups: GroupsData[];
 	singletons: FormattedRowData[];
 }
@@ -48,6 +48,7 @@ export type GroupData = {
 	prime: string;
 	recurring: boolean | string;
 	stillRecurring: boolean | string;
+	terms: string[];
 };
 
 export type SetEditingFn = (arg: boolean) => void;

@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import type { CsvUploadData, GroupData } from '@/app/types';
+import type { CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 
@@ -12,7 +12,9 @@ export const MONTHLY = 'Monthly';
 
 export default function CsvUpload() {
 	const [error, setError] = useState<string | null>();
-	const [data, setCSVData] = useState<GroupData[]>([]);
+	const [groupsData, setCSVData] = useState<FindGroupsData | undefined>(
+		undefined,
+	);
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
 
@@ -25,7 +27,7 @@ export default function CsvUpload() {
 				return;
 			}
 
-			const parsedData: GroupData[] = await parseCsv(fileData);
+			const parsedData: FindGroupsData = await parseCsv(fileData);
 
 			setCSVData(parsedData);
 		} catch (err) {
@@ -33,32 +35,20 @@ export default function CsvUpload() {
 		}
 	}
 
-	const numTotal = data.reduce(
-		(acc, current) => acc + current.transactions.length,
-		data.length,
-	);
-	const groups = data.filter((f) => f.transactions.length);
-	const numGroupTransactions = groups.reduce(
-		(acc, current) => acc + current.transactions.length,
-		groups.length,
-	);
-	const recurringGroups = groups.filter((f) => f.recurring);
-	const singletons = data.filter((f) => !f.transactions.length);
-
-	const stats = [
-		{ label: '# of Transactions', value: numTotal },
-		{
-			label: '# of Groups',
-			value: groups.length,
-			description: `${recurringGroups.length} Recurring`,
-		},
-		{ label: '# of Transactions in Groups', value: numGroupTransactions },
-		{ label: '# of Ungrouped Transactions', value: singletons.length },
-	];
+	// const stats = [
+	// 	{ label: '# of Transactions', value: numTotal },
+	// 	{
+	// 		label: '# of Groups',
+	// 		value: groups.length,
+	// 		description: `${recurringGroups.length} Recurring`,
+	// 	},
+	// 	{ label: '# of Transactions in Groups', value: numGroupTransactions },
+	// 	{ label: '# of Ungrouped Transactions', value: singletons.length },
+	// ];
 
 	return (
 		<section className="px-4">
-			{numTotal > 0 && (
+			{/* {numTotal > 0 && (
 				<div className="stats w-full">
 					{stats.map((stat) => (
 						<div className="stat" key={stat.label}>
@@ -68,9 +58,9 @@ export default function CsvUpload() {
 						</div>
 					))}
 				</div>
-			)}
+			)} */}
 
-			{data.length === 0 && (
+			{!groupsData && (
 				<>
 					<form
 						className="form-control py-4 join join-horizontal"
@@ -95,12 +85,16 @@ export default function CsvUpload() {
 				</>
 			)}
 
-			{data.length > 0 && (
+			{groupsData && groupsData.groups.length > 0 && (
 				<>
 					<div className="divider" />
 
-					{data?.map((group) => (
-						<Group groupData={group} key={group.uid} setCSVData={setCSVData} />
+					{groupsData.groups?.map((groupData) => (
+						<Group
+							groupData={groupData}
+							key={groupData.group.uid}
+							setCSVData={setCSVData}
+						/>
 					))}
 				</>
 			)}

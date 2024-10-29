@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
-import type { FindGroupData, GroupData } from '@/app/types';
+import type { FindGroupsData, GroupData } from '@/app/types';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 import findRecurring from './findRecurring';
@@ -32,7 +32,9 @@ const blacklist = [
 	'xfer',
 ];
 
-export default async function parseCsv(fileData: File) {
+export default async function parseCsv(
+	fileData: File,
+): Promise<FindGroupsData> {
 	try {
 		const parsedData = await fauxAsync(fileData);
 		const formattedData = parsedData.map((d: string[]) => {
@@ -62,7 +64,7 @@ export default async function parseCsv(fileData: File) {
 			};
 		});
 
-		const { groups, singletons }: FindGroupData = findGroups(formattedData);
+		const { groups, singletons }: FindGroupsData = findGroups(formattedData);
 		const updatedGroups = groups.map(({ group, transactions }) => ({
 			transactions,
 			group: { ...group, ...findRecurring(transactions) },
@@ -79,18 +81,9 @@ export default async function parseCsv(fileData: File) {
 			0,
 		);
 
-		console.log({
-			actualTotal: numSingletons + numGroupTransactions,
-			expectedTotal,
-			numGroups,
-			recurringGroups,
-			numSingletons,
-			numGroupTransactions,
-		});
-
-		return [];
+		return { groups: updatedGroups, singletons };
 	} catch (err) {
 		console.error(err);
-		return [];
+		return { groups: [], singletons: [] };
 	}
 }

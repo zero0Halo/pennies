@@ -1,4 +1,4 @@
-import type { FindGroupData, FormattedRowData, GroupData } from '@/app/types';
+import type { FindGroupsData, FormattedRowData, GroupData } from '@/app/types';
 import { BIWEEKLY, MONTHLY, WEEKLY } from '../..';
 import dayjs from 'dayjs';
 

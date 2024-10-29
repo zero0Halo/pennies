@@ -1,7 +1,7 @@
-import type { GroupData } from '@/app/types';
+import type { FormattedRowData } from '@/app/types';
 
 interface TransactionsTableProps {
-	groupData: GroupData;
+	transactions: FormattedRowData[];
 }
 
 const displayAmount = new Intl.NumberFormat('en-US', {
@@ -9,7 +9,7 @@ const displayAmount = new Intl.NumberFormat('en-US', {
 	currency: 'USD',
 });
 
-export function TransactionsTable({ groupData }: TransactionsTableProps) {
+export function TransactionsTable({ transactions }: TransactionsTableProps) {
 	return (
 		<div className="overflow-x-auto">
 			<table className="table table-zebra">
@@ -23,17 +23,10 @@ export function TransactionsTable({ groupData }: TransactionsTableProps) {
 				</thead>
 
 				<tbody>
-					<tr className="bg-primary">
-						<th>1</th>
-						<td>{groupData.prime.description}</td>
-						<td>{displayAmount.format(groupData.prime.amount)}</td>
-						<td>{groupData.prime.date}</td>
-					</tr>
-
-					{groupData.transactions.length >= 1 &&
-						groupData.transactions.map((transaction, i) => (
-							<tr key={transaction.uid}>
-								<th>{i + 2}</th>
+					{transactions.length > 0 &&
+						transactions.map((transaction, i) => (
+							<tr className={i === 0 ? 'bg-primary' : ''} key={transaction.uid}>
+								<th>{i + 1}</th>
 								<td>{transaction.description}</td>
 								<td>{displayAmount.format(transaction.amount)}</td>
 								<td>{transaction.date}</td>
