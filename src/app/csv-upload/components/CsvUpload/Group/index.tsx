@@ -1,6 +1,6 @@
 import type React from 'react';
-import { TransactionsTable } from './TransactionsTable';
-import type { FindGroupsData, GroupData, GroupsData } from '../../../../types';
+import { TransactionsTable } from '../TransactionsTable';
+import type { FindGroupsData, GroupsData } from '@/app/types';
 import DisplayGroupName from './DisplayGroupName';
 
 interface GroupProps {

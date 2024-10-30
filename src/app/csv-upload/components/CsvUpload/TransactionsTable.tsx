@@ -9,10 +9,15 @@ const displayAmount = new Intl.NumberFormat('en-US', {
 	currency: 'USD',
 });
 
+function zebra(index: number, transaction: FormattedRowData) {
+	const zebraColor = index % 2 ? 'bg-slate-100' : 'bg-white';
+	return transaction.prime ? 'bg-primary' : zebraColor;
+}
+
 export function TransactionsTable({ transactions }: TransactionsTableProps) {
 	return (
 		<div className="overflow-x-auto">
-			<table className="table table-zebra">
+			<table className="table">
 				<thead>
 					<tr className="bg-neutral">
 						<th />
@@ -24,9 +29,9 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
 
 				<tbody>
 					{transactions.length > 0 &&
-						transactions.map((transaction, i) => (
-							<tr className={i === 0 ? 'bg-primary' : ''} key={transaction.uid}>
-								<th>{i + 1}</th>
+						transactions.map((transaction, index) => (
+							<tr className={zebra(index, transaction)} key={transaction.uid}>
+								<th>{index + 1}</th>
 								<td>{transaction.description}</td>
 								<td>{displayAmount.format(transaction.amount)}</td>
 								<td>{transaction.date}</td>

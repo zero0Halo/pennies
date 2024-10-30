@@ -6,10 +6,7 @@ import type { CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
-
-export const WEEKLY = 'Weekly';
-export const BIWEEKLY = 'BiWeekly';
-export const MONTHLY = 'Monthly';
+import { TransactionsTable } from './TransactionsTable';
 
 export default function CsvUpload() {
 	const [error, setError] = useState<string | null>();
@@ -69,6 +66,8 @@ export default function CsvUpload() {
 				<>
 					<div className="divider" />
 
+					<h3>Grouped</h3>
+
 					{groupsData.groups?.map((groupData) => (
 						<Group
 							groupData={groupData}
@@ -76,6 +75,16 @@ export default function CsvUpload() {
 							setCSVData={setCSVData}
 						/>
 					))}
+				</>
+			)}
+
+			{groupsData && groupsData.singletons.length > 0 && (
+				<>
+					<div className="divider" />
+
+					<h3>Ungrouped (Singletons)</h3>
+
+					<TransactionsTable transactions={groupsData.singletons} />
 				</>
 			)}
 		</section>
