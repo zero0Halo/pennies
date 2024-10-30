@@ -13,7 +13,11 @@ export async function POST(req: Request) {
 
 		const { error: userUpdateError } = await supabase
 			.from(USERS)
-			.update({ categories })
+			.update({
+				categories: categories.sort((a: string, b: string) =>
+					a.toLowerCase().localeCompare(b.toLowerCase()),
+				),
+			})
 			.eq('uid', uid);
 
 		if (userUpdateError)

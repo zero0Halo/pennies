@@ -32,7 +32,11 @@ export async function POST(req: Request) {
 		// Update the categories minus the one removed
 		const { error: userUpdateError } = await supabase
 			.from(USERS)
-			.update({ categories })
+			.update({
+				categories: categories.sort((a, b) =>
+					a.toLowercase().localCompare(b.toLowercase()),
+				),
+			})
 			.eq('uid', uid);
 
 		if (userUpdateError)
