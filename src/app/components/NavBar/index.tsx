@@ -29,6 +29,8 @@ export default function LoginBar() {
 
 				<NavLink href="/accounts">Accounts</NavLink>
 
+				<NavLink href="/categories">Categories</NavLink>
+
 				<NavLink href="/csv-upload">CSV Upload</NavLink>
 			</div>
 

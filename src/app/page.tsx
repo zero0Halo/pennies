@@ -1,15 +1,18 @@
 import Link from 'next/link';
 import useIsLoggedIn from './hooks/useIsLoggedIn';
 import useServerCookie from './hooks/useServerCookie';
-import { ACCOUNTS } from '@/app/constants';
-import type { AccountData } from './types';
+import { ACCOUNTS, USER } from '@/app/constants';
+import type { AccountData, UserData } from './types';
 import NextCruft from './components/NextCruft';
 
 export default function Home() {
 	const isLoggedIn = useIsLoggedIn();
 	const [accountsCookieData] = useServerCookie<AccountData[]>(ACCOUNTS);
+	const [userCookieData] = useServerCookie<UserData>(USER);
 	const noAccounts =
 		Array.isArray(accountsCookieData) && accountsCookieData.length === 0;
+	const noCategories =
+		typeof userCookieData === 'object' && !userCookieData?.categories;
 
 	return (
 		<div>
@@ -28,7 +31,7 @@ export default function Home() {
 				</div>
 			)}
 
-			{noAccounts && isLoggedIn && (
+			{isLoggedIn && noAccounts && (
 				<div className="hero bg-accent">
 					<div className="hero-content text-center pb-8">
 						<div className="max-w-md">
@@ -42,7 +45,21 @@ export default function Home() {
 				</div>
 			)}
 
-			{isLoggedIn && !noAccounts && (
+			{isLoggedIn && !noAccounts && noCategories && (
+				<div className="hero bg-accent">
+					<div className="hero-content text-center pb-8">
+						<div className="max-w-md">
+							<h2>Create Your Categories!</h2>
+
+							<Link href="categories" className="btn btn-primary">
+								Go To Categories
+							</Link>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{isLoggedIn && !noAccounts && !noCategories && (
 				<div className="hero bg-accent">
 					<div className="hero-content text-center pb-8">
 						<div className="max-w-md">
@@ -53,7 +70,8 @@ export default function Home() {
 							</Link>
 						</div>
 					</div>
-				</div>)}
+				</div>
+			)}
 
 			{false && <NextCruft />}
 		</div>

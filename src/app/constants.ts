@@ -20,3 +20,26 @@ export const IS_LOGGED_IN = 'isLoggedIn';
 
 export const EDIT = 'edit';
 export const DELETE = 'delete';
+
+export const CAR = 'Car';
+export const FAST_FOOD = 'Fast food';
+export const FOOD_DELIVERY = 'Food delivery';
+export const GIFT = 'Gift';
+export const HEALTH = 'Health';
+export const INCOME = 'Income';
+export const KIDS = 'Kids';
+export const MORTGAGE = 'Mortgage';
+export const ONLINE_SUBSCRIPTION = 'Online subscription';
+export const UTILITY = 'Utility';
+export const defaultCategories = [
+	CAR,
+	FAST_FOOD,
+	FOOD_DELIVERY,
+	GIFT,
+	HEALTH,
+	INCOME,
+	KIDS,
+	MORTGAGE,
+	ONLINE_SUBSCRIPTION,
+	UTILITY,
+];

@@ -1,5 +1,5 @@
-import type { FindGroupsData, FormattedRowData, GroupData } from '@/app/types';
-import { BIWEEKLY, MONTHLY, WEEKLY } from '../..';
+import type { FormattedRowData } from '@/app/types';
+import { BIWEEKLY, MONTHLY, WEEKLY } from '@/app/constants';
 import dayjs from 'dayjs';
 
 const isBiWeekly = (diff: number) => (8 >= diff && diff >= 6 ? 1 : 0);
