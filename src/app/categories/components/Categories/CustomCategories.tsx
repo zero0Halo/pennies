@@ -1,6 +1,6 @@
 'use client';
 
-import apiCall from '@/app/accounts/scripts/apiCall';
+import apiCall from '@/app/utils/apiCall';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -27,24 +27,24 @@ export default function CustomCategories({
 	} = useForm<CategoryFormData>();
 
 	function handleCreateCategory(formData: CategoryFormData) {
-		console.error(errors);
 		setError('');
 		setSuccess('');
+
 		if (!Object.keys(errors).length && uid) {
 			const { category } = formData;
 
 			apiCall('/api/category-create', {
 				onError: (msg) => setError(msg),
-				onSuccess: (msg) => setSuccess(msg),
+				onSuccess: (msg) => {
+					setSuccess(msg);
+					reset();
+				},
 				payload: {
-					category,
+					categories: [...categories, category],
 					uid,
 				},
 				reload: '/categories',
 			});
-
-			setSuccess('Success');
-			reset();
 		}
 	}
 

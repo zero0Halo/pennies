@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import useClientCookie from '@/app/hooks/useClientCookie';
-import apiCall from '../scripts/apiCall';
+import apiCall from '../../utils/apiCall';
 import { USER } from '../../constants';
 import type { AccountData, AccountDBData, UserData } from '@/app/types';
 import SelectType from './SelectType';

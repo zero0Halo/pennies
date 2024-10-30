@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useClientCookie from '@/app/hooks/useClientCookie';
-import apiCall from '../scripts/apiCall';
+import apiCall from '../../utils/apiCall';
 import type { AccountDBData, ActiveRowData, UserData } from '@/app/types';
 import { DELETE, EDIT, USER } from '@/app/constants';
 import AlertMessages from './AlertMessages';
