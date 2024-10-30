@@ -12,7 +12,7 @@ export default function Categories() {
 	const categories =
 		typeof userCookieData === 'object' && userCookieData.categories
 			? (userCookieData.categories as string[])
-			: [];
+			: ([] as string[]);
 
 	return (
 		<div>

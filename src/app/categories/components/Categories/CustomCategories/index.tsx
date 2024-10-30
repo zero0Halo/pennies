@@ -1,16 +1,13 @@
 'use client';
 
-import apiCall from '@/app/utils/apiCall';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import apiCall from '@/app/utils/apiCall';
+import CategoriesTable from './CategoriesTable';
 
 interface CustomCategoriesProps {
 	categories: string[];
 	uid: string | false;
-}
-
-export interface CategoryFormData {
-	category: string;
 }
 
 export default function CustomCategories({
@@ -24,15 +21,13 @@ export default function CustomCategories({
 		handleSubmit,
 		register,
 		reset,
-	} = useForm<CategoryFormData>();
+	} = useForm<{ category: string }>();
 
-	function handleCreateCategory(formData: CategoryFormData) {
+	function handleCreateCategory({ category }: { category: string }) {
 		setError('');
 		setSuccess('');
 
 		if (!Object.keys(errors).length && uid) {
-			const { category } = formData;
-
 			apiCall('/api/category-create', {
 				onError: (msg) => setError(msg),
 				onSuccess: (msg) => {
@@ -77,9 +72,7 @@ export default function CustomCategories({
 				</button>
 			</form>
 
-			{categories.map((category) => (
-				<div key={category}>{category}</div>
-			))}
+			<CategoriesTable categories={categories} uid={uid} />
 		</div>
 	);
 }

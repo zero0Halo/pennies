@@ -15,6 +15,10 @@ export interface ActiveRowData {
 	index: number | false;
 }
 
+export interface CategoryData {
+	category: string;
+}
+
 export interface CsvUploadData {
 	csvfile: FileList;
 }
