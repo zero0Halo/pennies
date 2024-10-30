@@ -22,6 +22,7 @@ export interface CsvUploadData {
 export interface FindGroupsData {
 	groups: GroupsData[];
 	singletons: FormattedRowData[];
+	total: number;
 }
 
 export interface GroupsData {

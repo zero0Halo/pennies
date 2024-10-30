@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
-import type { FindGroupsData, GroupData } from '@/app/types';
+import type { FindGroupsData } from '@/app/types';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 import findRecurring from './findRecurring';
@@ -70,20 +70,9 @@ export default async function parseCsv(
 			group: { ...group, ...findRecurring(transactions) },
 		}));
 
-		const expectedTotal = formattedData.length;
-		const numGroups = updatedGroups.length;
-		const recurringGroups = updatedGroups.filter(
-			({ group }) => group.recurring,
-		);
-		const numSingletons = singletons.length;
-		const numGroupTransactions = updatedGroups.reduce(
-			(acc, current) => acc + current.transactions.length,
-			0,
-		);
-
-		return { groups: updatedGroups, singletons };
+		return { groups: updatedGroups, singletons, total: formattedData.length };
 	} catch (err) {
 		console.error(err);
-		return { groups: [], singletons: [] };
+		return { groups: [], singletons: [], total: 0 };
 	}
 }

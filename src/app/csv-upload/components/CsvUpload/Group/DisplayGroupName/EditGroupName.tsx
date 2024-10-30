@@ -32,6 +32,7 @@ export function EditGroupName({
 				const newState = {
 					groups: [...state.groups],
 					singletons: [...state.singletons],
+					total: state.total,
 				};
 				const newGroup = groups[groupEntryIndex].group;
 				const newTransactions = groups[groupEntryIndex].transactions;
