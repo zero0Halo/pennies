@@ -4,16 +4,13 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import apiCall from '@/app/utils/apiCall';
 import CategoriesTable from './CategoriesTable';
+import useCategories from '@/app/hooks/useCategories';
 
 interface CustomCategoriesProps {
-	categories: string[];
 	uid: string | false;
 }
 
-export default function CustomCategories({
-	categories,
-	uid,
-}: CustomCategoriesProps) {
+export default function CustomCategories({ uid }: CustomCategoriesProps) {
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
 	const {
@@ -22,6 +19,7 @@ export default function CustomCategories({
 		register,
 		reset,
 	} = useForm<{ category: string }>();
+	const { customCategories: categories } = useCategories();
 
 	function handleCreateCategory({ category }: { category: string }) {
 		setError('');

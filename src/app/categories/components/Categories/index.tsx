@@ -9,10 +9,6 @@ export default function Categories() {
 		typeof userCookieData === 'object'
 			? (userCookieData as UserData).uid
 			: false;
-	const categories =
-		typeof userCookieData === 'object' && userCookieData.categories
-			? (userCookieData.categories as string[])
-			: ([] as string[]);
 
 	return (
 		<div>
@@ -32,7 +28,7 @@ export default function Categories() {
 				<div className="w-9/12">
 					<h3>Custom Categories</h3>
 
-					<CustomCategories categories={categories} uid={uid} />
+					<CustomCategories uid={uid} />
 				</div>
 			</div>
 		</div>

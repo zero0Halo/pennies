@@ -2,7 +2,8 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
-import responseFactory from '../utils/responseFactory';
+import alphaSort from '@/app/api/utils/alphaSort';
+import responseFactory from '@/app/api/utils/responseFactory';
 import { USER, USERS } from '@/app/constants';
 
 export async function POST(req: Request) {
@@ -17,25 +18,25 @@ export async function POST(req: Request) {
 			.select('categories')
 			.eq('uid', uid)
 			.single();
-
+		// console.log(userData?.categories);
 		if (userDataError)
 			return responseFactory('Error Retrieving Categories', userDataError);
 
 		// Remove the category from the array of categories
-		const categories = Array.isArray(userData.categories)
+		const categories: string[] | boolean = Array.isArray(userData.categories)
 			? userData.categories.filter((f) => f !== category)
 			: false;
 
 		if (categories === false)
 			return responseFactory(`Category "${category}" Does Not Exist`);
 
+		const sortedCategories = alphaSort(categories);
+
 		// Update the categories minus the one removed
 		const { error: userUpdateError } = await supabase
 			.from(USERS)
 			.update({
-				categories: categories.sort((a, b) =>
-					a.toLowercase().localCompare(b.toLowercase()),
-				),
+				categories: sortedCategories,
 			})
 			.eq('uid', uid);
 
