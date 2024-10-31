@@ -16,14 +16,14 @@ function zebra(index: number, transaction: FormattedRowData) {
 
 export function TransactionsTable({ transactions }: TransactionsTableProps) {
 	return (
-		<div className="overflow-x-auto">
-			<table className="table">
+		<div className="overflow-hidden">
+			<table className="table rounded-lg overflow-hidden">
 				<thead>
 					<tr className="bg-neutral">
 						<th />
-						<th className="text-white text-base">Description</th>
-						<th className="text-white text-base">Amount</th>
-						<th className="text-white text-base">Date</th>
+						<th className="text-white text-base py-1">Description</th>
+						<th className="text-white text-base py-1">Amount</th>
+						<th className="text-white text-base py-1">Date</th>
 					</tr>
 				</thead>
 

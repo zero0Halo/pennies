@@ -9,6 +9,7 @@ import Stats from './Stats';
 import { TransactionsTable } from './TransactionsTable';
 
 export default function CsvUpload() {
+	const [activeElement, setActiveElement] = useState<number | undefined>();
 	const [error, setError] = useState<string | null>();
 	const [groupsData, setCSVData] = useState<FindGroupsData | undefined>(
 		undefined,
@@ -68,10 +69,13 @@ export default function CsvUpload() {
 
 					<h3>Grouped</h3>
 
-					{groupsData.groups?.map((groupData) => (
+					{groupsData.groups?.map((groupData, index) => (
 						<Group
+							activeElement={activeElement}
+							index={index}
 							groupData={groupData}
 							key={groupData.group.uid}
+							setActiveElement={setActiveElement}
 							setCSVData={setCSVData}
 						/>
 					))}

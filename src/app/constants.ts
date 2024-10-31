@@ -25,6 +25,7 @@ export const CAR = 'Car';
 export const FAST_FOOD = 'Fast food';
 export const FOOD_DELIVERY = 'Food delivery';
 export const GIFT = 'Gift';
+export const GROCERIES = 'Groceries';
 export const HEALTH = 'Health';
 export const INCOME = 'Income';
 export const KIDS = 'Kids';
@@ -36,6 +37,7 @@ export const defaultCategories = [
 	FAST_FOOD,
 	FOOD_DELIVERY,
 	GIFT,
+	GROCERIES,
 	HEALTH,
 	INCOME,
 	KIDS,
