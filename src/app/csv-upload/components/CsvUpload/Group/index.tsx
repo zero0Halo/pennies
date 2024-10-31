@@ -56,7 +56,7 @@ export default function Group({
 								<div className="badge badge-accent badge-sm ml-2 h-6">
 									{group.recurring}
 								</div>
-								{group.stillRecurring && (
+								{group.still_recurring && (
 									<div className="badge badge-accent badge-sm ml-2 h-6">
 										Still Recurring
 									</div>
@@ -64,7 +64,10 @@ export default function Group({
 							</>
 						)}
 					</h4>
-					<div>({group.terms.join(', ')})</div>
+					<div>
+						({Array.isArray(group.terms) ? group.terms.join(', ') : group.terms}
+						)
+					</div>
 					<TransactionsTable transactions={transactions} />
 				</>
 			)}

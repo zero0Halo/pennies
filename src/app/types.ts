@@ -50,10 +50,12 @@ export type GroupData = {
 	description: string;
 	uid: string;
 	name: boolean | string;
+	notes: string;
 	prime: string;
 	recurring: boolean | string;
-	stillRecurring: boolean | string;
-	terms: string[];
+	siteurl: string;
+	still_recurring: boolean | string;
+	terms: string | string[];
 };
 
 export type SetEditingFn = (arg: boolean) => void;

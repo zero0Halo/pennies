@@ -36,9 +36,11 @@ export default function findGroups(
 				count: matches.length + 1,
 				description: transaction.description,
 				name: '',
+				notes: '',
 				prime: transaction.uid,
 				recurring: false,
-				stillRecurring: false,
+				siteurl: '',
+				still_recurring: false,
 				terms: transaction.terms,
 				uid: groupUid,
 			};
@@ -57,5 +59,5 @@ export default function findGroups(
 		}
 	}
 
-	return { groups, singletons };
+	return { groups, singletons, total: 0 };
 }

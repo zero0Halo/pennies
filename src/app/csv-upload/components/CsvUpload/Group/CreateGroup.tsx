@@ -14,13 +14,15 @@ export default function CreateGroup({
 	setActiveElement,
 	transactions,
 }: CreateGroupProps) {
-	const { register, watch } = useForm({
+	const { register, watch } = useForm<GroupData>({
 		defaultValues: {
 			description: group.description,
 			name: group.name,
+			notes: group.notes,
 			recurring: !!group.recurring,
-			still_recurring: group.stillRecurring,
-			terms: group.terms.join(', '),
+			siteurl: group.siteurl,
+			still_recurring: group.still_recurring,
+			terms: Array.isArray(group.terms) ? group.terms.join(', ') : group.terms,
 		},
 	});
 
@@ -79,7 +81,7 @@ export default function CreateGroup({
 						/>
 					</label>
 
-					<label className="input cursor-pointer input-bordered input-sm flex items-center gap-2 mb-2 font-bold join-item w-1/2">
+					<label className="input cursor-pointer input-bordered input-sm flex items-center gap-2 mb-3 font-bold join-item w-1/2">
 						Still Recurring:
 						<input
 							className="checkbox  checkbox-sm"
@@ -89,6 +91,30 @@ export default function CreateGroup({
 						/>
 					</label>
 				</div>
+
+				<label
+					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
+					htmlFor="siteurl"
+				>
+					Site Url:
+					<input
+						className="grow font-normal"
+						type="text"
+						{...register('siteurl')}
+					/>
+				</label>
+
+				<label
+					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
+					htmlFor="notes"
+				>
+					Notes:
+					<input
+						className="grow font-normal"
+						type="text"
+						{...register('notes')}
+					/>
+				</label>
 			</form>
 
 			<TransactionsTable transactions={transactions} />

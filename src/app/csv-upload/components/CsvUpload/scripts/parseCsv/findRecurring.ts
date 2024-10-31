@@ -41,11 +41,11 @@ export default function findRecurring(transactions: FormattedRowData[]) {
 
 	const recurring = checkRecurring(51);
 	const today = dayjs(new Date().getTime());
-	const stillRecurring =
+	const still_recurring =
 		recurring && today.diff(transactions[0].timestamp, 'M') <= 1;
 
 	return {
 		recurring,
-		stillRecurring,
+		still_recurring,
 	};
 }
