@@ -2,6 +2,7 @@ import type React from 'react';
 import { useForm } from 'react-hook-form';
 import type { FormattedRowData, GroupData } from '@/app/types';
 import { TransactionsTable } from '../TransactionsTable';
+import Button from '@/app/components/Button';
 
 interface CreateGroupProps {
 	group: GroupData;
@@ -25,10 +26,8 @@ export default function CreateGroup({
 			terms: Array.isArray(group.terms) ? group.terms.join(', ') : group.terms,
 		},
 	});
-
 	const watchRecurring = watch('recurring');
 
-	console.log(group);
 	return (
 		<div className="bg-secondary pt-1 p-8 rounded-lg">
 			<h3>Create Group</h3>
@@ -120,22 +119,16 @@ export default function CreateGroup({
 			<TransactionsTable transactions={transactions} />
 
 			<div className="join join-horizontal w-full shadow">
-				<button
-					className="btn btn-sm btn-warning text-black font-bold join-item mr-1 w-1/2"
+				<Button
+					className="btn-warning join-item mr-1 w-1/2"
 					onClick={() =>
 						typeof setActiveElement === 'function' &&
 						setActiveElement(undefined)
 					}
-					type="button"
 				>
 					Cancel
-				</button>
-				<button
-					className="btn btn-sm btn-success text-white font-bold join-item  w-1/2"
-					type="button"
-				>
-					Create Group
-				</button>
+				</Button>
+				<Button className=" btn-success join-item  w-1/2">Create Group</Button>
 			</div>
 		</div>
 	);

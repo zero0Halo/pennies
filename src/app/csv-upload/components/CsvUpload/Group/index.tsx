@@ -2,6 +2,7 @@ import type React from 'react';
 import { TransactionsTable } from '../TransactionsTable';
 import type { FindGroupsData, GroupsData } from '@/app/types';
 import CreateGroup from './CreateGroup';
+import Button from '@/app/components/Button';
 
 interface GroupProps {
 	activeElement: number | undefined;
@@ -32,14 +33,13 @@ export default function Group({
 			{!isActive && (
 				<>
 					{!group?.name && (
-						<button
-							className="btn btn-success btn-sm text-white font-bold"
+						<Button
+							className="btn-success"
 							disabled={!!activeElement}
 							onClick={() => setActiveElement(index)}
-							type="button"
 						>
 							Create Group
-						</button>
+						</Button>
 					)}
 					<h4 className="mb-0 mt-2 flex align-center">
 						<span>{group.description}</span>
