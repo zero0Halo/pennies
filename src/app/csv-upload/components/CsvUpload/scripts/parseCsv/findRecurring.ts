@@ -21,7 +21,7 @@ export default function findRecurring(transactions: FormattedRowData[]) {
 		const next = !isLast ? transactions[i + 1] : false;
 
 		if (next) {
-			const diff = current.timestamp.diff(next.timestamp, 'd');
+			const diff = dayjs(current.timestamp).diff(dayjs(next.timestamp), 'd');
 			matches[WEEKLY] += isWeekly(diff);
 			matches[BIWEEKLY] += isBiWeekly(diff);
 			matches[MONTHLY] += isMonthly(diff);

@@ -1,4 +1,5 @@
 import type { FormattedRowData } from '@/app/types';
+import dateFormat from '@/app/utils/dateFormat';
 
 interface TransactionsTableProps {
 	transactions: FormattedRowData[];
@@ -34,7 +35,7 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
 								<th>{index + 1}</th>
 								<td>{transaction.description}</td>
 								<td>{displayAmount.format(transaction.amount)}</td>
-								<td>{transaction.date}</td>
+								<td>{dateFormat(transaction.timestamp)}</td>
 							</tr>
 						))}
 				</tbody>

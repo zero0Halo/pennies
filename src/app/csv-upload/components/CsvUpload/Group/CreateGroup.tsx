@@ -40,18 +40,24 @@ export default function CreateGroup({
 		if (Object.keys(errors).length === 0) {
 			const date = new Date();
 			const isoDate = date.toISOString();
-			const updatedGroup = { ...formData };
-			const updatedTransactions = transactions.map((transaction) => ({
-				...transaction,
-				created: isoDate,
-				updated: isoDate,
-			}));
+			const updatedGroup: GroupData = { ...formData };
+			const updatedTransactions: FormattedRowData[] = transactions.map(
+				(transaction) => ({
+					...transaction,
+					category: formData.category,
+					created: isoDate,
+					updated: isoDate,
+				}),
+			);
+
+			updatedGroup.prime = updatedTransactions[0].uid;
+			updatedGroup.created = isoDate;
+			updatedGroup.updated = isoDate;
+
 			const payload = {
 				group: updatedGroup,
 				transactions: updatedTransactions,
 			};
-			updatedGroup.created = isoDate;
-			updatedGroup.updated = isoDate;
 
 			console.log(payload);
 		}

@@ -59,7 +59,15 @@ export default async function parseCsv(
 				.replace(regex.mixedIds, '')
 				.split(' ')
 				.filter((term) => !blacklist.includes(term) && term.length > 0);
-			const timestamp = new Date(date).toISOString();
+			let timestamp = '';
+			try {
+				timestamp =
+					date.length > 0
+						? new Date(date).toISOString()
+						: new Date().toISOString();
+			} catch (err) {
+				console.log({ date, err });
+			}
 
 			return {
 				amount,
