@@ -1,12 +1,13 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
 import { TransactionsTable } from './TransactionsTable';
+import Button from '@/app/components/Button';
 
 export default function CsvUpload() {
 	const [activeElement, setActiveElement] = useState<number | undefined>();
@@ -14,8 +15,22 @@ export default function CsvUpload() {
 	const [groupsData, setCSVData] = useState<FindGroupsData | undefined>(
 		undefined,
 	);
+	const [previousData, setPreviousData] = useState();
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
+
+	useEffect(() => {
+		if (!groupsData && !previousData) {
+			const localStorageData =
+				typeof window !== 'undefined'
+					? (localStorage.getItem('csv-upload') ?? false)
+					: false;
+
+			if (localStorageData) {
+				setPreviousData(JSON.parse(localStorageData));
+			}
+		}
+	}, [groupsData, previousData]);
 
 	async function handleCsvUpload(formData: CsvUploadData) {
 		try {
@@ -36,6 +51,18 @@ export default function CsvUpload() {
 
 	return (
 		<section className="px-4">
+			{previousData && !groupsData && (
+				<div className="alert bg-slate-200 shadow font-bold">
+					<div>A previous session was detected. Would you like to load it?</div>
+					<Button
+						className="btn-success join-item"
+						onClick={() => setCSVData(previousData)}
+					>
+						Yes
+					</Button>
+				</div>
+			)}
+
 			{groupsData && <Stats groupsData={groupsData} />}
 
 			{!groupsData && (
