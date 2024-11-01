@@ -35,7 +35,7 @@ export default function Group({
 					{!group?.name && (
 						<Button
 							className="btn-success"
-							disabled={!!activeElement}
+							disabled={activeElement !== undefined}
 							onClick={() => setActiveElement(index)}
 						>
 							Create Group

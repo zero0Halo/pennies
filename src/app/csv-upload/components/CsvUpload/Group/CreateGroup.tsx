@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import type { FormattedRowData, GroupData } from '@/app/types';
 import { TransactionsTable } from '../TransactionsTable';
 import Button from '@/app/components/Button';
+import Input from './Input';
 
 interface CreateGroupProps {
 	group: GroupData;
@@ -15,7 +16,12 @@ export default function CreateGroup({
 	setActiveElement,
 	transactions,
 }: CreateGroupProps) {
-	const { register, watch } = useForm<GroupData>({
+	const {
+		formState: errors,
+		handleSubmit,
+		register,
+		watch,
+	} = useForm<GroupData>({
 		defaultValues: {
 			description: group.description,
 			name: group.name,
@@ -28,108 +34,86 @@ export default function CreateGroup({
 	});
 	const watchRecurring = watch('recurring');
 
+	function handleCreateGroup(formData: GroupData) {
+		if (Object.keys(errors).length === 0) {
+			console.log(formData);
+		} else {
+			console.error(errors);
+		}
+	}
+
 	return (
 		<div className="bg-secondary pt-1 p-8 rounded-lg">
 			<h3>Create Group</h3>
-			<form className="form-control">
-				<label
-					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
-					htmlFor="name"
-				>
-					Name:
-					<input
-						className="grow font-normal"
-						placeholder="Type here..."
-						type="text"
-						{...register('name')}
-					/>
-				</label>
 
-				<label
-					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
-					htmlFor="description"
-				>
-					Description:
-					<input
-						className="grow font-normal"
-						placeholder="Type here..."
-						type="text"
-						{...register('description')}
-					/>
-				</label>
+			<form className="form-control" onSubmit={handleSubmit(handleCreateGroup)}>
+				<Input
+					fieldName="name"
+					label="Name"
+					{...register('name', { required: true })}
+				/>
 
-				<label
-					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
-					htmlFor="description"
-				>
-					Terms:
-					<input
-						className="grow font-normal"
-						type="text"
-						{...register('terms')}
-					/>
-				</label>
+				<Input
+					fieldName="description"
+					label="Description"
+					{...register('description', { required: true })}
+				/>
+
+				<Input
+					fieldName="terms"
+					label="Terms"
+					{...register('terms', { required: true })}
+				/>
 
 				<div className="join join-horizontal">
-					<label className="input cursor-pointer input-bordered input-sm flex items-center gap-2 mb-2 font-bold join-item mr-1 w-1/2">
-						Recurring {group.recurring}:
-						<input
-							type="checkbox"
-							className="checkbox  checkbox-sm"
-							{...register('recurring')}
-						/>
-					</label>
+					<Input
+						className="join-item mr-1 w-1/2"
+						fieldName="recurring"
+						label={`Recurring ${group.recurring}`}
+						type="checkbox"
+						{...register('recurring')}
+					/>
 
-					<label className="input cursor-pointer input-bordered input-sm flex items-center gap-2 mb-3 font-bold join-item w-1/2">
-						Still Recurring:
-						<input
-							className="checkbox  checkbox-sm"
-							disabled={!watchRecurring}
-							type="checkbox"
-							{...register('still_recurring')}
-						/>
-					</label>
+					<Input
+						className="join-item w-1/2"
+						disabled={!watchRecurring}
+						fieldName="still_recurring"
+						label="Still Recurring"
+						type="checkbox"
+						{...register('still_recurring')}
+					/>
 				</div>
 
-				<label
-					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
-					htmlFor="siteurl"
-				>
-					Site Url:
-					<input
-						className="grow font-normal"
-						type="text"
-						{...register('siteurl')}
-					/>
-				</label>
+				<Input fieldName="siteurl" label="Site Url" {...register('siteurl')} />
 
-				<label
-					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
-					htmlFor="notes"
+				<Input fieldName="notes" label="Notes" {...register('notes')} />
+
+				<div
+					// biome-ignore lint/a11y/noNoninteractiveTabindex: <explanation>
+					tabIndex={0}
+					className="collapse collapse-plus border-base-300 bg-accent mt-2 mb-4 rounded-xl overflow-hidden border"
 				>
-					Notes:
-					<input
-						className="grow font-normal"
-						type="text"
-						{...register('notes')}
-					/>
-				</label>
+					<div className="collapse-title text-md font-bold">Transactions</div>
+					<div className="collapse-content">
+						<TransactionsTable transactions={transactions} />
+					</div>
+				</div>
+
+				<div className="join join-horizontal w-full shadow">
+					<Button
+						className="btn-warning join-item mr-1 w-1/2"
+						onClick={() =>
+							typeof setActiveElement === 'function' &&
+							setActiveElement(undefined)
+						}
+					>
+						Cancel
+					</Button>
+					<Button className=" btn-success join-item  w-1/2" type="submit">
+						Create Group
+					</Button>
+				</div>
 			</form>
-
-			<TransactionsTable transactions={transactions} />
-
-			<div className="join join-horizontal w-full shadow">
-				<Button
-					className="btn-warning join-item mr-1 w-1/2"
-					onClick={() =>
-						typeof setActiveElement === 'function' &&
-						setActiveElement(undefined)
-					}
-				>
-					Cancel
-				</Button>
-				<Button className=" btn-success join-item  w-1/2">Create Group</Button>
-			</div>
 		</div>
 	);
 }
