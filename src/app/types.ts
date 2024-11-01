@@ -36,19 +36,22 @@ export interface GroupsData {
 
 export interface FormattedRowData {
 	amount: number;
-	date: string;
+	category: string;
+	created: string;
 	description: string;
 	group_uid: string;
 	prime: boolean;
 	terms: string[];
-	timestamp: Dayjs;
+	timestamp: string;
 	uid: string;
+	updated: string;
 }
 
 export type GroupData = {
+	category: string;
 	count: number;
+	created: string;
 	description: string;
-	uid: string;
 	name: boolean | string;
 	notes: string;
 	prime: string;
@@ -56,6 +59,8 @@ export type GroupData = {
 	siteurl: string;
 	still_recurring: boolean | string;
 	terms: string | string[];
+	uid: string;
+	updated: string;
 };
 
 export type SetEditingFn = (arg: boolean) => void;

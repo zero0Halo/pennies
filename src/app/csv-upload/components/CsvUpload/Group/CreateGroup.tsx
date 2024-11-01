@@ -17,7 +17,7 @@ export default function CreateGroup({
 	transactions,
 }: CreateGroupProps) {
 	const {
-		formState: errors,
+		formState: { errors },
 		handleSubmit,
 		register,
 		watch,
@@ -36,9 +36,22 @@ export default function CreateGroup({
 
 	function handleCreateGroup(formData: GroupData) {
 		if (Object.keys(errors).length === 0) {
-			console.log(formData);
-		} else {
-			console.error(errors);
+			const date = new Date();
+			const isoDate = date.toISOString();
+			const updatedGroup = { ...formData };
+			const updatedTransactions = transactions.map((transaction) => ({
+				...transaction,
+				created: isoDate,
+				updated: isoDate,
+			}));
+			const payload = {
+				group: updatedGroup,
+				transactions: updatedTransactions,
+			};
+			updatedGroup.created = isoDate;
+			updatedGroup.updated = isoDate;
+
+			console.log(payload);
 		}
 	}
 
@@ -48,6 +61,7 @@ export default function CreateGroup({
 
 			<form className="form-control" onSubmit={handleSubmit(handleCreateGroup)}>
 				<Input
+					className={errors?.name ? 'input-error' : ''}
 					fieldName="name"
 					label="Name"
 					{...register('name', { required: true })}

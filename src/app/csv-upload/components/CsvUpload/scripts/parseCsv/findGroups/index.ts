@@ -33,7 +33,9 @@ export default function findGroups(
 		if (matches.length) {
 			const groupUid = uuidv4();
 			const group: GroupData = {
+				category: '',
 				count: matches.length + 1,
+				created: '',
 				description: transaction.description,
 				name: '',
 				notes: '',
@@ -43,6 +45,7 @@ export default function findGroups(
 				still_recurring: false,
 				terms: transaction.terms,
 				uid: groupUid,
+				updated: '',
 			};
 
 			transaction.prime = true;

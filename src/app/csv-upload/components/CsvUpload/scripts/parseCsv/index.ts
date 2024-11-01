@@ -59,17 +59,19 @@ export default async function parseCsv(
 				.replace(regex.mixedIds, '')
 				.split(' ')
 				.filter((term) => !blacklist.includes(term) && term.length > 0);
-			const timestamp = dayjs(new Date(date).getTime());
+			const timestamp = new Date(date).toISOString();
 
 			return {
 				amount,
-				date,
+				category: '',
+				created: '',
 				description,
 				group_uid: '',
 				prime: false,
-				uid,
 				terms,
 				timestamp,
+				updated: '',
+				uid,
 			};
 		});
 
