@@ -4,6 +4,7 @@ import type { FormattedRowData, GroupData } from '@/app/types';
 import { TransactionsTable } from '../TransactionsTable';
 import Button from '@/app/components/Button';
 import Input from './Input';
+import useCategories from '@/app/hooks/useCategories';
 
 interface CreateGroupProps {
 	group: GroupData;
@@ -16,6 +17,7 @@ export default function CreateGroup({
 	setActiveElement,
 	transactions,
 }: CreateGroupProps) {
+	const { categories } = useCategories();
 	const {
 		formState: { errors },
 		handleSubmit,
@@ -79,7 +81,7 @@ export default function CreateGroup({
 					{...register('terms', { required: true })}
 				/>
 
-				<div className="join join-horizontal">
+				<div className="join join-horizontal mb-4">
 					<Input
 						className="join-item mr-1 w-1/2"
 						fieldName="recurring"
@@ -98,9 +100,31 @@ export default function CreateGroup({
 					/>
 				</div>
 
+				<label
+					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
+					htmlFor="category"
+				>
+					Category
+					<select
+						className="select select-sm grow font-normal"
+						{...register('category')}
+					>
+						{categories.map((value) => (
+							<option key={value} value={value}>
+								{value}
+							</option>
+						))}
+					</select>
+				</label>
+
 				<Input fieldName="siteurl" label="Site Url" {...register('siteurl')} />
 
-				<Input fieldName="notes" label="Notes" {...register('notes')} />
+				<Input
+					className="mb-4"
+					fieldName="notes"
+					label="Notes"
+					{...register('notes')}
+				/>
 
 				<div
 					// biome-ignore lint/a11y/noNoninteractiveTabindex: <explanation>
