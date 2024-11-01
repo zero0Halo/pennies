@@ -27,6 +27,7 @@ export default function Group({
 				<CreateGroup
 					group={group}
 					setActiveElement={setActiveElement}
+					setCSVData={setCSVData}
 					transactions={transactions}
 				/>
 			)}

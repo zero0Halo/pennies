@@ -1,14 +1,15 @@
 import type React from 'react';
 import { useForm } from 'react-hook-form';
-import type { FormattedRowData, GroupData } from '@/app/types';
+import type { FindGroupsData, FormattedRowData, GroupData } from '@/app/types';
 import { TransactionsTable } from '../TransactionsTable';
 import Button from '@/app/components/Button';
-import Input from './Input';
+import DataInput from './DataInput';
 import useCategories from '@/app/hooks/useCategories';
 
 interface CreateGroupProps {
 	group: GroupData;
 	setActiveElement: React.Dispatch<React.SetStateAction<number | undefined>>;
+	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	transactions: FormattedRowData[];
 }
 
@@ -68,27 +69,27 @@ export default function CreateGroup({
 			<h3>Create Group</h3>
 
 			<form className="form-control" onSubmit={handleSubmit(handleCreateGroup)}>
-				<Input
+				<DataInput
 					className={errors?.name ? 'input-error' : ''}
 					fieldName="name"
 					label="Name"
 					{...register('name', { required: true })}
 				/>
 
-				<Input
+				<DataInput
 					fieldName="description"
 					label="Description"
 					{...register('description', { required: true })}
 				/>
 
-				<Input
+				<DataInput
 					fieldName="terms"
 					label="Terms"
 					{...register('terms', { required: true })}
 				/>
 
 				<div className="join join-horizontal mb-4">
-					<Input
+					<DataInput
 						className="join-item mr-1 w-1/2"
 						fieldName="recurring"
 						label={`Recurring ${group.recurring}`}
@@ -96,7 +97,7 @@ export default function CreateGroup({
 						{...register('recurring')}
 					/>
 
-					<Input
+					<DataInput
 						className="join-item w-1/2"
 						disabled={!watchRecurring}
 						fieldName="still_recurring"
@@ -106,26 +107,20 @@ export default function CreateGroup({
 					/>
 				</div>
 
-				<label
-					className="input input-bordered input-sm flex items-center gap-2 mb-2 font-bold"
-					htmlFor="category"
-				>
-					Category
-					<select
-						className="select select-sm grow font-normal"
-						{...register('category')}
-					>
-						{categories.map((value) => (
-							<option key={value} value={value}>
-								{value}
-							</option>
-						))}
-					</select>
-				</label>
+				<DataInput
+					fieldName="category"
+					label="Category"
+					type="select"
+					options={categories}
+				/>
 
-				<Input fieldName="siteurl" label="Site Url" {...register('siteurl')} />
+				<DataInput
+					fieldName="siteurl"
+					label="Site Url"
+					{...register('siteurl')}
+				/>
 
-				<Input
+				<DataInput
 					className="mb-4"
 					fieldName="notes"
 					label="Notes"
