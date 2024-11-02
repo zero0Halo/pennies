@@ -1,14 +1,16 @@
 import React from 'react';
 
 type SelectProps = {
-	fieldName: string;
+	className?: string;
 	options: string[];
 } & React.SelectHTMLAttributes<HTMLSelectElement>;
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-	({ options = [], ...rest }, ref) => {
+	({ className = '', options = [], ...rest }, ref) => {
+		const classes = ['select select-sm grow font-normal', className].join();
+
 		return (
-			<select className="select select-sm grow font-normal" ref={ref} {...rest}>
+			<select className={classes} ref={ref} {...rest}>
 				{options.map((value) => (
 					<option key={value} value={value}>
 						{value}

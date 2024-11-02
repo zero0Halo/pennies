@@ -2,21 +2,24 @@ import React from 'react';
 
 type InputProps = {
 	className?: string;
-	fieldName: string;
-	type?: 'text' | 'checkbox';
+	type: 'text' | 'checkbox';
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-	({ className, fieldName, type = 'text', ...rest }, ref) => {
+	({ className = '', type = 'text', ...rest }, ref) => {
+		const typeClasses = {
+			checkbox: 'checkbox checkbox-sm',
+			text: 'grow font-normal',
+		};
+		const classes = [typeClasses[type], className].join(' ');
+
 		return (
 			<input
-				id={fieldName}
-				name={fieldName}
-				className={className}
+				className={classes}
 				placeholder="Type here..."
+				ref={ref}
 				type={type}
-				ref={ref} // Attach ref here
-				{...rest} // Spread the rest of the input attributes
+				{...rest}
 			/>
 		);
 	},

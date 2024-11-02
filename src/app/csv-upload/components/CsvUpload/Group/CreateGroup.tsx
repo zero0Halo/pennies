@@ -3,7 +3,10 @@ import { useForm } from 'react-hook-form';
 import type { FindGroupsData, FormattedRowData, GroupData } from '@/app/types';
 import { TransactionsTable } from '../TransactionsTable';
 import Button from '@/app/components/Button';
-import DataInput from './DataInput';
+import Label from './Label';
+import Input from './Input';
+import Select from './Select';
+
 import useCategories from '@/app/hooks/useCategories';
 
 interface CreateGroupProps {
@@ -16,6 +19,7 @@ interface CreateGroupProps {
 export default function CreateGroup({
 	group,
 	setActiveElement,
+	setCSVData,
 	transactions,
 }: CreateGroupProps) {
 	const { categories } = useCategories();
@@ -41,7 +45,7 @@ export default function CreateGroup({
 		if (Object.keys(errors).length === 0) {
 			const date = new Date();
 			const isoDate = date.toISOString();
-			const updatedGroup: GroupData = { ...formData };
+			const updatedGroup: GroupData = { ...group, ...formData };
 			const updatedTransactions: FormattedRowData[] = transactions.map(
 				(transaction) => ({
 					...transaction,
@@ -55,12 +59,27 @@ export default function CreateGroup({
 			updatedGroup.created = isoDate;
 			updatedGroup.updated = isoDate;
 
-			const payload = {
-				group: updatedGroup,
-				transactions: updatedTransactions,
-			};
+			setCSVData((state) => {
+				if (state) {
+					const newState = {
+						groups: [...state.groups],
+						singletons: [...state.singletons],
+						total: state.total,
+					};
+					const groupIndex = newState?.groups.findIndex(
+						({ group }) => group.uid === updatedGroup.uid,
+					);
 
-			console.log(payload);
+					newState.groups.splice(groupIndex, 1, {
+						group: updatedGroup,
+						transactions: updatedTransactions,
+					});
+
+					return newState;
+				}
+
+				return state;
+			});
 		}
 	}
 
@@ -69,68 +88,64 @@ export default function CreateGroup({
 			<h3>Create Group</h3>
 
 			<form className="form-control" onSubmit={handleSubmit(handleCreateGroup)}>
-				<DataInput
-					className={errors?.name ? 'input-error' : ''}
-					fieldName="name"
-					label="Name"
-					{...register('name', { required: true })}
-				/>
+				<Label htmlFor="name">
+					Name
+					<Input
+						className={errors?.name ? 'input-error' : ''}
+						type="text"
+						{...register('name', { required: true })}
+					/>
+				</Label>
 
-				<DataInput
-					fieldName="description"
-					label="Description"
-					{...register('description', { required: true })}
-				/>
+				<Label htmlFor="description">
+					Description
+					<Input
+						className={errors?.description ? 'input-error' : ''}
+						type="text"
+						{...register('description', { required: true })}
+					/>
+				</Label>
 
-				<DataInput
-					fieldName="terms"
-					label="Terms"
-					{...register('terms', { required: true })}
-				/>
+				<Label htmlFor="terms">
+					Terms
+					<Input type="text" {...register('terms', { required: true })} />
+				</Label>
 
 				<div className="join join-horizontal mb-4">
-					<DataInput
-						className="join-item mr-1 w-1/2"
-						fieldName="recurring"
-						label={`Recurring ${group.recurring}`}
-						type="checkbox"
-						{...register('recurring')}
-					/>
+					<Label className="join-item w-1/2" htmlFor="recurring">
+						Recurring {group.recurring}
+						<Input type="checkbox" {...register('recurring')} />
+					</Label>
 
-					<DataInput
-						className="join-item w-1/2"
-						disabled={!watchRecurring}
-						fieldName="still_recurring"
-						label="Still Recurring"
-						type="checkbox"
-						{...register('still_recurring')}
-					/>
+					<Label className="join-item w-1/2" htmlFor="still_recurring">
+						Still Recurring
+						<Input
+							disabled={!watchRecurring}
+							type="checkbox"
+							{...register('still_recurring')}
+						/>
+					</Label>
 				</div>
 
-				<DataInput
-					fieldName="category"
-					label="Category"
-					type="select"
-					options={categories}
-				/>
+				<Label htmlFor="category">
+					Category
+					<Select options={categories} {...register('category')} />
+				</Label>
 
-				<DataInput
-					fieldName="siteurl"
-					label="Site Url"
-					{...register('siteurl')}
-				/>
+				<Label htmlFor="siteurl">
+					Site Url
+					<Input type="text" {...register('siteurl')} />
+				</Label>
 
-				<DataInput
-					className="mb-4"
-					fieldName="notes"
-					label="Notes"
-					{...register('notes')}
-				/>
+				<Label className="mb-4" htmlFor="notes">
+					Notes
+					<Input type="text" {...register('notes')} />
+				</Label>
 
 				<div
 					// biome-ignore lint/a11y/noNoninteractiveTabindex: <explanation>
 					tabIndex={0}
-					className="collapse collapse-plus border-base-300 bg-accent mt-2 mb-4 rounded-xl overflow-hidden border"
+					className="collapse collapse-plus border-base-300 bg-accent mt-2 mb-6 rounded-xl overflow-hidden border"
 				>
 					<div className="collapse-title text-md font-bold">Transactions</div>
 					<div className="collapse-content">

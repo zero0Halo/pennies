@@ -94,8 +94,6 @@ export default function CsvUpload() {
 				<>
 					<div className="divider" />
 
-					<h3>Grouped</h3>
-
 					{groupsData.groups?.map((groupData, index) => (
 						<Group
 							activeElement={activeElement}
