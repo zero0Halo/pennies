@@ -15,24 +15,21 @@ export default function CsvUpload() {
 	const [groupsData, setCSVData] = useState<FindGroupsData | undefined>(
 		undefined,
 	);
-	const [previousData, setPreviousData] = useState();
+	const [previousData, setPreviousData] = useState<
+		FindGroupsData | false | undefined
+	>(undefined);
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
 
-	if (groupsData) {
-		console.log(groupsData.groups[0]);
-	}
-
+	// Check for CSV data in local storage
 	useEffect(() => {
-		if (!groupsData && !previousData) {
+		if (!groupsData && previousData === undefined) {
 			const localStorageData =
 				typeof window !== 'undefined'
 					? (localStorage.getItem('csv-upload') ?? false)
 					: false;
 
-			if (localStorageData) {
-				setPreviousData(JSON.parse(localStorageData));
-			}
+			setPreviousData(localStorageData ? JSON.parse(localStorageData) : false);
 		}
 	}, [groupsData, previousData]);
 
@@ -55,9 +52,17 @@ export default function CsvUpload() {
 
 	return (
 		<section className="px-4">
+			{/* Show previous data warning */}
 			{previousData && !groupsData && (
 				<div className="alert bg-slate-200 shadow font-bold">
 					<div>A previous session was detected. Would you like to load it?</div>
+
+					<Button
+						className="btn-error join-item"
+						onClick={() => setPreviousData(false)}
+					>
+						No
+					</Button>
 					<Button
 						className="btn-success join-item"
 						onClick={() => setCSVData(previousData)}
@@ -67,9 +72,8 @@ export default function CsvUpload() {
 				</div>
 			)}
 
-			{groupsData && <Stats groupsData={groupsData} />}
-
-			{!groupsData && (
+			{/* Show CSV file uploader */}
+			{!groupsData && previousData === false && (
 				<>
 					<form
 						className="form-control py-4 join join-horizontal"
@@ -94,6 +98,10 @@ export default function CsvUpload() {
 				</>
 			)}
 
+			{/* Show CSV stats */}
+			{groupsData && <Stats groupsData={groupsData} />}
+
+			{/* Show groups */}
 			{groupsData && groupsData.groups.length > 0 && (
 				<>
 					<div className="divider" />
@@ -120,6 +128,7 @@ export default function CsvUpload() {
 				</>
 			)}
 
+			{/* Show singletons */}
 			{groupsData && groupsData.singletons.length > 0 && (
 				<>
 					<div className="divider" />
