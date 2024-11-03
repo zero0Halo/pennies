@@ -37,7 +37,7 @@ export default function findGroups(
 				count: matches.length + 1,
 				created: '',
 				description: transaction.description,
-				name: '',
+				name: false,
 				notes: '',
 				prime: transaction.uid,
 				recurring: false,

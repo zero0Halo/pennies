@@ -1,8 +1,8 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
-import type { CsvUploadData, FindGroupsData } from '@/app/types';
+import { Fragment, useEffect, useState } from 'react';
+import type { CsvUploadData, FindGroupsData, GroupsData } from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
@@ -18,6 +18,10 @@ export default function CsvUpload() {
 	const [previousData, setPreviousData] = useState();
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
+
+	if (groupsData) {
+		console.log(groupsData.groups[0]);
+	}
 
 	useEffect(() => {
 		if (!groupsData && !previousData) {
@@ -94,16 +98,25 @@ export default function CsvUpload() {
 				<>
 					<div className="divider" />
 
-					{groupsData.groups?.map((groupData, index) => (
-						<Group
-							activeElement={activeElement}
-							index={index}
-							groupData={groupData}
-							key={groupData.group.uid}
-							setActiveElement={setActiveElement}
-							setCSVData={setCSVData}
-						/>
-					))}
+					{groupsData.groups?.map((groupData, index) =>
+						typeof groupData.group.name === 'boolean' ? (
+							<Group
+								activeElement={activeElement}
+								index={index}
+								groupData={groupData}
+								key={groupData.group.uid}
+								setActiveElement={setActiveElement}
+								setCSVData={setCSVData}
+							/>
+						) : (
+							<Fragment key={groupData.group.uid}>
+								<div className="alert alert-success text-white font-bold my-4">
+									Group "{groupData.group.name}" Created!
+								</div>
+								<div className="divider" />
+							</Fragment>
+						),
+					)}
 				</>
 			)}
 

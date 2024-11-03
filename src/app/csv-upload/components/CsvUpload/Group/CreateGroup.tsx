@@ -31,9 +31,9 @@ export default function CreateGroup({
 	} = useForm<GroupData>({
 		defaultValues: {
 			description: group.description,
-			name: group.name,
+			name: '',
 			notes: group.notes,
-			recurring: !!group.recurring,
+			recurring: group.recurring,
 			siteurl: group.siteurl,
 			still_recurring: group.still_recurring,
 			terms: Array.isArray(group.terms) ? group.terms.join(', ') : group.terms,
@@ -80,6 +80,7 @@ export default function CreateGroup({
 
 				return state;
 			});
+			setActiveElement(undefined);
 		}
 	}
 
