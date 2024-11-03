@@ -113,10 +113,10 @@ export default function CsvUpload() {
 
 					<div role="tablist" className="tabs tabs-lifted">
 						<input
-							aria-label="Reviewing"
-							className="tab"
+							aria-label={`Reviewing (${groupsData.groups.length - completed.length})`}
+							className="tab after:whitespace-nowrap"
 							defaultChecked
-							name="my_tabs_2"
+							name="group_tabs"
 							role="tab"
 							type="radio"
 						/>
@@ -142,7 +142,7 @@ export default function CsvUpload() {
 						<input
 							aria-label={`Completed${completed.length > 0 ? ` (${completed.length})` : ''}`}
 							className="tab after:whitespace-nowrap"
-							name="my_tabs_2"
+							name="group_tabs"
 							role="tab"
 							type="radio"
 						/>

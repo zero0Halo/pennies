@@ -1,5 +1,6 @@
 import type React from 'react';
 import { useForm } from 'react-hook-form';
+import Cookies from 'js-cookie';
 import type { FindGroupsData, FormattedRowData, GroupData } from '@/app/types';
 import { TransactionsTable } from '../TransactionsTable';
 import Button from '@/app/components/Button';
@@ -8,6 +9,7 @@ import Input from './Input';
 import Select from './Select';
 
 import useCategories from '@/app/hooks/useCategories';
+import { CSV_UPLOAD } from '@/app/constants';
 
 interface CreateGroupProps {
 	group: GroupData;
@@ -74,6 +76,8 @@ export default function CreateGroup({
 						group: updatedGroup,
 						transactions: updatedTransactions,
 					});
+
+					localStorage.setItem(CSV_UPLOAD, JSON.stringify(newState));
 
 					return newState;
 				}

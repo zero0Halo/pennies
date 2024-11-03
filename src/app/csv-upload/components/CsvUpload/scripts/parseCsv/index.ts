@@ -1,18 +1,9 @@
-import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
-import Cookies from 'js-cookie';
 import type { FindGroupsData } from '@/app/types';
+import { CSV_UPLOAD } from '@/app/constants';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 import findRecurring from './findRecurring';
-
-function isCookieSizeWithinLimit(name: string, value: string) {
-	// Calculate size of the cookie name, value, and necessary separators (e.g., '=' and ';')
-	const cookieSize = new Blob([`${name}=${value};`]).size;
-	const maxCookieSize = 4096; // 4 KB limit
-	console.log(cookieSize);
-	return cookieSize <= maxCookieSize;
-}
 
 const regex = {
 	creditCard: /card \d+/g,
@@ -95,7 +86,7 @@ export default async function parseCsv(
 			total: formattedData.length,
 		};
 
-		localStorage.setItem('csv-upload', JSON.stringify(returnData));
+		localStorage.setItem(CSV_UPLOAD, JSON.stringify(returnData));
 
 		return returnData;
 	} catch (err) {

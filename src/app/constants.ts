@@ -31,6 +31,7 @@ export const INCOME = 'Income';
 export const KIDS = 'Kids';
 export const MORTGAGE = 'Mortgage';
 export const ONLINE_SUBSCRIPTION = 'Online subscription';
+export const TRANSFER = 'Transfer';
 export const UTILITY = 'Utility';
 export const defaultCategories = [
 	CAR,
@@ -40,8 +41,12 @@ export const defaultCategories = [
 	GROCERIES,
 	HEALTH,
 	INCOME,
+	INVESTMENT,
 	KIDS,
 	MORTGAGE,
 	ONLINE_SUBSCRIPTION,
+	TRANSFER,
 	UTILITY,
 ];
+
+export const CSV_UPLOAD = 'csv-upload';
