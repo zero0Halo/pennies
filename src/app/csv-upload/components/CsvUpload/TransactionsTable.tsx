@@ -2,6 +2,8 @@ import type { FormattedRowData } from '@/app/types';
 import dateFormat from '@/app/utils/dateFormat';
 
 interface TransactionsTableProps {
+	className?: string;
+	tableClassName?: string;
 	transactions: FormattedRowData[];
 }
 
@@ -15,10 +17,20 @@ function zebra(index: number, transaction: FormattedRowData) {
 	return transaction.prime ? 'bg-primary' : zebraColor;
 }
 
-export function TransactionsTable({ transactions }: TransactionsTableProps) {
+export function TransactionsTable({
+	className = '',
+	tableClassName = '',
+	transactions,
+}: TransactionsTableProps) {
+	const classes = ['overflow-hidden', className].join(' ');
+	const tableClasses = [
+		'table overflow-hidden rounded-lg',
+		tableClassName,
+	].join(' ');
+
 	return (
-		<div className="overflow-hidden">
-			<table className="table rounded-lg overflow-hidden">
+		<div className={classes}>
+			<table className={tableClasses}>
 				<thead>
 					<tr className="bg-neutral">
 						<th />

@@ -22,7 +22,7 @@ export default function Group({
 	const isActive = activeElement === index;
 
 	return (
-		<div className="px-4">
+		<div className="p-4 bg-slate-100 rounded-xl mb-4">
 			{isActive && (
 				<CreateGroup
 					group={group}
@@ -69,11 +69,12 @@ export default function Group({
 						({Array.isArray(group.terms) ? group.terms.join(', ') : group.terms}
 						)
 					</div>
-					<TransactionsTable transactions={transactions} />
+					<TransactionsTable
+						tableClassName="border-white border-2"
+						transactions={transactions}
+					/>
 				</>
 			)}
-
-			<div className="divider" />
 		</div>
 	);
 }

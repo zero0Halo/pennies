@@ -1,13 +1,14 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { Fragment, useEffect, useState } from 'react';
-import type { CsvUploadData, FindGroupsData, GroupsData } from '@/app/types';
+import { useEffect, useState } from 'react';
+import type { CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
 import { TransactionsTable } from './TransactionsTable';
 import Button from '@/app/components/Button';
+import CompletedGroup from './Group/CompletedGroup';
 
 export default function CsvUpload() {
 	const [activeElement, setActiveElement] = useState<number | undefined>();
@@ -121,7 +122,7 @@ export default function CsvUpload() {
 						/>
 						<div
 							role="tabpanel"
-							className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+							className="tab-content bg-base-100 border-base-300 rounded-box px-2 py-6"
 						>
 							{groupsData.groups?.map(
 								(groupData, index) =>
@@ -147,16 +148,13 @@ export default function CsvUpload() {
 						/>
 						<div
 							role="tabpanel"
-							className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+							className="tab-content bg-base-100 border-base-300 rounded-xl p-4 pb-0"
 						>
 							{completed.map((groupData, index) => (
-								<Group
-									activeElement={activeElement}
+								<CompletedGroup
+									groupsData={groupData}
 									index={index}
-									groupData={groupData}
 									key={groupData.group.uid}
-									setActiveElement={setActiveElement}
-									setCSVData={setCSVData}
 								/>
 							))}
 						</div>
