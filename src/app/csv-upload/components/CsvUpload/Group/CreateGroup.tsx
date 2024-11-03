@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useForm } from 'react-hook-form';
 import Cookies from 'js-cookie';
-import type { FindGroupsData, FormattedRowData, GroupData } from '@/app/types';
+import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
 import { TransactionsTable } from '../TransactionsTable';
 import Button from '@/app/components/Button';
 import Label from './Label';
@@ -15,7 +15,7 @@ interface CreateGroupProps {
 	group: GroupData;
 	setActiveElement: React.Dispatch<React.SetStateAction<number | undefined>>;
 	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
-	transactions: FormattedRowData[];
+	transactions: TransactionData[];
 }
 
 export default function CreateGroup({
@@ -48,7 +48,7 @@ export default function CreateGroup({
 			const date = new Date();
 			const isoDate = date.toISOString();
 			const updatedGroup: GroupData = { ...group, ...formData };
-			const updatedTransactions: FormattedRowData[] = transactions.map(
+			const updatedTransactions: TransactionData[] = transactions.map(
 				(transaction) => ({
 					...transaction,
 					category: formData.category,

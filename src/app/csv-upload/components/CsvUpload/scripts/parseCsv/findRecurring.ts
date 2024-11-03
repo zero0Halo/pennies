@@ -1,4 +1,4 @@
-import type { FormattedRowData } from '@/app/types';
+import type { TransactionData } from '@/app/types';
 import { BIWEEKLY, MONTHLY, WEEKLY } from '@/app/constants';
 import dayjs from 'dayjs';
 
@@ -6,7 +6,7 @@ const isBiWeekly = (diff: number) => (8 >= diff && diff >= 6 ? 1 : 0);
 const isMonthly = (diff: number) => (16 >= diff && diff >= 12 ? 1 : 0);
 const isWeekly = (diff: number) => (34 >= diff && diff >= 25 ? 1 : 0);
 
-export default function findRecurring(transactions: FormattedRowData[]) {
+export default function findRecurring(transactions: TransactionData[]) {
 	if (transactions.length === 0) return false;
 
 	const matches = {

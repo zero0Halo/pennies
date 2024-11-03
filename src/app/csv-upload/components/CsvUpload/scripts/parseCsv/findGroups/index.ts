@@ -3,23 +3,21 @@ import clone from './clone';
 import getDescriptionScore from './getDescriptionScore';
 import type {
 	FindGroupsData,
-	FormattedRowData,
+	TransactionData,
 	GroupData,
 	GroupsData,
 } from '@/app/types';
 
-export default function findGroups(
-	rowData: FormattedRowData[],
-): FindGroupsData {
+export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 	const groups: GroupsData[] = [];
-	const singletons: FormattedRowData[] = [];
-	let transactionsPool: FormattedRowData[] = rowData.map(
-		(row) => clone(row) as FormattedRowData,
+	const singletons: TransactionData[] = [];
+	let transactionsPool: TransactionData[] = rowData.map(
+		(row) => clone(row) as TransactionData,
 	);
 
 	// Continually remove the first item from the pool so the choices to match against get smaller
 	while (transactionsPool.length) {
-		const transaction = transactionsPool.shift() as FormattedRowData;
+		const transaction = transactionsPool.shift() as TransactionData;
 		let matches = transactionsPool.filter(
 			(f) => getDescriptionScore(transaction.terms, f.terms) > 75,
 		);

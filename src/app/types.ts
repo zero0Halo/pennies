@@ -25,16 +25,16 @@ export interface CsvUploadData {
 
 export interface FindGroupsData {
 	groups: GroupsData[];
-	singletons: FormattedRowData[];
+	singletons: TransactionData[];
 	total: number;
 }
 
 export interface GroupsData {
-	transactions: FormattedRowData[];
+	transactions: TransactionData[];
 	group: GroupData;
 }
 
-export interface FormattedRowData {
+export interface TransactionData {
 	amount: number;
 	category: string;
 	created: string;
