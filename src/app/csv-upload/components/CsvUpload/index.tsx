@@ -20,6 +20,10 @@ export default function CsvUpload() {
 	>(undefined);
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
+	const completed =
+		groupsData !== undefined
+			? groupsData.groups.filter(({ group }) => group.name !== false)
+			: [];
 
 	// Check for CSV data in local storage
 	useEffect(() => {
@@ -106,25 +110,57 @@ export default function CsvUpload() {
 				<>
 					<div className="divider" />
 
-					{groupsData.groups?.map((groupData, index) =>
-						typeof groupData.group.name === 'boolean' ? (
-							<Group
-								activeElement={activeElement}
-								index={index}
-								groupData={groupData}
-								key={groupData.group.uid}
-								setActiveElement={setActiveElement}
-								setCSVData={setCSVData}
-							/>
-						) : (
-							<Fragment key={groupData.group.uid}>
-								<div className="alert alert-success text-white font-bold my-4">
-									Group "{groupData.group.name}" Created!
-								</div>
-								<div className="divider" />
-							</Fragment>
-						),
-					)}
+					<div role="tablist" className="tabs tabs-lifted">
+						<input
+							aria-label="Reviewing"
+							className="tab"
+							defaultChecked
+							name="my_tabs_2"
+							role="tab"
+							type="radio"
+						/>
+						<div
+							role="tabpanel"
+							className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+						>
+							{groupsData.groups?.map(
+								(groupData, index) =>
+									typeof groupData.group.name === 'boolean' && (
+										<Group
+											activeElement={activeElement}
+											index={index}
+											groupData={groupData}
+											key={groupData.group.uid}
+											setActiveElement={setActiveElement}
+											setCSVData={setCSVData}
+										/>
+									),
+							)}
+						</div>
+
+						<input
+							aria-label={`Completed${completed.length > 0 ? ` (${completed.length})` : ''}`}
+							className="tab after:whitespace-nowrap"
+							name="my_tabs_2"
+							role="tab"
+							type="radio"
+						/>
+						<div
+							role="tabpanel"
+							className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+						>
+							{completed.map((groupData, index) => (
+								<Group
+									activeElement={activeElement}
+									index={index}
+									groupData={groupData}
+									key={groupData.group.uid}
+									setActiveElement={setActiveElement}
+									setCSVData={setCSVData}
+								/>
+							))}
+						</div>
+					</div>
 				</>
 			)}
 
