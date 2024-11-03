@@ -46,6 +46,7 @@ export default function findGroups(
 				terms: transaction.terms,
 				uid: groupUid,
 				updated: '',
+				user_uid: transaction.user_uid,
 			};
 
 			transaction.prime = true;

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { FindGroupsData } from '@/app/types';
+import type { FindGroupsData, UserData } from '@/app/types';
 import { CSV_UPLOAD } from '@/app/constants';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
@@ -34,15 +34,22 @@ const blacklist = [
 
 export default async function parseCsv(
 	fileData: File,
-): Promise<FindGroupsData> {
+	userdata: boolean | UserData | undefined,
+): Promise<FindGroupsData | boolean> {
 	try {
+		const user_uid =
+			typeof userdata !== 'undefined' || typeof userdata !== 'boolean'
+				? (userdata as UserData).uid
+				: false;
+
+		if (user_uid === false) return new Promise((_, reject) => reject(false));
+
 		const parsedData = await fauxAsync(fileData);
 		const formattedData = parsedData.map((d: string[]) => {
 			const filteredRow = d.filter((f) => f && f.length > 1);
 			const amount = +(filteredRow?.at(1) ?? 0);
 			const date = filteredRow?.at(0) ?? '';
 			const description = filteredRow?.at(2)?.toLowerCase() ?? '';
-			const uid = uuidv4();
 			const terms = description
 				.replace(regex.creditCard, '')
 				.replace(regex.date, '')
@@ -51,6 +58,8 @@ export default async function parseCsv(
 				.split(' ')
 				.filter((term) => !blacklist.includes(term) && term.length > 0);
 			let timestamp = '';
+			const uid = uuidv4();
+
 			try {
 				timestamp =
 					date.length > 0
@@ -71,6 +80,7 @@ export default async function parseCsv(
 				timestamp,
 				updated: '',
 				uid,
+				user_uid,
 			};
 		});
 
@@ -88,7 +98,7 @@ export default async function parseCsv(
 
 		localStorage.setItem(CSV_UPLOAD, JSON.stringify(returnData));
 
-		return returnData;
+		return new Promise((resolve) => resolve(returnData));
 	} catch (err) {
 		console.error(err);
 		return { groups: [], singletons: [], total: 0 };

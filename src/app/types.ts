@@ -45,6 +45,7 @@ export interface FormattedRowData {
 	timestamp: string;
 	uid: string;
 	updated: string;
+	user_uid: string;
 }
 
 export type GroupData = {
@@ -61,6 +62,7 @@ export type GroupData = {
 	terms: string | string[];
 	uid: string;
 	updated: string;
+	user_uid: string;
 };
 
 export type SetEditingFn = (arg: boolean) => void;

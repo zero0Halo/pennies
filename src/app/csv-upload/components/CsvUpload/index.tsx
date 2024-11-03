@@ -2,13 +2,15 @@
 
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import type { CsvUploadData, FindGroupsData } from '@/app/types';
+import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
 import { TransactionsTable } from './TransactionsTable';
 import Button from '@/app/components/Button';
 import CompletedGroup from './Group/CompletedGroup';
+import useClientCookie from '@/app/hooks/useClientCookie';
+import { USER } from '@/app/constants';
 
 export default function CsvUpload() {
 	const [activeElement, setActiveElement] = useState<number | undefined>();
@@ -19,6 +21,7 @@ export default function CsvUpload() {
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
 	>(undefined);
+	const [userData] = useClientCookie<UserData>(USER);
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
 	const completed =
@@ -47,9 +50,12 @@ export default function CsvUpload() {
 				return;
 			}
 
-			const parsedData: FindGroupsData = await parseCsv(fileData);
+			const parsedData: FindGroupsData | boolean = await parseCsv(
+				fileData,
+				userData,
+			);
 
-			setCSVData(parsedData);
+			if (typeof parsedData !== 'boolean') setCSVData(parsedData);
 		} catch (err) {
 			setError((err as Error).message);
 		}
