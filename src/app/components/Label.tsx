@@ -14,7 +14,7 @@ export default function Label({
 	...rest
 }: LabelProps) {
 	const classes = [
-		'input input-bordered input-sm flex items-center gap-2 mb-2 font-bold',
+		'input input-bordered input-sm flex items-center gap-2 mb-2 font-bold overflow-hidden',
 		className,
 	].join(' ');
 

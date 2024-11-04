@@ -7,7 +7,10 @@ type SelectProps = {
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 	({ className = '', options = [], ...rest }, ref) => {
-		const classes = ['select select-sm grow font-normal', className].join();
+		const classes = [
+			'select select-sm grow font-normal text-sm',
+			className,
+		].join();
 
 		return (
 			<select className={classes} ref={ref} {...rest}>

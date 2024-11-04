@@ -31,6 +31,7 @@ export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 		if (matches.length) {
 			const groupUid = uuidv4();
 			const group: GroupData = {
+				account_uid: transaction.account_uid,
 				category: '',
 				count: matches.length + 1,
 				created: '',

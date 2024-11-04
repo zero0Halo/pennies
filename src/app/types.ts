@@ -1,9 +1,9 @@
-import type { Dayjs } from 'dayjs';
-
 export type AccountData = {
 	is_default: boolean;
 	name: string;
 	type: string;
+	uid: string;
+	user_uid: string;
 };
 
 export interface AccountDBData extends AccountData {
@@ -20,6 +20,7 @@ export interface CategoryData {
 }
 
 export interface CsvUploadData {
+	account: string;
 	csvfile: FileList;
 }
 
@@ -34,21 +35,8 @@ export interface GroupsData {
 	group: GroupData;
 }
 
-export interface TransactionData {
-	amount: number;
-	category: string;
-	created: string;
-	description: string;
-	group_uid: string;
-	prime: boolean;
-	terms: string[];
-	timestamp: string;
-	uid: string;
-	updated: string;
-	user_uid: string;
-}
-
 export type GroupData = {
+	account_uid: string;
 	category: string;
 	count: number;
 	created: string;
@@ -82,6 +70,21 @@ export interface SignOutData {
 export interface SignUpData extends SignInData {
 	firstname?: string;
 	lastname?: string;
+}
+
+export interface TransactionData {
+	account_uid: string;
+	amount: number;
+	category: string;
+	created: string;
+	description: string;
+	group_uid: string;
+	prime: boolean;
+	terms: string[];
+	timestamp: string;
+	uid: string;
+	updated: string;
+	user_uid: string;
 }
 
 export interface UserData {

@@ -1,15 +1,18 @@
 'use client';
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
+import type { AccountData, UserData } from '@/app/types';
 import useClientCookie from '@/app/hooks/useClientCookie';
-import apiCall from '../../utils/apiCall';
-import { USER } from '../../constants';
-import type { AccountData, AccountDBData, UserData } from '@/app/types';
-import SelectType from './SelectType';
+import { accountTypes, USER } from '@/app/constants';
+import apiCall from '@/app/utils/apiCall';
+import Input from '@/app/components/Input';
+import Label from '@/app/components/Label';
+import Select from '@/app/components/Select';
 
 interface AccountCreateProps {
-	accountsData: AccountDBData[];
+	accountsData: AccountData[];
 	setCreatingAccount: (arg: boolean) => void;
 }
 
@@ -75,31 +78,29 @@ export default function AccountCreate({
 
 			{success.length === 0 && (
 				<>
-					<input
-						className={`input input-sm input-bordered mb-2 ${errors?.name && 'input-error'}`}
-						placeholder="Account Name"
-						type="text"
-						{...register('name', { required: true })}
-					/>
+					<Label className={errors?.name ? 'input-error' : ''} htmlFor="name">
+						Account Name
+						<Input type="text" {...register('name', { required: true })} />
+					</Label>
 
-					<SelectType
-						className="mb-2"
-						error={errors?.type}
-						register={register}
-					/>
+					<Label className={errors?.type ? 'input-error' : ''} htmlFor="type">
+						Account Type
+						<Select
+							options={accountTypes}
+							{...register('type', { required: true })}
+						/>
+					</Label>
 
 					<div className="flex flex-wrap items-center pl-3 pb-4">
-						<input
-							type="checkbox"
-							className="checkbox checkbox-sm"
-							{...register('is_default')}
-							defaultChecked={noAccounts}
-							disabled={noAccounts}
-						/>
-
-						<label className="pl-2" htmlFor="is_default">
+						<Label htmlFor="is_default">
 							Default Account
-						</label>
+							<Input
+								type="checkbox"
+								defaultChecked={noAccounts}
+								disabled={noAccounts}
+								{...register('is_default')}
+							/>
+						</Label>
 					</div>
 
 					{defaultWarning && (

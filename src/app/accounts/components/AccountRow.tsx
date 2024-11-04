@@ -3,10 +3,12 @@ import { useForm } from 'react-hook-form';
 import useClientCookie from '@/app/hooks/useClientCookie';
 import apiCall from '../../utils/apiCall';
 import type { AccountDBData, ActiveRowData, UserData } from '@/app/types';
-import { DELETE, EDIT, USER } from '@/app/constants';
+import { accountTypes, DELETE, EDIT, USER } from '@/app/constants';
 import AlertMessages from './AlertMessages';
-import SelectType from './SelectType';
 import ButtonGroup from './ButtonGroup';
+import Select from '@/app/components/Select';
+import Label from '@/app/components/Label';
+import Input from '@/app/components/Input';
 
 interface AccountRowProps {
 	account: AccountDBData;
@@ -97,11 +99,9 @@ export default function AccountRow({
 
 				<td>
 					{isEditing ? (
-						<input
-							className="input input-text input-sm input-bordered w-full border-black"
-							type="text"
-							{...register('name', { required: true })}
-						/>
+						<Label htmlFor="name">
+							<Input type="text" {...register('name', { required: true })} />
+						</Label>
 					) : (
 						account.name
 					)}
@@ -109,11 +109,9 @@ export default function AccountRow({
 
 				<td>
 					{isEditing ? (
-						<SelectType
-							className="w-full border-black"
-							error={errors?.type}
-							register={register}
-						/>
+						<Label htmlFor="type">
+							<Select options={accountTypes} {...register('type')} />
+						</Label>
 					) : (
 						account.type
 					)}
@@ -121,12 +119,13 @@ export default function AccountRow({
 
 				<td className="text-center">
 					{isEditing ? (
-						<input
-							className="checkbox border-black bg-white"
-							defaultChecked={account.is_default}
-							type="checkbox"
-							{...register('is_default')}
-						/>
+						<Label className="bg-transparent border-none" htmlFor="is_default">
+							<Input
+								defaultChecked={account.is_default}
+								type="checkbox"
+								{...register('is_default', { required: true })}
+							/>
+						</Label>
 					) : (
 						account.is_default && 'Yes'
 					)}

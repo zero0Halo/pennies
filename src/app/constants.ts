@@ -33,6 +33,9 @@ export const MORTGAGE = 'Mortgage';
 export const ONLINE_SUBSCRIPTION = 'Online subscription';
 export const TRANSFER = 'Transfer';
 export const UTILITY = 'Utility';
+
+// Arrays of options
+export const accountTypes = [CHECKING, CREDIT_CARD, INVESTMENT, SAVINGS];
 export const defaultCategories = [
 	CAR,
 	FAST_FOOD,

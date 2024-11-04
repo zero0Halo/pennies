@@ -2,7 +2,12 @@
 
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
+import type {
+	UserData,
+	CsvUploadData,
+	FindGroupsData,
+	AccountData,
+} from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
@@ -11,6 +16,9 @@ import Button from '@/app/components/Button';
 import CompletedGroup from './Group/CompletedGroup';
 import useClientCookie from '@/app/hooks/useClientCookie';
 import { USER } from '@/app/constants';
+import useAccounts from '@/app/hooks/useAccounts';
+import Label from '@/app/components/Label';
+import Select from '@/app/components/Select';
 
 export default function CsvUpload() {
 	const [activeElement, setActiveElement] = useState<number | undefined>();
@@ -22,13 +30,13 @@ export default function CsvUpload() {
 		FindGroupsData | false | undefined
 	>(undefined);
 	const [userData] = useClientCookie<UserData>(USER);
+	const { accounts, getAccountByName } = useAccounts();
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
 	const completed =
 		groupsData !== undefined
 			? groupsData.groups.filter(({ group }) => group.name !== false)
 			: [];
-
 	// Check for CSV data in local storage
 	useEffect(() => {
 		if (!groupsData && previousData === undefined) {
@@ -50,9 +58,11 @@ export default function CsvUpload() {
 				return;
 			}
 
+			const accountUid = getAccountByName(formData.account)?.uid;
 			const parsedData: FindGroupsData | boolean = await parseCsv(
 				fileData,
 				userData,
+				accountUid,
 			);
 
 			if (typeof parsedData !== 'boolean') setCSVData(parsedData);
@@ -96,6 +106,13 @@ export default function CsvUpload() {
 							type="file"
 							{...register('csvfile', { required: true })}
 						/>
+						<Label className="join-item" htmlFor="account">
+							Account
+							<Select
+								options={accounts.map((account) => account.name)}
+								{...register('account')}
+							/>
+						</Label>
 						<button
 							type="submit"
 							className="btn btn-accent btn-sm join-item"

@@ -35,14 +35,17 @@ const blacklist = [
 export default async function parseCsv(
 	fileData: File,
 	userdata: boolean | UserData | undefined,
+	account_uid: string | undefined,
 ): Promise<FindGroupsData | boolean> {
+	console.log({ account_uid });
 	try {
 		const user_uid =
 			typeof userdata !== 'undefined' || typeof userdata !== 'boolean'
 				? (userdata as UserData).uid
 				: false;
 
-		if (user_uid === false) return new Promise((_, reject) => reject(false));
+		if (user_uid === false || !account_uid)
+			return new Promise((_, reject) => reject(false));
 
 		const parsedData = await fauxAsync(fileData);
 		const formattedData = parsedData.map((d: string[]) => {
@@ -70,6 +73,7 @@ export default async function parseCsv(
 			}
 
 			return {
+				account_uid,
 				amount,
 				category: '',
 				created: '',
