@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
 import useCategories from '@/app/hooks/useCategories';
@@ -30,10 +30,11 @@ export default function CreateGroup({
 		formState: { errors },
 		handleSubmit,
 		register,
+		setValue,
 		watch,
 	} = useForm<GroupData>({
 		defaultValues: {
-			account_uid: group.account_uid,
+			account_uid: undefined,
 			description: group.description,
 			name: '',
 			notes: group.notes,
@@ -44,6 +45,14 @@ export default function CreateGroup({
 		},
 	});
 	const watchRecurring = watch('recurring');
+
+	// The options are pulled from a cookie, and react-hook-form has problems setting a default value
+	// because of it
+	React.useEffect(() => {
+		if (group.account_uid && options.length) {
+			setValue('account_uid', group.account_uid);
+		}
+	}, [group.account_uid, options, setValue]);
 
 	function handleCreateGroup(formData: GroupData) {
 		if (Object.keys(errors).length === 0) {

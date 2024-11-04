@@ -12,7 +12,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			text: 'grow font-normal',
 		};
 		const classes = [typeClasses[type], className].join(' ');
-		console.log({ rest });
+
 		return (
 			<input
 				className={classes}
