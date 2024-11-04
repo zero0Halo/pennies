@@ -14,10 +14,20 @@ export default function useAccounts() {
 	const defaultAccount = accounts.find(
 		(account) => account.is_default === true,
 	);
+	const options = accounts.map((account) => ({
+		name: account.name,
+		value: account.uid,
+	}));
 	const getAccountByName = (name: string) =>
 		accounts.find((account) => account.name === name);
 	const getAccountByUid = (uid: string) =>
 		accounts.find((account) => account.uid === uid);
 
-	return { accounts, defaultAccount, getAccountByName, getAccountByUid };
+	return {
+		accounts,
+		defaultAccount,
+		getAccountByName,
+		getAccountByUid,
+		options,
+	};
 }

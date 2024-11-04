@@ -1,14 +1,15 @@
 import type React from 'react';
 import { useForm } from 'react-hook-form';
 import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
+import useCategories from '@/app/hooks/useCategories';
 import { TransactionsTable } from '../TransactionsTable';
 import Button from '@/app/components/Button';
-import Label from '../../../../components/Label';
-import Input from '../../../../components/Input';
-import Select from '../../../../components/Select';
+import Label from '@/app/components/Label';
+import Input from '@/app/components/Input';
+import Select from '@/app/components/Select';
 
-import useCategories from '@/app/hooks/useCategories';
 import { CSV_UPLOAD } from '@/app/constants';
+import useAccounts from '@/app/hooks/useAccounts';
 
 interface CreateGroupProps {
 	group: GroupData;
@@ -24,6 +25,7 @@ export default function CreateGroup({
 	transactions,
 }: CreateGroupProps) {
 	const { categories } = useCategories();
+	const { options } = useAccounts();
 	const {
 		formState: { errors },
 		handleSubmit,
@@ -31,6 +33,7 @@ export default function CreateGroup({
 		watch,
 	} = useForm<GroupData>({
 		defaultValues: {
+			account_uid: group.account_uid,
 			description: group.description,
 			name: '',
 			notes: group.notes,
@@ -98,6 +101,14 @@ export default function CreateGroup({
 						className={errors?.name ? 'input-error' : ''}
 						type="text"
 						{...register('name', { required: true })}
+					/>
+				</Label>
+
+				<Label htmlFor="account">
+					Account
+					<Select
+						options={options}
+						{...register('account_uid', { required: true })}
 					/>
 				</Label>
 

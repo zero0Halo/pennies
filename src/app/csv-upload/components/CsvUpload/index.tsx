@@ -2,12 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import type {
-	UserData,
-	CsvUploadData,
-	FindGroupsData,
-	AccountData,
-} from '@/app/types';
+import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
@@ -30,7 +25,7 @@ export default function CsvUpload() {
 		FindGroupsData | false | undefined
 	>(undefined);
 	const [userData] = useClientCookie<UserData>(USER);
-	const { accounts, getAccountByName } = useAccounts();
+	const { options, getAccountByUid } = useAccounts();
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
 	const completed =
@@ -58,7 +53,7 @@ export default function CsvUpload() {
 				return;
 			}
 
-			const accountUid = getAccountByName(formData.account)?.uid;
+			const accountUid = formData.account;
 			const parsedData: FindGroupsData | boolean = await parseCsv(
 				fileData,
 				userData,
@@ -108,10 +103,7 @@ export default function CsvUpload() {
 						/>
 						<Label className="join-item" htmlFor="account">
 							Account
-							<Select
-								options={accounts.map((account) => account.name)}
-								{...register('account')}
-							/>
+							<Select options={options} {...register('account')} />
 						</Label>
 						<button
 							type="submit"
