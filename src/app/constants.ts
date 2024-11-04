@@ -1,38 +1,34 @@
+export const ACCOUNTS = 'accounts';
 export const BIWEEKLY = 'BiWeekly';
-export const MONTHLY = 'Monthly';
-export const NONE = 'none';
-export const NOT_RECURRING = 'notRecurring';
-export const POSSIBLY_RECURRING = 'possiblyRecurring';
-export const RECURRING = 'recurring';
-export const WEEKLY = 'Weekly';
-// Account Types
+export const CAR = 'Car';
 export const CHECKING = 'Checking';
 export const CREDIT_CARD = 'Credit Card';
-export const INVESTMENT = 'Investment';
-export const SAVINGS = 'Savings';
-
-export const USERS = 'users';
-export const USER = 'user';
-export const ACCOUNTS = 'accounts';
-export const TRANSACTIONS = 'transactions';
-
-export const IS_LOGGED_IN = 'isLoggedIn';
-
-export const EDIT = 'edit';
 export const DELETE = 'delete';
-
-export const CAR = 'Car';
+export const EDIT = 'edit';
 export const FAST_FOOD = 'Fast food';
 export const FOOD_DELIVERY = 'Food delivery';
 export const GIFT = 'Gift';
 export const GROCERIES = 'Groceries';
 export const HEALTH = 'Health';
 export const INCOME = 'Income';
+export const INVESTMENT = 'Investment';
+export const IS_LOGGED_IN = 'isLoggedIn';
 export const KIDS = 'Kids';
+export const MONTHLY = 'Monthly';
 export const MORTGAGE = 'Mortgage';
+export const NONE = 'none';
+export const NOT_RECURRING = 'notRecurring';
 export const ONLINE_SUBSCRIPTION = 'Online subscription';
+export const POSSIBLY_RECURRING = 'possiblyRecurring';
+export const RECURRING = 'recurring';
+export const SAVINGS = 'Savings';
+export const TRANSACTIONS = 'transactions';
 export const TRANSFER = 'Transfer';
+export const USER = 'user';
+export const USERS = 'users';
 export const UTILITY = 'Utility';
+export const WEEKLY = 'Weekly';
+export const GROUPS = 'groups';
 
 // Arrays of options
 export const accountTypes = [CHECKING, CREDIT_CARD, INVESTMENT, SAVINGS];
