@@ -56,9 +56,9 @@ export default function CreateGroup({
 
 	function handleCreateGroup(formData: GroupData) {
 		if (Object.keys(errors).length === 0) {
+			// Get the data ready for the payload
 			const date = new Date();
 			const isoDate = date.toISOString();
-			const updatedGroup: GroupData = { ...group, ...formData };
 			const updatedTransactions: TransactionData[] = transactions.map(
 				(transaction) => ({
 					...transaction,
@@ -67,10 +67,13 @@ export default function CreateGroup({
 					updated: isoDate,
 				}),
 			);
-
-			updatedGroup.prime = updatedTransactions[0].uid;
-			updatedGroup.created = isoDate;
-			updatedGroup.updated = isoDate;
+			const updatedGroup: GroupData = {
+				...group,
+				...formData,
+				created: isoDate,
+				prime: updatedTransactions[0].uid,
+				updated: isoDate,
+			};
 
 			setCSVData((state) => {
 				if (state) {
