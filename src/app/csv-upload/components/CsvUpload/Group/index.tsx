@@ -1,7 +1,7 @@
 import type React from 'react';
 import { TransactionsTable } from '../TransactionsTable';
 import type { FindGroupsData, GroupsData } from '@/app/types';
-import CreateGroup from './CreateGroup';
+import GroupCreate from './GroupCreate';
 import Button from '@/app/components/Button';
 
 interface GroupProps {
@@ -24,7 +24,7 @@ export default function Group({
 	return (
 		<div className="p-4 bg-slate-100 rounded-xl mb-4">
 			{isActive && (
-				<CreateGroup
+				<GroupCreate
 					group={group}
 					setActiveElement={setActiveElement}
 					setCSVData={setCSVData}

@@ -8,7 +8,7 @@ import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
 import { TransactionsTable } from './TransactionsTable';
 import Button from '@/app/components/Button';
-import CompletedGroup from './Group/CompletedGroup';
+import CompletedGroup from './Group/GroupCompleted';
 import useClientCookie from '@/app/hooks/useClientCookie';
 import { USER } from '@/app/constants';
 import useAccounts from '@/app/hooks/useAccounts';

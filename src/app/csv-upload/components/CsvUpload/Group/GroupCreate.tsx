@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
+import useAccounts from '@/app/hooks/useAccounts';
 import useCategories from '@/app/hooks/useCategories';
 import { TransactionsTable } from '../TransactionsTable';
 import Button from '@/app/components/Button';
@@ -9,21 +10,20 @@ import Input from '@/app/components/Input';
 import Select from '@/app/components/Select';
 
 import { CSV_UPLOAD } from '@/app/constants';
-import useAccounts from '@/app/hooks/useAccounts';
 
-interface CreateGroupProps {
+interface GroupCreateProps {
 	group: GroupData;
 	setActiveElement: React.Dispatch<React.SetStateAction<number | undefined>>;
 	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	transactions: TransactionData[];
 }
 
-export default function CreateGroup({
+export default function GroupCreate({
 	group,
 	setActiveElement,
 	setCSVData,
 	transactions,
-}: CreateGroupProps) {
+}: GroupCreateProps) {
 	const { categories } = useCategories();
 	const { options } = useAccounts();
 	const {

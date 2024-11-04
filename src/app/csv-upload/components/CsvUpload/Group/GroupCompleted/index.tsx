@@ -3,8 +3,9 @@ import type { GroupsData } from '@/app/types';
 import Badge from './Badge';
 import Field from './Field';
 import { TransactionsTable } from '../../TransactionsTable';
+import useAccounts from '@/app/hooks/useAccounts';
 
-interface CompletedGroupProps {
+interface GroupCompletedProps {
 	groupsData: GroupsData;
 	index: number;
 }
@@ -17,10 +18,11 @@ function classes(alt: boolean) {
 	return classes.join(' ');
 }
 
-export default function CompletedGroup({
+export default function GroupCompleted({
 	groupsData: { group, transactions },
 	index,
-}: CompletedGroupProps) {
+}: GroupCompletedProps) {
+	const { getAccountByUid } = useAccounts();
 	const alt: boolean = index % 2 !== 0;
 
 	return (
@@ -40,7 +42,21 @@ export default function CompletedGroup({
 			</div>
 
 			<Field alt={alt} label="Description" value={group.description} />
-			<Field alt={alt} label="Category" value={group.category} />
+
+			<div className="join join-horizontal mb-2 w-full">
+				<Field
+					alt={alt}
+					className="join-item !mb-0 mr-1 w-1/2"
+					label="Account"
+					value={getAccountByUid(group.account_uid)?.name ?? ''}
+				/>
+				<Field
+					alt={alt}
+					className="join-item w-1/2"
+					label="Category"
+					value={group.category}
+				/>
+			</div>
 			<Field alt={alt} label="Terms" value={group.terms} />
 			<Field alt={alt} label="Site Url" value={group.siteurl} />
 			<Field alt={alt} label="Notes" value={group.notes} />
