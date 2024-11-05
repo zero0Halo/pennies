@@ -80,7 +80,7 @@ export interface TransactionData {
 	description: string;
 	group_uid: string;
 	prime: boolean;
-	terms: string[];
+	terms: string[] | string;
 	timestamp: string;
 	uid: string;
 	updated: string;

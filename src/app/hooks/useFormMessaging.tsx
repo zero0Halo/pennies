@@ -17,7 +17,13 @@ function FormMessaging({
 		<>
 			{error && error.length > 0 && (
 				<div className="alert alert-error my-6 text-white font-bold">
-					<span>X</span>
+					<button
+						className="btn btn-xs text-sm"
+						onClick={() => setClose(true)}
+						type="button"
+					>
+						X
+					</button>
 					<span>{error}</span>
 				</div>
 			)}

@@ -9,9 +9,8 @@ import Label from '@/app/components/Label';
 import Input from '@/app/components/Input';
 import Select from '@/app/components/Select';
 import formatPayload from './scripts/formatPayload';
-
-import { CSV_UPLOAD } from '@/app/constants';
 import updateState from './scripts/updateState';
+import { CSV_UPLOAD } from '@/app/constants';
 import apiCall from '@/app/utils/apiCall';
 import disabledClass from '@/app/utils/disabledClass';
 
@@ -101,7 +100,7 @@ export default function GroupCreate({
 			});
 		}
 	}
-	console.log({ loading });
+
 	return (
 		<div
 			className={`bg-secondary pt-1 p-8 rounded-lg relative${loading ? disabledClass : ''}`}

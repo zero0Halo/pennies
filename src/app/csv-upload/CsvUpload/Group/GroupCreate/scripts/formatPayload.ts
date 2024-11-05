@@ -18,6 +18,9 @@ export default function formatPayload({
 			...transaction,
 			category: formData.category,
 			created: isoDate,
+			terms: Array.isArray(transaction.terms)
+				? transaction.terms
+				: transaction.terms.split(', '),
 			updated: isoDate,
 		}),
 	);
@@ -26,6 +29,9 @@ export default function formatPayload({
 		...formData,
 		created: isoDate,
 		prime: updatedTransactions[0].uid,
+		terms: Array.isArray(formData.terms)
+			? formData.terms
+			: formData.terms.split(',').map((term) => term.trim()),
 		updated: isoDate,
 	};
 

@@ -18,14 +18,13 @@ import useFormMessaging from '@/app/hooks/useFormMessaging';
 
 export default function CsvUpload() {
 	const [activeElement, setActiveElement] = useState<number | undefined>();
-	const { props, setSuccess, setError, FormMessaging } = useFormMessaging();
-	// const [error, setError] = useState<string | null>();
 	const [groupsData, setCSVData] = useState<FindGroupsData | undefined>(
 		undefined,
 	);
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
 	>(undefined);
+	const { props, setSuccess, setError, FormMessaging } = useFormMessaging();
 	const [userData] = useClientCookie<UserData>(USER);
 	const { options } = useAccounts();
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
@@ -79,18 +78,20 @@ export default function CsvUpload() {
 				<div className="alert bg-slate-200 shadow font-bold">
 					<div>A previous session was detected. Would you like to load it?</div>
 
-					<Button
-						className="btn-error join-item"
-						onClick={() => setPreviousData(false)}
-					>
-						No
-					</Button>
-					<Button
-						className="btn-success join-item"
-						onClick={() => setCSVData(previousData)}
-					>
-						Yes
-					</Button>
+					<div className="join join-horizontal">
+						<Button
+							className="btn-error join-item mr-1"
+							onClick={() => setPreviousData(false)}
+						>
+							No
+						</Button>
+						<Button
+							className="btn-success join-item"
+							onClick={() => setCSVData(previousData)}
+						>
+							Yes
+						</Button>
+					</div>
 				</div>
 			)}
 
