@@ -17,7 +17,7 @@ function zebra(index: number, transaction: TransactionData) {
 	return transaction.prime ? 'bg-primary' : zebraColor;
 }
 
-export function TransactionsTable({
+export default function TransactionsTable({
 	className = '',
 	tableClassName = '',
 	transactions,

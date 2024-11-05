@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
 import useAccounts from '@/app/hooks/useAccounts';
 import useCategories from '@/app/hooks/useCategories';
-import { TransactionsTable } from '../../TransactionsTable';
+import TransactionsTable from '../../TransactionsTable';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Input from '@/app/components/Input';

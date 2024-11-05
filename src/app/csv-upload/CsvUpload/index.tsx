@@ -6,7 +6,7 @@ import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
 import parseCsv from './scripts/parseCsv';
 import Stats from './Stats';
-import { TransactionsTable } from './TransactionsTable';
+import TransactionsTable from './TransactionsTable';
 import Button from '@/app/components/Button';
 import CompletedGroup from './Group/GroupCompleted';
 import useClientCookie from '@/app/hooks/useClientCookie';
