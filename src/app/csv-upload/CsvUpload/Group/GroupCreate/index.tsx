@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
 import useAccounts from '@/app/hooks/useAccounts';
 import useCategories from '@/app/hooks/useCategories';
+import useLoading from '@/app/hooks/useLoading';
 import TransactionsTable from '../../TransactionsTable';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
@@ -12,7 +13,6 @@ import formatPayload from './scripts/formatPayload';
 import updateState from './scripts/updateState';
 import { CSV_UPLOAD } from '@/app/constants';
 import apiCall from '@/app/utils/apiCall';
-import disabledClass from '@/app/utils/disabledClass';
 
 interface GroupCreateProps {
 	group: GroupData;
@@ -31,9 +31,9 @@ export default function GroupCreate({
 	setSuccess,
 	transactions,
 }: GroupCreateProps) {
-	const [loading, setLoading] = useState(false);
-	const { categories } = useCategories();
 	const { options } = useAccounts();
+	const { categories } = useCategories();
+	const { props, setLoading, Loading } = useLoading();
 	const {
 		formState: { errors },
 		handleSubmit,
@@ -63,9 +63,9 @@ export default function GroupCreate({
 	}, [group.account_uid, options, setValue]);
 
 	async function handleCreateGroup(formData: GroupData) {
-		setLoading(true);
-
 		if (Object.keys(errors).length === 0) {
+			setLoading(true);
+
 			const { updatedGroup, updatedTransactions } = formatPayload({
 				formData,
 				group,
@@ -102,9 +102,9 @@ export default function GroupCreate({
 	}
 
 	return (
-		<div
-			className={`bg-secondary pt-1 p-8 rounded-lg relative${loading ? disabledClass : ''}`}
-		>
+		<div className={'bg-secondary pt-1 p-8 rounded-lg relative'}>
+			<Loading {...props} />
+
 			<h3>Create Group</h3>
 
 			<form className="form-control" onSubmit={handleSubmit(handleCreateGroup)}>

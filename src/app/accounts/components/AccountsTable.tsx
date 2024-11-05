@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { AccountDBData, ActiveRowData } from '../../types';
 import AccountRow from './AccountRow';
 import { DELETE, EDIT } from '@/app/constants';
-import disabledClass from '@/app/utils/disabledClass';
+import useLoading from '@/app/hooks/useLoading';
 
 interface AccountsTableProps {
 	accountsData: AccountDBData[];
@@ -19,11 +19,11 @@ export default function AccountsTable({
 		mode: false,
 		index: false,
 	});
+	const { Loading } = useLoading();
 
 	return (
-		<div
-			className={`overflow-x-auto relative${creatingAccount ? disabledClass : ''}`}
-		>
+		<div className={'overflow-x-auto relative'}>
+			{creatingAccount && <Loading hideSpinner />}
 			<table className="table border-2">
 				<thead>
 					<tr className="bg-neutral">
