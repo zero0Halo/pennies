@@ -3,13 +3,15 @@ import { useForm } from 'react-hook-form';
 import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
 import useAccounts from '@/app/hooks/useAccounts';
 import useCategories from '@/app/hooks/useCategories';
-import { TransactionsTable } from '../TransactionsTable';
+import { TransactionsTable } from '../../TransactionsTable';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Input from '@/app/components/Input';
 import Select from '@/app/components/Select';
+import formatPayload from './scripts/formatPayload';
 
 import { CSV_UPLOAD } from '@/app/constants';
+import updateState from './scripts/updateState';
 
 interface GroupCreateProps {
 	group: GroupData;
@@ -57,46 +59,19 @@ export default function GroupCreate({
 	function handleCreateGroup(formData: GroupData) {
 		if (Object.keys(errors).length === 0) {
 			// Get the data ready for the payload
-			const date = new Date();
-			const isoDate = date.toISOString();
-			const updatedTransactions: TransactionData[] = transactions.map(
-				(transaction) => ({
-					...transaction,
-					category: formData.category,
-					created: isoDate,
-					updated: isoDate,
-				}),
-			);
-			const updatedGroup: GroupData = {
-				...group,
-				...formData,
-				created: isoDate,
-				prime: updatedTransactions[0].uid,
-				updated: isoDate,
-			};
+			const { updatedGroup, updatedTransactions } = formatPayload({
+				formData,
+				group,
+				transactions,
+			});
 
 			setCSVData((state) => {
-				if (state) {
-					const newState = {
-						groups: [...state.groups],
-						singletons: [...state.singletons],
-						total: state.total,
-					};
-					const groupIndex = newState?.groups.findIndex(
-						({ group }) => group.uid === updatedGroup.uid,
-					);
-
-					newState.groups.splice(groupIndex, 1, {
-						group: updatedGroup,
-						transactions: updatedTransactions,
-					});
-
-					localStorage.setItem(CSV_UPLOAD, JSON.stringify(newState));
-
-					return newState;
-				}
-
-				return state;
+				const updatedState = updateState({
+					state,
+					updatedGroup,
+					updatedTransactions,
+				});
+				return updatedState;
 			});
 			setActiveElement(undefined);
 		}

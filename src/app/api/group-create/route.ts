@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 		const cookieStore = cookies();
 		const supabase = createServerClient(cookieStore);
 		const { group, transactions } = await req.json();
-		const { user_uid } = group;
+		const { user_uid, terms } = group;
 
 		// Get the prime values from groups table
 		const { data: primeSelectData, error: primeSelectError } = await supabase
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
 
 		const { error: insertGroupError } = await supabase
 			.from(GROUPS)
-			.insert({ ...group });
+			.insert({ ...group, terms: terms.split(', ') });
 
 		if (insertGroupError)
 			return responseFactory('Error Creating Group', insertGroupError);
