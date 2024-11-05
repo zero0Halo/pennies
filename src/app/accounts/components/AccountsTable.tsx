@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { AccountDBData, ActiveRowData } from '../../types';
 import AccountRow from './AccountRow';
 import { DELETE, EDIT } from '@/app/constants';
+import disabledClass from '@/app/utils/disabledClass';
 
 interface AccountsTableProps {
 	accountsData: AccountDBData[];
@@ -19,12 +20,9 @@ export default function AccountsTable({
 		index: false,
 	});
 
-	const disabled =
-		" after:content[''] after:absolute after:w-full after:h-full after:z-50 after:bg-white after:opacity-60 after:top-0 after:left-0";
-
 	return (
 		<div
-			className={`overflow-x-auto relative${creatingAccount ? disabled : ''}`}
+			className={`overflow-x-auto relative${creatingAccount ? disabledClass : ''}`}
 		>
 			<table className="table border-2">
 				<thead>

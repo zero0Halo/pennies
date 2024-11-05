@@ -9,8 +9,6 @@ export default async function apiCall(
 	endpoint: string,
 	settings: SettingsData,
 ) {
-	settings.onError('');
-
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
@@ -34,7 +32,9 @@ export default async function apiCall(
 				window.location.href = settings.reload as string;
 			}, 2000);
 		}
-	} else {
-		settings.onError(msg);
+
+		return new Promise((resolve) => resolve(msg));
 	}
+	settings.onError(msg);
+	return new Promise((_, reject) => reject(msg));
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
 import useAccounts from '@/app/hooks/useAccounts';
@@ -12,11 +12,15 @@ import formatPayload from './scripts/formatPayload';
 
 import { CSV_UPLOAD } from '@/app/constants';
 import updateState from './scripts/updateState';
+import apiCall from '@/app/utils/apiCall';
+import disabledClass from '@/app/utils/disabledClass';
 
 interface GroupCreateProps {
 	group: GroupData;
 	setActiveElement: React.Dispatch<React.SetStateAction<number | undefined>>;
 	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setError: (arg: string) => void;
+	setSuccess: (arg: string) => void;
 	transactions: TransactionData[];
 }
 
@@ -24,8 +28,11 @@ export default function GroupCreate({
 	group,
 	setActiveElement,
 	setCSVData,
+	setError,
+	setSuccess,
 	transactions,
 }: GroupCreateProps) {
+	const [loading, setLoading] = useState(false);
 	const { categories } = useCategories();
 	const { options } = useAccounts();
 	const {
@@ -56,7 +63,9 @@ export default function GroupCreate({
 		}
 	}, [group.account_uid, options, setValue]);
 
-	function handleCreateGroup(formData: GroupData) {
+	async function handleCreateGroup(formData: GroupData) {
+		setLoading(true);
+
 		if (Object.keys(errors).length === 0) {
 			const { updatedGroup, updatedTransactions } = formatPayload({
 				formData,
@@ -64,24 +73,39 @@ export default function GroupCreate({
 				transactions,
 			});
 
-			setCSVData((state) => {
-				const updatedState = updateState({
-					state,
-					updatedGroup,
-					updatedTransactions,
-				});
+			await apiCall('/api/group-create', {
+				onError: (msg) => {
+					setLoading(false);
+					setError(msg);
+				},
+				onSuccess: (msg) => {
+					setLoading(false);
+					setSuccess(msg);
+					setCSVData((state) => {
+						const updatedState = updateState({
+							state,
+							updatedGroup,
+							updatedTransactions,
+						});
 
-				localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
+						localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
 
-				return updatedState;
+						return updatedState;
+					});
+					setActiveElement(undefined);
+				},
+				payload: {
+					group: updatedGroup,
+					transactions: updatedTransactions,
+				},
 			});
-
-			setActiveElement(undefined);
 		}
 	}
-
+	console.log({ loading });
 	return (
-		<div className="bg-secondary pt-1 p-8 rounded-lg">
+		<div
+			className={`bg-secondary pt-1 p-8 rounded-lg relative${loading ? disabledClass : ''}`}
+		>
 			<h3>Create Group</h3>
 
 			<form className="form-control" onSubmit={handleSubmit(handleCreateGroup)}>

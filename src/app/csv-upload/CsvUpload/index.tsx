@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm, useFormContext } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
@@ -74,8 +74,6 @@ export default function CsvUpload() {
 
 	return (
 		<section className="px-4">
-			<FormMessaging {...props} />
-
 			{/* Show previous data warning */}
 			{previousData && !groupsData && (
 				<div className="alert bg-slate-200 shadow font-bold">
@@ -123,7 +121,12 @@ export default function CsvUpload() {
 			)}
 
 			{/* Show CSV stats */}
-			{groupsData && <Stats groupsData={groupsData} />}
+			{groupsData && (
+				<>
+					<Stats groupsData={groupsData} />
+					<FormMessaging {...props} />
+				</>
+			)}
 
 			{/* Show groups */}
 			{groupsData && groupsData.groups.length > 0 && (
@@ -153,6 +156,8 @@ export default function CsvUpload() {
 											key={groupData.group.uid}
 											setActiveElement={setActiveElement}
 											setCSVData={setCSVData}
+											setError={setError}
+											setSuccess={setSuccess}
 										/>
 									),
 							)}
