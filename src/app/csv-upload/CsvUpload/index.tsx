@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import Group from './Group';
@@ -14,10 +14,12 @@ import { USER } from '@/app/constants';
 import useAccounts from '@/app/hooks/useAccounts';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
+import useFormMessaging from '@/app/hooks/useFormMessaging';
 
 export default function CsvUpload() {
 	const [activeElement, setActiveElement] = useState<number | undefined>();
-	const [error, setError] = useState<string | null>();
+	const { props, setSuccess, setError, FormMessaging } = useFormMessaging();
+	// const [error, setError] = useState<string | null>();
 	const [groupsData, setCSVData] = useState<FindGroupsData | undefined>(
 		undefined,
 	);
@@ -25,13 +27,14 @@ export default function CsvUpload() {
 		FindGroupsData | false | undefined
 	>(undefined);
 	const [userData] = useClientCookie<UserData>(USER);
-	const { options, getAccountByUid } = useAccounts();
+	const { options } = useAccounts();
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
 	const completed =
 		groupsData !== undefined
 			? groupsData.groups.filter(({ group }) => group.name !== false)
 			: [];
+
 	// Check for CSV data in local storage
 	useEffect(() => {
 		if (!groupsData && previousData === undefined) {
@@ -60,7 +63,10 @@ export default function CsvUpload() {
 				accountUid,
 			);
 
-			if (typeof parsedData !== 'boolean') setCSVData(parsedData);
+			if (typeof parsedData !== 'boolean') {
+				setSuccess('CSV Data Parsed!');
+				setCSVData(parsedData);
+			}
 		} catch (err) {
 			setError((err as Error).message);
 		}
@@ -68,6 +74,8 @@ export default function CsvUpload() {
 
 	return (
 		<section className="px-4">
+			<FormMessaging {...props} />
+
 			{/* Show previous data warning */}
 			{previousData && !groupsData && (
 				<div className="alert bg-slate-200 shadow font-bold">
@@ -90,32 +98,28 @@ export default function CsvUpload() {
 
 			{/* Show CSV file uploader */}
 			{!groupsData && previousData === false && (
-				<>
-					<form
-						className="form-control py-4 join join-horizontal"
-						onSubmit={handleSubmit(handleCsvUpload)}
+				<form
+					className="form-control py-4 join join-horizontal"
+					onSubmit={handleSubmit(handleCsvUpload)}
+				>
+					<input
+						accept=".csv"
+						className="file-input file-input-bordered file-input-sm file-input-primary join-item"
+						type="file"
+						{...register('csvfile', { required: true })}
+					/>
+					<Label className="join-item" htmlFor="account">
+						Account
+						<Select options={options} {...register('account')} />
+					</Label>
+					<button
+						type="submit"
+						className="btn btn-accent btn-sm join-item"
+						disabled={noFileChosen}
 					>
-						<input
-							accept=".csv"
-							className="file-input file-input-bordered file-input-sm file-input-primary join-item"
-							type="file"
-							{...register('csvfile', { required: true })}
-						/>
-						<Label className="join-item" htmlFor="account">
-							Account
-							<Select options={options} {...register('account')} />
-						</Label>
-						<button
-							type="submit"
-							className="btn btn-accent btn-sm join-item"
-							disabled={noFileChosen}
-						>
-							Upload
-						</button>
-					</form>
-
-					{error && <div className="alert alert-error">{error}</div>}
-				</>
+						Upload
+					</button>
+				</form>
 			)}
 
 			{/* Show CSV stats */}

@@ -58,7 +58,6 @@ export default function GroupCreate({
 
 	function handleCreateGroup(formData: GroupData) {
 		if (Object.keys(errors).length === 0) {
-			// Get the data ready for the payload
 			const { updatedGroup, updatedTransactions } = formatPayload({
 				formData,
 				group,
@@ -71,8 +70,12 @@ export default function GroupCreate({
 					updatedGroup,
 					updatedTransactions,
 				});
+
+				localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
+
 				return updatedState;
 			});
+
 			setActiveElement(undefined);
 		}
 	}
