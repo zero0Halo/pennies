@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface FormMessagingProps {
 	close: boolean;
@@ -55,6 +55,27 @@ export default function useFormMessaging() {
 	const [error, _setError] = useState('');
 	const [success, _setSuccess] = useState('');
 	const [close, setClose] = useState(false);
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+	useEffect(() => {
+		if (success) {
+			// Clear any existing timer
+			if (timerRef.current) clearTimeout(timerRef.current);
+
+			// Set a new timer
+			timerRef.current = setTimeout(() => {
+				setError('');
+				setClose(false);
+				setSuccess('');
+				timerRef.current = null; // Reset ref
+			}, 3000);
+
+			// Cleanup on unmount
+			return () => {
+				if (timerRef.current) clearTimeout(timerRef.current);
+			};
+		}
+	}, [success]);
 
 	const setError = (msg: string) => {
 		_setSuccess('');

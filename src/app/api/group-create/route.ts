@@ -1,4 +1,4 @@
-// src/app/api/account-create/route.ts
+// src/app/api/group-create/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
@@ -51,8 +51,6 @@ export async function POST(req: Request) {
 
 		// Create Transactions
 		// --------------------------------------------------------------------------------------------
-
-		console.log({ transactions });
 		const { data, error: upsertTransactionsError } = await supabase
 			.from(TRANSACTIONS)
 			.upsert(transactions, {
