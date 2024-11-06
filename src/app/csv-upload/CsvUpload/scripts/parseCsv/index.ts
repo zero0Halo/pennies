@@ -82,6 +82,7 @@ export default async function parseCsv(
 				prime: false,
 				terms,
 				timestamp,
+				transfer_uid: undefined,
 				updated: '',
 				uid,
 				user_uid,

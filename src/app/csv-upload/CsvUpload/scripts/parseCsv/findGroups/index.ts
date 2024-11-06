@@ -43,6 +43,7 @@ export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 				siteurl: '',
 				still_recurring: false,
 				terms: transaction.terms,
+				transfer_uid: undefined,
 				uid: groupUid,
 				updated: '',
 				user_uid: transaction.user_uid,

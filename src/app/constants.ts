@@ -24,6 +24,7 @@ export const RECURRING = 'recurring';
 export const SAVINGS = 'Savings';
 export const TRANSACTIONS = 'transactions';
 export const TRANSFER = 'Transfer';
+export const TRANSFERS = 'transfers';
 export const USER = 'user';
 export const USERS = 'users';
 export const UTILITY = 'Utility';

@@ -48,6 +48,7 @@ export type GroupData = {
 	siteurl: string;
 	still_recurring: boolean | string;
 	terms: string | string[];
+	transfer_uid?: string;
 	uid: string;
 	updated: string;
 	user_uid: string;
@@ -93,6 +94,18 @@ export interface TransactionData {
 	prime: boolean;
 	terms: string[] | string;
 	timestamp: string;
+	transfer_uuid?: string;
+	uid: string;
+	updated: string;
+	user_uid: string;
+}
+
+export interface TransferData {
+	amount: number;
+	created: string;
+	description: string;
+	from_account_uid: string;
+	to_account_uid: string;
 	uid: string;
 	updated: string;
 	user_uid: string;

@@ -4,6 +4,7 @@ import Badge from './Badge';
 import Field from './Field';
 import TransactionsTable from '../../TransactionsTable';
 import useAccounts from '@/app/hooks/useAccounts';
+import { TRANSFER } from '@/app/constants';
 
 interface GroupCompletedProps {
 	groupsData: GroupsData;
@@ -24,6 +25,10 @@ export default function GroupCompleted({
 }: GroupCompletedProps) {
 	const { getAccountByUid } = useAccounts();
 	const alt: boolean = index % 2 !== 0;
+	const categoryText =
+		group.category !== TRANSFER
+			? group.category
+			: `${TRANSFER} to ${getAccountByUid(group.transfer_uid as string)?.name ?? ''}`;
 
 	return (
 		<div className={classes(alt)}>
@@ -54,7 +59,7 @@ export default function GroupCompleted({
 					alt={alt}
 					className="join-item w-1/2"
 					label="Category"
-					value={group.category}
+					value={categoryText}
 				/>
 			</div>
 			<Field alt={alt} label="Terms" value={group.terms} />

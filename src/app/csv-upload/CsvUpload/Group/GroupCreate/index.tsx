@@ -11,8 +11,8 @@ import Input from '@/app/components/Input';
 import Select from '@/app/components/Select';
 import formatPayload from './scripts/formatPayload';
 import updateState from './scripts/updateState';
-import { CSV_UPLOAD } from '@/app/constants';
 import apiCall from '@/app/utils/apiCall';
+import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 
 interface GroupCreateProps {
 	group: GroupData;
@@ -53,6 +53,7 @@ export default function GroupCreate({
 		},
 	});
 	const watchRecurring = watch('recurring');
+	const watchCategory: string = watch('category');
 
 	// The options are pulled from a cookie, and react-hook-form has problems setting a default value
 	// because of it
@@ -155,10 +156,21 @@ export default function GroupCreate({
 					</Label>
 				</div>
 
-				<Label htmlFor="category">
-					Category
-					<Select options={categories} {...register('category')} />
-				</Label>
+				<div className="join join-horizontal mb-4">
+					<Label className="join-item w-1/2" htmlFor="category">
+						Category
+						<Select options={categories} {...register('category')} />
+					</Label>
+
+					<Label className="join-item w-1/2" htmlFor="transfer_uid">
+						Transfer To
+						<Select
+							disabled={watchCategory !== TRANSFER}
+							options={options.filter((g) => g.value !== group.account_uid)}
+							{...register('transfer_uid')}
+						/>
+					</Label>
+				</div>
 
 				<Label htmlFor="siteurl">
 					Site Url

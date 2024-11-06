@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+label:has(select:disabled) {
+  cursor: not-allowed;
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-b2,oklch(var(--b2)/var(--tw-border-opacity)));
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-b2,oklch(var(--b2)/var(--tw-bg-opacity)));
+  color: var(--fallback-bc,oklch(var(--bc)/0.4));
+}
 
 .lds-grid,
 .lds-grid div {
