@@ -5,6 +5,7 @@ import { createServerClient } from '@/utils/supabase/server';
 import responseFactory from '../utils/responseFactory';
 import { GROUPS, TRANSACTIONS } from '@/app/constants';
 import type { TransactionData } from '@/app/types';
+import monthlySumPayload from '../utils/monthlySumPayload';
 
 export async function POST(req: Request) {
 	try {
@@ -12,6 +13,10 @@ export async function POST(req: Request) {
 		const supabase = createServerClient(cookieStore);
 		const { group, transactions } = await req.json();
 		const { user_uid } = group;
+
+		const r = monthlySumPayload(transactions);
+		console.log(r);
+		if (r) return responseFactory('Testing', {}, 200);
 
 		// Get the description values from groups table
 		const { data: descriptionSelectData, error: descriptionSelectError } =
