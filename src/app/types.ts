@@ -53,6 +53,17 @@ export type GroupData = {
 	user_uid: string;
 };
 
+export interface MonthlySumData {
+	account_uid: string;
+	created: string;
+	month_uid_key: string;
+	timestamp: string;
+	uid: string;
+	updated: string;
+	user_uid: string;
+	sum: number;
+}
+
 export type SetEditingFn = (arg: boolean) => void;
 export interface SetGroupNameData {
 	name: string | boolean;

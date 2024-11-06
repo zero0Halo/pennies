@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
 import responseFactory from '../utils/responseFactory';
-import { GROUPS, TRANSACTIONS } from '@/app/constants';
-import type { TransactionData } from '@/app/types';
+import { GROUPS, MONTHLY_SUMS, TRANSACTIONS } from '@/app/constants';
+import type { MonthlySumData, TransactionData } from '@/app/types';
 import monthlySumPayload from '../utils/monthlySumPayload';
 
 export async function POST(req: Request) {
@@ -13,10 +13,6 @@ export async function POST(req: Request) {
 		const supabase = createServerClient(cookieStore);
 		const { group, transactions } = await req.json();
 		const { user_uid } = group;
-
-		const r = monthlySumPayload(transactions);
-		console.log(r);
-		if (r) return responseFactory('Testing', {}, 200);
 
 		// Get the description values from groups table
 		const { data: descriptionSelectData, error: descriptionSelectError } =
@@ -64,6 +60,7 @@ export async function POST(req: Request) {
 			});
 		const upsertTransactionsData = data as TransactionData[] | null;
 
+		// If there is an error with the upsert, roll back the creation of the group
 		if (upsertTransactionsError) {
 			const { error: deleteGroupError } = await supabase
 				.from(GROUPS)
@@ -82,11 +79,76 @@ export async function POST(req: Request) {
 			);
 		}
 
+		// If some transactions weren't inserted then error out
 		if (
 			Array.isArray(upsertTransactionsData) &&
 			upsertTransactionsData.length < transactions.length
 		)
 			responseFactory('Some Transactions Were Identified As Duplicates');
+
+		// Update Month Sums
+		// --------------------------------------------------------------------------------------------
+
+		// Get all the entries in month_sums
+		const { data: selectMonthlySumData, error: selectMonthlySumError } =
+			await supabase
+				.from(MONTHLY_SUMS)
+				.select('*')
+				.eq('user_uid', user_uid)
+				.order('month_uid_key', { ascending: false });
+
+		if (selectMonthlySumError)
+			return responseFactory(
+				'Unable to Retrieve Monthly Sums',
+				selectMonthlySumError,
+			);
+
+		// Generate a payload using this batch of transactions and the sums already recorded in the db
+		const payload: MonthlySumData[] = monthlySumPayload(
+			transactions,
+			selectMonthlySumData,
+		);
+
+		// Upsert the entries in payload
+		const { data: dataNoType, error: upsertMonthlySumsError } = await supabase
+			.from(MONTHLY_SUMS)
+			.upsert(payload, { onConflict: 'month_uid_key' });
+
+		// Type the data correctly because TS is a bitch
+		const upsertMonthlySumsData = dataNoType as MonthlySumData[] | null;
+
+		if (upsertMonthlySumsError)
+			return responseFactory(
+				'Unable to Update Montly Sums',
+				upsertMonthlySumsError,
+			);
+
+		// If all the entries weren't upserted throw an error
+		if (
+			upsertMonthlySumsData &&
+			upsertMonthlySumsData.length !== payload.length
+		) {
+			return responseFactory(
+				'All Updates to Monthly Sums Were Not Processed',
+				upsertMonthlySumsData,
+			);
+		}
+
+		// Get all the entries again so we can put it in a cookie
+		const {
+			data: selectMonthlySumDataCookie,
+			error: selectMonthlySumErrorCookie,
+		} = await supabase
+			.from(MONTHLY_SUMS)
+			.select('*')
+			.eq('user_uid', user_uid)
+			.order('month_uid_key', { ascending: false });
+
+		if (selectMonthlySumError)
+			return responseFactory(
+				'Unable to Retrieve Monthly Sums For Cookie',
+				selectMonthlySumErrorCookie,
+			);
 
 		const response = responseFactory(
 			`Group "${group.name}" Created!`,
@@ -98,6 +160,15 @@ export async function POST(req: Request) {
 			secure: process.env.NODE_ENV === 'production',
 			maxAge: 60 * 60 * 24 * 7, // 1 week
 		});
+
+		response.cookies.set(
+			MONTHLY_SUMS,
+			JSON.stringify(selectMonthlySumDataCookie),
+			{
+				secure: process.env.NODE_ENV === 'production',
+				maxAge: 60 * 60 * 24 * 7, // 1 week
+			},
+		);
 
 		return response;
 	} catch (error: unknown) {

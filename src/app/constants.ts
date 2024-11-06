@@ -29,6 +29,7 @@ export const USERS = 'users';
 export const UTILITY = 'Utility';
 export const WEEKLY = 'Weekly';
 export const GROUPS = 'groups';
+export const MONTHLY_SUMS = 'monthly_sums';
 
 // Arrays of options
 export const accountTypes = [CHECKING, CREDIT_CARD, INVESTMENT, SAVINGS];

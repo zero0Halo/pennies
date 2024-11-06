@@ -1,29 +1,23 @@
-import type { TransactionData } from '@/app/types';
+import type { MonthlySumData, TransactionData } from '@/app/types';
 import { v4 as uuidv4 } from 'uuid';
-
-interface MonthlySumData {
-	created: string;
-	month_uid_key: string;
-	timestamp: string;
-	uid: string;
-	updated: string;
-	user_uid: string;
-	sum: number;
-}
 
 export default function monthlySumPayload(
 	transactions: TransactionData[],
+	selectMonthlySumData: MonthlySumData[],
 ): MonthlySumData[] {
 	const payloadMap = new Map<string, MonthlySumData[]>();
+
+	// Format the transactions data into MonthlySumData
 	const payloadArr: MonthlySumData[] = transactions.map(
-		({ amount, timestamp, user_uid }) => {
+		({ account_uid, amount, timestamp, user_uid }) => {
 			const date = new Date(timestamp);
 			const isoDate = new Date().toISOString();
-			const month = date.getMonth();
+			const month = date.getMonth() + 1;
 			const year = date.getFullYear();
-			const month_uid_key = `${month}-${year}-${user_uid}`;
+			const month_uid_key = `${month}-${year}-${user_uid}-${account_uid}`;
 
 			return {
+				account_uid,
 				created: isoDate,
 				month_uid_key,
 				sum: amount,
@@ -35,6 +29,7 @@ export default function monthlySumPayload(
 		},
 	);
 
+	// Group entries by month_uid_key
 	payloadArr.forEach((entry) => {
 		const keyExists = payloadMap.get(entry.month_uid_key);
 		if (!keyExists) {
@@ -44,10 +39,17 @@ export default function monthlySumPayload(
 		}
 	});
 
+	// Return a single entry per unique month_uid_key with their total sum
 	const payload: MonthlySumData[] = Array.from(payloadMap.values()).map(
 		(entries: MonthlySumData[]) => {
-			const sum = entries.reduce((acc, current) => acc + current.sum, 0);
-			return { ...entries[0], sum };
+			const prime = { ...entries[0] };
+			const currentSum =
+				selectMonthlySumData.find(
+					(current) => current.month_uid_key === prime.month_uid_key,
+				)?.sum ?? 0;
+			const sum =
+				currentSum + entries.reduce((acc, current) => acc + current.sum, 0);
+			return { ...prime, sum };
 		},
 	);
 
