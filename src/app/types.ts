@@ -1,3 +1,5 @@
+import type { NextResponse } from 'next/server';
+
 export type AccountData = {
 	is_default: boolean;
 	name: string;
@@ -94,7 +96,7 @@ export interface TransactionData {
 	prime: boolean;
 	terms: string[] | string;
 	timestamp: string;
-	transfer_uuid?: string;
+	transfer_uid?: string;
 	uid: string;
 	updated: string;
 	user_uid: string;
