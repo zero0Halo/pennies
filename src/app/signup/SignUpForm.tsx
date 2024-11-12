@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import type { SignUpData } from '../../types';
+import type { SignUpData } from '../types';
 
 function SignUpForm() {
 	const [success, setSuccess] = useState('');

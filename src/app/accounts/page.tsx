@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import useServerCookie from '../hooks/useServerCookie';
 import { ACCOUNTS, USER } from '@/app/constants';
 import type { UserData } from '@/app/types';
-import Accounts from './components/Accounts';
+import Accounts from './Accounts';
 import { redirect } from 'next/navigation';
 
 async function getAccountsData(userData: UserData) {

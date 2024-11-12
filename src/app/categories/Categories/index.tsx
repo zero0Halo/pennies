@@ -11,25 +11,23 @@ export default function Categories() {
 			: false;
 
 	return (
-		<div>
-			<div className="flex">
-				<div className="w-3/12 pr-4">
-					<h3>Default Categories</h3>
+		<div className="flex">
+			<div className="w-3/12 pr-4">
+				<h3>Default Categories</h3>
 
-					<ul className="list-disc">
-						{defaultCategories.map((category) => (
-							<li className="py-0 my-0" key={category}>
-								{category}
-							</li>
-						))}
-					</ul>
-				</div>
+				<ul className="list-disc">
+					{defaultCategories.map((category) => (
+						<li className="py-0 my-0" key={category}>
+							{category}
+						</li>
+					))}
+				</ul>
+			</div>
 
-				<div className="w-9/12">
-					<h3>Custom Categories</h3>
+			<div className="w-9/12">
+				<h3>Custom Categories</h3>
 
-					<CustomCategories uid={uid} />
-				</div>
+				<CustomCategories uid={uid} />
 			</div>
 		</div>
 	);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { AccountDBData, ActiveRowData } from '../../types';
+import type { AccountDBData, ActiveRowData } from '../../../types';
 import AccountRow from './AccountRow';
 import { DELETE, EDIT } from '@/app/constants';
 import useLoading from '@/app/hooks/useLoading';
