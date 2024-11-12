@@ -4,7 +4,7 @@ import toReturn, { type ReturnData } from '@/app/api/utils/toReturn';
 import type { TransactionData } from '@/app/types';
 import responseFactory from '../../utils/responseFactory';
 
-interface TransactionsUpsertArgs {
+export interface TransactionsUpsertArgs {
 	supabase: SupabaseClient;
 	transactions: TransactionData[];
 }

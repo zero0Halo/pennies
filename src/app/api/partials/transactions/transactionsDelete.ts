@@ -11,16 +11,16 @@ interface TransactionsDeleteArgs {
 
 export default async function transactionsDelete({
 	supabase,
-	data,
+	data: transactionsData,
 }: TransactionsDeleteArgs): Promise<ReturnData> {
-	const { data: transactionsData, error } = await supabase
+	const { data, error } = await supabase
 		.from(TRANSACTIONS)
 		.delete()
 		.in(
 			'uid',
-			data.map((m) => m.uid),
+			transactionsData.map((m) => m.uid),
 		)
-		.eq('user_uid', data[0].user_uid);
+		.eq('user_uid', transactionsData[0].user_uid);
 
 	return toReturn({
 		data,

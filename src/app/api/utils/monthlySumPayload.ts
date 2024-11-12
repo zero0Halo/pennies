@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function monthlySumPayload(
 	transactions: TransactionData[],
-	selectMonthlySumData: MonthlySumData[],
+	sumData: MonthlySumData[],
 ): MonthlySumData[] {
 	const payloadMap = new Map<string, MonthlySumData[]>();
 
@@ -44,9 +44,8 @@ export default function monthlySumPayload(
 		(entries: MonthlySumData[]) => {
 			const prime = { ...entries[0] };
 			const currentSum =
-				selectMonthlySumData.find(
-					(current) => current.month_uid_key === prime.month_uid_key,
-				)?.sum ?? 0;
+				sumData.find((current) => current.month_uid_key === prime.month_uid_key)
+					?.sum ?? 0;
 			const sum =
 				currentSum + entries.reduce((acc, current) => acc + current.sum, 0);
 			return { ...prime, sum };

@@ -3,17 +3,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
 import responseFactory from '../utils/responseFactory';
-import { GROUPS, MONTHLY_SUMS, TRANSACTIONS } from '@/app/constants';
-import type { MonthlySumData, TransactionData } from '@/app/types';
-import monthlySumPayload from '../utils/monthlySumPayload';
-
-import groupsDelete from '../partials/groups/groupsDelete';
-import groupsSelect from '../partials/groups/groupsSelect';
-import groupsExist from '../partials/groups/groupsExist';
-import groupsInsert from '../partials/groups/groupsInsert';
-import transactionsUpsert from '../partials/transactions/transactionsUpsert';
-import upsertRollback from '../partials/upsertRollback';
-import transactionsDelete from '../partials/transactions/transactionsDelete';
+import upsertIsGood from '../utils/upsertIsGood';
+import partialHelper from '../partials/partialsHelper';
 
 export async function POST(req: Request) {
 	try {
@@ -21,133 +12,97 @@ export async function POST(req: Request) {
 		const supabase = createServerClient(cookieStore);
 		const { group, transactions } = await req.json();
 		const { account_uid, user_uid } = group;
-
-		// Get the description values from groups table
-		const { data: descriptionSelectData, error: descriptionSelectError } =
-			await groupsSelect({
-				account_uid,
-				selectFrom: 'description',
-				supabase,
-				user_uid,
-			});
-
-		if (descriptionSelectError) return descriptionSelectError;
-
-		// Check and make sure there isn't a duplicate based on the select data
-		const { error: existsError } = await groupsExist(
-			descriptionSelectData,
-			group,
-		);
-
-		if (existsError) return existsError;
-
-		// Insert the group
-		const { error: groupInsertError } = await groupsInsert({
-			group,
-			supabase,
-		});
-
-		if (groupInsertError) return groupInsertError;
-
-		// Get all the groups
-		const { data: allGroupsData, error: allGroupsError } = await groupsSelect({
+		const {
+			groupsDelete,
+			groupsExist,
+			groupsInsert,
+			groupsSelect,
+			monthlySumsRollback,
+			monthlySumsSelect,
+			monthlySumsUpsert,
+			transactionsDelete,
+			transactionsUpsert,
+		} = partialHelper({
 			account_uid,
 			supabase,
 			user_uid,
 		});
 
-		if (allGroupsError) return allGroupsError;
+		// Get a snapshot of group descriptions
+		const { data: descriptionsSnapshot, error: descriptionsSnapshotError } =
+			await groupsSelect('description');
+		if (descriptionsSnapshotError) return descriptionsSnapshotError;
+
+		// Check and make sure there isn't a duplicate group based on the descriptions snapshot
+		const { error: existsError } = await groupsExist({
+			data: descriptionsSnapshot,
+			group,
+		});
+		if (existsError) return existsError;
+
+		// Insert the group
+		const { error: groupInsertError } = await groupsInsert(group);
+		if (groupInsertError) return groupInsertError;
+
+		// Get a snapshot of groups
+		const { data: groupsSnapshot, error: groupsSnapshotError } =
+			await groupsSelect();
+		if (groupsSnapshotError) return groupsSnapshotError;
+
+		// Get a snapshot of monthly_sums
+		const { data: monthlySumsSnapshot, error: monthlySumsSnapshotError } =
+			await monthlySumsSelect();
+		if (monthlySumsSnapshotError) return monthlySumsSnapshotError;
 
 		// Upsert the transactions
-		const { data: upsertData, error: upsertError } = await transactionsUpsert({
-			supabase,
-			transactions,
+		const { data: transactionsData, error: transactionsError } =
+			await transactionsUpsert(transactions);
+
+		// Make sure the transactions upsert was completely successful
+		const { error: transactionsUpsertIsBad } = await upsertIsGood({
+			data: transactionsData,
+			original: transactions,
 		});
 
-		// If not all the transactions were upserted, roll them all back
-		const { error: notAllUpserted } = await upsertRollback({
-			data: transactions,
-			deletePartial: transactionsDelete,
-			supabase,
-			upsertData,
-		});
+		// If there was a problem upserting the transactions, rollback transactions and group
+		if (transactionsError || transactionsUpsertIsBad) {
+			const { error: transactionsDeleteError } =
+				await transactionsDelete(transactions);
+			const { error: groupDeleteError } = await groupsDelete(group);
 
-		// If there was a problem upserting the transactions, rollback the group's creation
-		if (upsertError || notAllUpserted) {
-			const { error: groupDeleteError } = await groupsDelete({
-				group,
-				supabase,
-			});
-
+			if (transactionsError) return transactionsError;
+			if (transactionsUpsertIsBad) return transactionsUpsertIsBad;
+			if (transactionsDeleteError) return transactionsDeleteError;
 			if (groupDeleteError) return groupDeleteError;
-
-			return upsertError ?? notAllUpserted;
 		}
 
-		// const { data: transactionsData, error: transactionsError } =
-		// 	await transactionsCreate({ supabase, transactions });
+		// Upsert/Update the updated data back into monthly_sums
+		const { data: monthlySumsUpsertData, error: monthlySumsUpsertError } =
+			await monthlySumsUpsert({
+				sumData: monthlySumsSnapshot,
+				transactions,
+			});
 
-		// // Rollback creating the group if there was an error creating the transactions
-		// if (transactionsError) {
-		// 	const { error: groupsError } = await groupsDelete({ group, supabase });
+		// Make sure the monthly_sums upsert was completely successful
+		const { error: monthlySumsUpsertNotEqual } = await upsertIsGood({
+			data: monthlySumsUpsertData,
+			original: monthlySumsSnapshot,
+		});
 
-		// 	if (groupsError) return groupsError;
-		// }
+		// If there is a problem upserting monthly_sums, rollback monthly_sums, transactions & group
+		if (monthlySumsUpsertNotEqual || monthlySumsUpsertError) {
+			const { error: monthlySumsRollbackError } =
+				await monthlySumsRollback(monthlySumsSnapshot);
+			const { error: transactionsDeleteError } =
+				await transactionsDelete(transactions);
+			const { error: groupDeleteError } = await groupsDelete(group);
 
-		// // Create Transfers
-		// // --------------------------------------------------------------------------------------------
-		// // const { data: insertTransfersData, error: insertTransfersError } =
-		// // 	await transferCreate(transactions, 'Could Not Create Transfers');
-
-		// // if (insertTransfersError) return insertTransfersError;
-
-		// // Update Month Sums
-		// // --------------------------------------------------------------------------------------------
-
-		// // Get all the entries in month_sums
-		// const { data: selectMonthlySumData, error: selectMonthlySumError } =
-		// 	await supabase
-		// 		.from(MONTHLY_SUMS)
-		// 		.select('*')
-		// 		.eq('user_uid', user_uid)
-		// 		.order('month_uid_key', { ascending: false });
-
-		// if (selectMonthlySumError)
-		// 	return responseFactory(
-		// 		'Unable to Retrieve Monthly Sums',
-		// 		selectMonthlySumError,
-		// 	);
-
-		// // Generate a payload using this batch of transactions and the sums already recorded in the db
-		// const payload: MonthlySumData[] = monthlySumPayload(
-		// 	transactions,
-		// 	selectMonthlySumData,
-		// );
-
-		// // Upsert the entries in payload
-		// const { data: dataNoType, error: upsertMonthlySumsError } = await supabase
-		// 	.from(MONTHLY_SUMS)
-		// 	.upsert(payload, { onConflict: 'month_uid_key' });
-
-		// // Type the data correctly because TS is a bitch
-		// const upsertMonthlySumsData = dataNoType as MonthlySumData[] | null;
-
-		// if (upsertMonthlySumsError)
-		// 	return responseFactory(
-		// 		'Unable to Update Montly Sums',
-		// 		upsertMonthlySumsError,
-		// 	);
-
-		// // If all the entries weren't upserted throw an error
-		// if (
-		// 	upsertMonthlySumsData &&
-		// 	upsertMonthlySumsData.length !== payload.length
-		// ) {
-		// 	return responseFactory(
-		// 		'All Updates to Monthly Sums Were Not Processed',
-		// 		upsertMonthlySumsData,
-		// 	);
-		// }
+			if (monthlySumsUpsertError) return monthlySumsUpsertError;
+			if (monthlySumsUpsertNotEqual) return monthlySumsUpsertNotEqual;
+			if (monthlySumsRollbackError) return monthlySumsRollbackError;
+			if (transactionsDeleteError) return transactionsDeleteError;
+			if (groupDeleteError) return groupDeleteError;
+		}
 
 		// // Get all the entries again so we can put it in a cookie
 		// const {
@@ -167,11 +122,11 @@ export async function POST(req: Request) {
 
 		const response = responseFactory(
 			`Group "${group.name}" Created!`,
-			allGroupsData,
+			groupsSnapshot,
 			200,
 		);
 
-		// response.cookies.set(GROUPS, JSON.stringify(allGroupsData), {
+		// response.cookies.set(GROUPS, JSON.stringify(groupsSnapshot), {
 		// 	secure: process.env.NODE_ENV === 'production',
 		// 	maxAge: 60 * 60 * 24 * 7, // 1 week
 		// });
