@@ -5,6 +5,8 @@ import { createServerClient } from '@/utils/supabase/server';
 import responseFactory from '../utils/responseFactory';
 import upsertIsGood from '../utils/upsertIsGood';
 import partialHelper from '../partials/partialsHelper';
+import cookieJar from '../utils/cookieJar';
+import { GROUPS, MONTHLY_SUMS } from '@/app/constants';
 
 export async function POST(req: Request) {
 	try {
@@ -43,11 +45,6 @@ export async function POST(req: Request) {
 		// Insert the group
 		const { error: groupInsertError } = await groupsInsert(group);
 		if (groupInsertError) return groupInsertError;
-
-		// Get a snapshot of groups
-		const { data: groupsSnapshot, error: groupsSnapshotError } =
-			await groupsSelect();
-		if (groupsSnapshotError) return groupsSnapshotError;
 
 		// Get a snapshot of monthly_sums
 		const { data: monthlySumsSnapshot, error: monthlySumsSnapshotError } =
@@ -104,41 +101,18 @@ export async function POST(req: Request) {
 			if (groupDeleteError) return groupDeleteError;
 		}
 
-		// // Get all the entries again so we can put it in a cookie
-		// const {
-		// 	data: selectMonthlySumDataCookie,
-		// 	error: selectMonthlySumErrorCookie,
-		// } = await supabase
-		// 	.from(MONTHLY_SUMS)
-		// 	.select('*')
-		// 	.eq('user_uid', user_uid)
-		// 	.order('month_uid_key', { ascending: false });
+		// Create the response to return
+		const response = responseFactory(`Group "${group.name}" Created!`, {}, 200);
 
-		// if (selectMonthlySumError)
-		// 	return responseFactory(
-		// 		'Unable to Retrieve Monthly Sums For Cookie',
-		// 		selectMonthlySumErrorCookie,
-		// 	);
+		// Get monthly_sum data for the cookie
+		const { data: monthlySumsCookie, error: groupsCookieError } =
+			await monthlySumsSelect();
+		if (groupsCookieError) return groupsCookieError;
 
-		const response = responseFactory(
-			`Group "${group.name}" Created!`,
-			groupsSnapshot,
-			200,
+		// Add the data to the cookie
+		response.cookies.set(
+			...cookieJar({ name: MONTHLY_SUMS, data: monthlySumsCookie }),
 		);
-
-		// response.cookies.set(GROUPS, JSON.stringify(groupsSnapshot), {
-		// 	secure: process.env.NODE_ENV === 'production',
-		// 	maxAge: 60 * 60 * 24 * 7, // 1 week
-		// });
-
-		// response.cookies.set(
-		// 	MONTHLY_SUMS,
-		// 	JSON.stringify(selectMonthlySumDataCookie),
-		// 	{
-		// 		secure: process.env.NODE_ENV === 'production',
-		// 		maxAge: 60 * 60 * 24 * 7, // 1 week
-		// 	},
-		// );
 
 		return response;
 	} catch (error: unknown) {

@@ -14,7 +14,7 @@ export default function SignOut() {
 		});
 
 		if (response.ok) {
-			window.location.href = '/';
+			window.location.href = '/signout';
 		} else {
 			setError(`Sign out failed: ${response.statusText}`);
 		}
