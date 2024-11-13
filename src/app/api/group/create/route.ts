@@ -1,9 +1,7 @@
 // src/app/api/group/create/route.ts
 import { NextResponse } from 'next/server';
-import responseFactory from '../../utils/responseFactory';
-import upsertIsGood from '../../utils/upsertIsGood';
-import partialHelper from '../../partials/partialsHelper';
-import cookieJar from '../../utils/cookieJar';
+import partialHelper from '@/app/api/partials/partialsHelper';
+import { cookieJar, responseFactory, upsertIsGood } from '@/app/api/utils';
 import { MONTHLY_SUMS } from '@/app/constants';
 
 export async function POST(req: Request) {

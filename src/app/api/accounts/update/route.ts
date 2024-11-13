@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
-import responseFactory from '../../utils/responseFactory';
+import { responseFactory } from '@/app/api/utils';
 import { ACCOUNTS } from '@/app/constants';
 
 export async function POST(req: Request) {
