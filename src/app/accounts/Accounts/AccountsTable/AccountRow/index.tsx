@@ -51,7 +51,7 @@ export default function AccountRow({
 				: zebraColor;
 
 	async function handleSubmitDelete() {
-		apiCall('/api/account-delete', {
+		apiCall('/api/accounts/delete', {
 			onError: (msg) => setError(msg),
 			onSuccess: (msg) => setSuccess(msg),
 			payload: {
@@ -78,7 +78,7 @@ export default function AccountRow({
 			return;
 		}
 
-		apiCall('/api/account-update', {
+		apiCall('/api/accounts/update', {
 			onError: (msg) => setError(msg),
 			onSuccess: (msg) => setSuccess(msg),
 			payload: {

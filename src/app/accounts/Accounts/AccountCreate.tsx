@@ -44,7 +44,7 @@ export default function AccountCreate({
 			return;
 		}
 
-		apiCall('/api/account-create', {
+		apiCall('/api/accounts/create', {
 			onError: (msg) => setError(msg),
 			onSuccess: (msg) => setSuccess(msg),
 			payload: {

@@ -1,8 +1,8 @@
-// src/app/api/account-create/route.ts
+// src/app/api/accounts/create/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
-import responseFactory from '../utils/responseFactory';
+import responseFactory from '../../utils/responseFactory';
 import { ACCOUNTS } from '@/app/constants';
 
 export async function POST(req: Request) {
@@ -26,12 +26,13 @@ export async function POST(req: Request) {
 			? accountsSelectData.find((f) => f.is_default)
 			: false;
 
-		// If there is a default account and the account being inserted is a default account, update the
+		// If there is a default account and the account being updated is a default account, update the
 		// existing account to no longer be the default
 		if (defaultAccount && is_default) {
 			const { error: accountUpdateError } = await supabase
 				.from(ACCOUNTS)
 				.update({ is_default: false })
+				.eq('uid', defaultAccount.uid)
 				.eq('user_uid', user_uid);
 
 			if (accountUpdateError)
@@ -41,16 +42,16 @@ export async function POST(req: Request) {
 				);
 		}
 
-		// Insert the account data into the accounts table
+		// Update the account's data
 		const { data: accountData, error: accountInsertError } = await supabase
 			.from(ACCOUNTS)
-			.insert({
+			.update({
 				is_default,
 				name,
 				type,
-				uid,
-				user_uid,
-			});
+			})
+			.eq('uid', uid)
+			.eq('user_uid', user_uid);
 
 		if (accountInsertError)
 			return responseFactory('Error Inserting Account', accountInsertError);
