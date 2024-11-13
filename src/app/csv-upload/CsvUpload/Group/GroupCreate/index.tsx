@@ -73,7 +73,7 @@ export default function GroupCreate({
 				transactions,
 			});
 
-			await apiCall('/api/group-create', {
+			await apiCall('/api/group/create', {
 				onError: (msg) => {
 					setLoading(false);
 					setError(msg);

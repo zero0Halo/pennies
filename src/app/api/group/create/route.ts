@@ -1,11 +1,9 @@
-// src/app/api/group-create/route.ts
+// src/app/api/group/create/route.ts
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase/server';
-import responseFactory from '../utils/responseFactory';
-import upsertIsGood from '../utils/upsertIsGood';
-import partialHelper from '../partials/partialsHelper';
-import cookieJar from '../utils/cookieJar';
+import responseFactory from '../../utils/responseFactory';
+import upsertIsGood from '../../utils/upsertIsGood';
+import partialHelper from '../../partials/partialsHelper';
+import cookieJar from '../../utils/cookieJar';
 import { MONTHLY_SUMS } from '@/app/constants';
 
 export async function POST(req: Request) {
