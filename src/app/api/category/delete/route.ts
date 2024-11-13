@@ -1,4 +1,4 @@
-// src/app/api/category-delete/route.ts
+// src/app/api/category/delete/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';

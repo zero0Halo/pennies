@@ -26,7 +26,7 @@ export default function CustomCategories({ uid }: CustomCategoriesProps) {
 		setSuccess('');
 
 		if (!Object.keys(errors).length && uid) {
-			apiCall('/api/category-create', {
+			apiCall('/api/category/create', {
 				onError: (msg) => setError(msg),
 				onSuccess: (msg) => {
 					setSuccess(msg);

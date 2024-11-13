@@ -19,7 +19,7 @@ export default function CategoriesTable({
 
 	async function handleDeleteCategory(category: string) {
 		if (uid) {
-			apiCall('/api/category-delete', {
+			apiCall('/api/category/delete', {
 				onError: (msg) => setError(msg),
 				onSuccess: (msg) => setSuccess(msg),
 				payload: {
