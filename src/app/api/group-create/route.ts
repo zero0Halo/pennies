@@ -6,12 +6,10 @@ import responseFactory from '../utils/responseFactory';
 import upsertIsGood from '../utils/upsertIsGood';
 import partialHelper from '../partials/partialsHelper';
 import cookieJar from '../utils/cookieJar';
-import { GROUPS, MONTHLY_SUMS } from '@/app/constants';
+import { MONTHLY_SUMS } from '@/app/constants';
 
 export async function POST(req: Request) {
 	try {
-		const cookieStore = cookies();
-		const supabase = createServerClient(cookieStore);
 		const { group, transactions } = await req.json();
 		const { account_uid, user_uid } = group;
 		const {
@@ -26,7 +24,6 @@ export async function POST(req: Request) {
 			transactionsUpsert,
 		} = partialHelper({
 			account_uid,
-			supabase,
 			user_uid,
 		});
 
