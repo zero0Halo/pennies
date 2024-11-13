@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Loading Spinner */
 label:has(select:disabled) {
   cursor: not-allowed;
   --tw-border-opacity: 1;
@@ -83,4 +84,22 @@ label:has(select:disabled) {
   }
 }
 
-
+/* X in CSS */
+.x {
+  border-radius: 1000px;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  &:after {
+    position: absolute;
+    top: 0px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    content: "\d7";
+    font-size: 30px;
+    color: #000;
+    /* line-height: 1em; */
+    text-align: center;
+  }
+}

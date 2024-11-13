@@ -13,35 +13,19 @@ function FormMessaging({
 	setClose,
 	success,
 }: FormMessagingProps) {
-	const jsx = (
-		<>
-			{error && error.length > 0 && (
-				<div className="alert alert-error my-6 text-white font-bold">
-					<button
-						className="btn btn-xs text-sm"
-						onClick={() => setClose(true)}
-						type="button"
-					>
-						X
-					</button>
-					<span>{error}</span>
-				</div>
-			)}
-			{success && success.length > 0 && (
-				<div className="alert alert-success my-6 text-white font-bold">
-					<span>
-						<button
-							className="btn btn-xs text-sm"
-							onClick={() => setClose(true)}
-							type="button"
-						>
-							X
-						</button>
-					</span>
-					<span>{success}</span>
-				</div>
-			)}
-		</>
+	const jsx = true && (
+		<div className="fixed top-0  left-1/2 transform -translate-x-1/2 z-50">
+			<div
+				className={`alert alert-${error?.length ? 'error' : 'success'} my-6 text-white font-bold shadow-xl`}
+			>
+				<button
+					className="btn btn-xs text-xs text-white x"
+					onClick={() => setClose(true)}
+					type="button"
+				/>
+				<span>{error?.length ? error : success}</span>
+			</div>
+		</div>
 	);
 
 	if (close) return null;
