@@ -9,7 +9,7 @@ export default function SignOut() {
 	async function handleSignOut(event: SignOutData) {
 		event.preventDefault();
 
-		const response = await fetch('/api/user-signout', {
+		const response = await fetch('/api/user/signout', {
 			method: 'POST',
 		});
 

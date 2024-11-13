@@ -1,9 +1,9 @@
-// src/app/api/user-signin/route.ts
+// src/app/api/user/signin/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase/server';
 import { ACCOUNTS, IS_LOGGED_IN, USER, USERS } from '@/app/constants';
-import responseFactory from '../utils/responseFactory';
+import responseFactory from '../../utils/responseFactory';
 
 export async function POST(req: Request) {
 	try {

@@ -10,7 +10,7 @@ export default function Login() {
 	const [error, setError] = useState('');
 
 	async function handleSignIn(formData: SignInData) {
-		const response = await fetch('/api/user-signin', {
+		const response = await fetch('/api/user/signin', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

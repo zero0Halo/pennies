@@ -14,7 +14,7 @@ function SignUpForm() {
 	} = useForm<SignUpData>();
 
 	const handleSignUp = async (formData: SignUpData) => {
-		const response = await fetch('/api/user-signup', {
+		const response = await fetch('/api/user/signup', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
