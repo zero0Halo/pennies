@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import accountsSelectFn from './accounts/accountsSelect';
 // groups
 import groupsDeleteFn from './groups/groupsDelete';
 import groupsExist from './groups/groupsExist';
@@ -30,6 +31,11 @@ export default function partials({ account_uid, user_uid }: PartialsArgs) {
 	const supabase = createServerClient(cookieStore);
 
 	return {
+		// accounts
+		accountsSelect: (selectFrom?: '*' | 'is_default') =>
+			user_uid
+				? accountsSelectFn({ selectFrom, supabase, user_uid })
+				: toReturn({}),
 		// groups
 		groupsDelete: (group: GroupData) => groupsDeleteFn({ group, supabase }),
 		groupsExist,

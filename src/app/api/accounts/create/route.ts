@@ -1,96 +1,61 @@
 // src/app/api/accounts/create/route.ts
-import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase';
-import { responseFactory } from '@/utils/api';
+import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
+import partials from '@/app/api/partials';
+import type { AccountData } from '@/app/types';
 import { ACCOUNTS } from '@/app/constants';
 
 export async function POST(req: Request) {
-	try {
-		const cookieStore = cookies();
-		const supabase = createServerClient(cookieStore);
-		const { is_default, name, type, uid, user_uid } = await req.json();
+	const cookieStore = cookies();
+	const supabase = createServerClient(cookieStore);
+	const { is_default, name, type, uid, user_uid } = await req.json();
+	const payload = [
+		{
+			is_default,
+			name,
+			type,
+			uid,
+			user_uid,
+		},
+	];
+	const { accountsSelect } = partials({ user_uid });
 
-		// Get all of the accounts
-		const { data: accountsSelectData, error: accountsSelectError } =
-			await supabase.from(ACCOUNTS).select('*').eq('user_uid', user_uid);
+	// Get the default account if it exists
+	const { data, error: defaultAccountError } =
+		await accountsSelect('is_default');
+	const defaultAccount = data as AccountData[];
 
-		if (accountsSelectError)
-			return responseFactory(
-				'Error Retrieving Accounts Data',
-				accountsSelectError,
-			);
+	if (defaultAccountError) return defaultAccountError;
 
-		// Find out if there is a default account
-		const defaultAccount = accountsSelectData
-			? accountsSelectData.find((f) => f.is_default)
-			: false;
-
-		// If there is a default account and the account being inserted is a default account, update the
-		// existing account to no longer be the default
-		if (defaultAccount && is_default) {
-			const { error: accountUpdateError } = await supabase
-				.from(ACCOUNTS)
-				.update({ is_default: false })
-				.eq('user_uid', user_uid);
-
-			if (accountUpdateError)
-				return responseFactory(
-					'Error Updating Original Default Account',
-					accountUpdateError,
-				);
-		}
-
-		// Insert the account data into the accounts table
-		const { data: accountData, error: accountInsertError } = await supabase
-			.from(ACCOUNTS)
-			.insert({
-				is_default,
-				name,
-				type,
-				uid,
-				user_uid,
-			});
-
-		if (accountInsertError)
-			return responseFactory('Error Inserting Account', accountInsertError);
-
-		// Get all of the accounts
-		const { data: accountsCookieData, error: accountsCookieError } =
-			await supabase
-				.from(ACCOUNTS)
-				.select('*')
-				.eq('user_uid', user_uid)
-				.order('is_default', { ascending: false });
-
-		if (accountsCookieError)
-			return responseFactory(
-				'Error Retrieving Accounts Data',
-				accountsCookieError,
-			);
-
-		// Create a response and put the updated accounts data into the accounts cookie
-		const response = NextResponse.json(
-			{
-				message: 'Account Created',
-				data: accountData,
-			},
-			{ status: 200 },
-		);
-
-		response.cookies.set(ACCOUNTS, JSON.stringify(accountsCookieData), {
-			secure: process.env.NODE_ENV === 'production',
-			maxAge: 60 * 60 * 24 * 7, // 1 week
-		});
-
-		return response;
-	} catch (error: unknown) {
-		console.error(error);
-		const errorMessage =
-			error instanceof Error ? error.message : 'Unknown error';
-		return NextResponse.json(
-			{ message: 'Server error', error: errorMessage },
-			{ status: 500 },
-		);
+	// If there is a default account and the account being inserted is a default account, update the
+	// existing account to no longer be the default
+	if (defaultAccount.length && is_default) {
+		const noLongerDefault = { ...defaultAccount[0], is_default: false };
+		payload.push(noLongerDefault);
 	}
+
+	// Upsert the account data into the accounts table
+	const { data: upsertData, error: upsertError } = await supabase
+		.from(ACCOUNTS)
+		.upsert(payload);
+	if (upsertError) return upsertError;
+
+	// Check to make sure the upsert is good
+	const { error: upsertMal } = await upsertIsGood({
+		data: upsertData,
+		original: payload,
+	});
+	if (upsertMal) return upsertMal;
+
+	// Get all of the accounts
+	const { data: accountsCookie, error: accountsCookieError } =
+		await accountsSelect();
+	if (accountsCookieError) return accountsCookieError;
+
+	// Create a response and put the updated accounts data into the accounts cookie
+	const response = responseFactory('Account Created!', {}, 200);
+	response.cookies.set(...cookieJar({ name: ACCOUNTS, data: accountsCookie }));
+
+	return response;
 }
