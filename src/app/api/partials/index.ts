@@ -1,5 +1,9 @@
 import { cookies } from 'next/headers';
+// accounts
+import accountsDeleteFn from './accounts/accountsDelete';
 import accountsSelectFn from './accounts/accountsSelect';
+import accountsUpdateFn from './accounts/accountsUpdate';
+import accountsUpsertFn from './accounts/accountsUpsert';
 // groups
 import groupsDeleteFn from './groups/groupsDelete';
 import groupsExist from './groups/groupsExist';
@@ -19,7 +23,7 @@ import transactionsUpsertFn from './transactions/transactionsUpsert';
 // types
 import { createServerClient } from '@/utils/supabase';
 import { toReturn } from '@/utils/api';
-import type { GroupData, TransactionData } from '@/app/types';
+import type { AccountData, GroupData, TransactionData } from '@/app/types';
 
 interface PartialsArgs {
 	account_uid?: string;
@@ -32,10 +36,20 @@ export default function partials({ account_uid, user_uid }: PartialsArgs) {
 
 	return {
 		// accounts
+		accountsDelete: (account: AccountData) =>
+			user_uid
+				? accountsDeleteFn({ account, supabase, user_uid })
+				: toReturn({}),
 		accountsSelect: (selectFrom?: '*' | 'is_default') =>
 			user_uid
 				? accountsSelectFn({ selectFrom, supabase, user_uid })
 				: toReturn({}),
+		accountsUpdate: (account: AccountData) =>
+			user_uid
+				? accountsUpdateFn({ account, supabase, user_uid })
+				: toReturn({}),
+		accountsUpsert: (accounts: AccountData[]) =>
+			accountsUpsertFn({ accounts, supabase }),
 		// groups
 		groupsDelete: (group: GroupData) => groupsDeleteFn({ group, supabase }),
 		groupsExist,

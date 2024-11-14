@@ -7,7 +7,7 @@ import Input from '@/app/components/Input';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import { useClientCookie } from '@/app/hooks/client';
-import { apiCall } from '@/utils/app';
+import { apiCall, isoDate } from '@/utils/app';
 import type { AccountData, UserData } from '@/app/types';
 import { accountTypes, USER } from '@/app/constants';
 
@@ -48,10 +48,12 @@ export default function AccountCreate({
 			onError: (msg) => setError(msg),
 			onSuccess: (msg) => setSuccess(msg),
 			payload: {
+				created: isoDate(),
 				is_default: is_default ?? noAccounts,
 				name,
 				type,
 				uid: uuidv4(),
+				updated: isoDate(),
 				user_uid: (userCookieData as UserData).uid,
 			},
 			reload: '/accounts',

@@ -1,32 +1,32 @@
 // src/app/api/accounts/create/route.ts
-import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase';
-import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
 import partials from '@/app/api/partials';
+import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
 import type { AccountData } from '@/app/types';
 import { ACCOUNTS } from '@/app/constants';
 
 export async function POST(req: Request) {
-	const cookieStore = cookies();
-	const supabase = createServerClient(cookieStore);
-	const { is_default, name, type, uid, user_uid } = await req.json();
+	const { created, is_default, name, type, uid, updated, user_uid } =
+		await req.json();
 	const payload = [
 		{
+			created,
 			is_default,
 			name,
 			type,
 			uid,
+			updated,
 			user_uid,
 		},
 	];
-	const { accountsSelect } = partials({ user_uid });
+	console.log(payload);
+	const { accountsSelect, accountsUpsert } = partials({ user_uid });
 
 	// Get the default account if it exists
 	const { data, error: defaultAccountError } =
 		await accountsSelect('is_default');
-	const defaultAccount = data as AccountData[];
-
 	if (defaultAccountError) return defaultAccountError;
+
+	const defaultAccount = data as AccountData[];
 
 	// If there is a default account and the account being inserted is a default account, update the
 	// existing account to no longer be the default
@@ -36,9 +36,8 @@ export async function POST(req: Request) {
 	}
 
 	// Upsert the account data into the accounts table
-	const { data: upsertData, error: upsertError } = await supabase
-		.from(ACCOUNTS)
-		.upsert(payload);
+	const { data: upsertData, error: upsertError } =
+		await accountsUpsert(payload);
 	if (upsertError) return upsertError;
 
 	// Check to make sure the upsert is good

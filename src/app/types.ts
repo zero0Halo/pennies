@@ -1,10 +1,12 @@
 import type { NextResponse } from 'next/server';
 
 export type AccountData = {
+	created: string;
 	is_default: boolean;
 	name: string;
 	type: string;
 	uid: string;
+	updated: string;
 	user_uid: string;
 };
 

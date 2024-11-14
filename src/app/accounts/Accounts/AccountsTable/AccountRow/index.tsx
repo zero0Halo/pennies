@@ -55,8 +55,7 @@ export default function AccountRow({
 			onError: (msg) => setError(msg),
 			onSuccess: (msg) => setSuccess(msg),
 			payload: {
-				is_default: account.is_default,
-				uid: account.uid,
+				account,
 				user_uid: (userCookieData as UserData).uid,
 			},
 			reload: '/accounts',
