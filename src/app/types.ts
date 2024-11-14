@@ -86,6 +86,12 @@ export interface SignUpData extends SignInData {
 	lastname?: string;
 }
 
+export type ReturnData = {
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	data?: null | any[];
+	error?: NextResponse | null;
+};
+
 export interface TransactionData {
 	account_uid: string;
 	amount: number;

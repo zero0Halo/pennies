@@ -1,10 +1,10 @@
-import { createServerClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
-import useServerCookie from '../hooks/useServerCookie';
-import { ACCOUNTS, USER } from '@/app/constants';
-import type { UserData } from '@/app/types';
-import Accounts from './Accounts';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import Accounts from './Accounts';
+import useServerCookie from '../hooks/useServerCookie';
+import { createServerClient } from '@/utils/supabase';
+import type { UserData } from '@/app/types';
+import { ACCOUNTS, USER } from '@/app/constants';
 
 async function getAccountsData(userData: UserData) {
 	try {

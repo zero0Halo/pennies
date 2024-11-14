@@ -1,5 +1,5 @@
+import { dateFormat, zebra } from '@/utils/app';
 import type { TransactionData } from '@/app/types';
-import dateFormat from '@/app/utils/dateFormat';
 
 interface TransactionsTableProps {
 	className?: string;
@@ -11,11 +11,6 @@ const displayAmount = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'USD',
 });
-
-function zebra(index: number, transaction: TransactionData) {
-	const zebraColor = index % 2 ? 'bg-slate-100' : 'bg-white';
-	return transaction.prime ? 'bg-primary' : zebraColor;
-}
 
 export default function TransactionsTable({
 	className = '',

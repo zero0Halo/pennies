@@ -1,8 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { responseFactory, toReturn } from '@/utils/api';
+import type { ReturnData, TransactionData } from '@/app/types';
 import { TRANSACTIONS } from '@/app/constants';
-import toReturn, { type ReturnData } from '@/app/api/utils/toReturn';
-import type { TransactionData } from '@/app/types';
-import responseFactory from '../../utils/responseFactory';
 
 export interface TransactionsUpsertArgs {
 	supabase: SupabaseClient;

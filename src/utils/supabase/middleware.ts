@@ -1,7 +1,10 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import {
+	createServerClient as createServerClientFn,
+	type CookieOptions,
+} from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
-export const createClient = (request: NextRequest) => {
+const createMiddlewareClient = (request: NextRequest) => {
 	// Create an unmodified response
 	let supabaseResponse = NextResponse.next({
 		request: {
@@ -9,7 +12,7 @@ export const createClient = (request: NextRequest) => {
 		},
 	});
 
-	const supabase = createServerClient(
+	const supabase = createServerClientFn(
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -36,3 +39,5 @@ export const createClient = (request: NextRequest) => {
 
 	return supabaseResponse;
 };
+
+export default createMiddlewareClient;

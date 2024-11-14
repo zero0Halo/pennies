@@ -1,7 +1,7 @@
 // src/app/api/signup/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase/server';
+import { createServerClient } from '@/utils/supabase';
 import { USER } from '@/app/constants';
 
 export async function POST(req: Request) {

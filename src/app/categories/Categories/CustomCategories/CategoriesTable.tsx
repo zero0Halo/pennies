@@ -1,8 +1,7 @@
 'use client';
 
 import { Fragment, useState } from 'react';
-import zebra from '@/app/utils/zebra';
-import apiCall from '@/app/utils/apiCall';
+import { apiCall, zebra } from '@/utils/app';
 
 interface CategoriesTableProps {
 	categories: string[];

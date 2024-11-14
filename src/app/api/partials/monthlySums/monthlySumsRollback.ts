@@ -1,9 +1,9 @@
 import type { MonthlySumData } from '@/app/types';
-import type { ReturnData } from '../../utils/toReturn';
+import type { ReturnData } from '../../../../utils/utils/toReturn';
 import { MONTHLY_SUMS } from '@/app/constants';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import toReturn from '../../utils/toReturn';
-import responseFactory from '../../utils/responseFactory';
+import toReturn from '../../../../utils/utils/toReturn';
+import responseFactory from '../../../../utils/utils/responseFactory';
 
 export type MonthlySumSnapshot = MonthlySumData[] | undefined | null;
 

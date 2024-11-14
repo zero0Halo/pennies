@@ -1,7 +1,7 @@
-import { GROUPS } from '@/app/constants';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import responseFactory from '../../utils/responseFactory';
-import toReturn, { type ReturnData } from '@/app/api/utils/toReturn';
+import { responseFactory, toReturn } from '@/utils/api';
+import type { ReturnData } from '@/app/types';
+import { GROUPS } from '@/app/constants';
 
 interface GroupsSelectArgs {
 	account_uid: string;

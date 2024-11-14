@@ -1,7 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import toReturn, { type ReturnData } from '@/app/api/utils/toReturn';
-import responseFactory from '@/app/api/utils/responseFactory';
-import type { GroupData } from '@/app/types';
+import { toReturn, responseFactory } from '@/utils/api';
+import type { GroupData, ReturnData } from '@/app/types';
 import { GROUPS } from '@/app/constants';
 
 interface GroupsDeleteArgs {

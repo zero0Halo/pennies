@@ -1,9 +1,11 @@
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient as createBrowserClientFn } from '@supabase/ssr';
 
-export const createClient = () =>
-	createBrowserClient(
+const createBrowserClient = () =>
+	createBrowserClientFn(
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 	);
+
+export default createBrowserClient;

@@ -1,7 +1,7 @@
 import { MONTHLY_SUMS } from '@/app/constants';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import toReturn from '../../utils/toReturn';
-import responseFactory from '../../utils/responseFactory';
+import toReturn from '../../../../utils/utils/toReturn';
+import responseFactory from '../../../../utils/utils/responseFactory';
 
 interface MonthlySumsSelectArgs {
 	account_uid: string;

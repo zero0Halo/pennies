@@ -1,9 +1,9 @@
 // src/app/api/user/signout/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase/server';
+import { createServerClient } from '@/utils/supabase';
+import { cookieJar } from '@/utils/api';
 import { ACCOUNTS, IS_LOGGED_IN, MONTHLY_SUMS, USER } from '@/app/constants';
-import { cookieJar } from '@/app/api/utils';
 
 export async function POST() {
 	const cookieStore = cookies();

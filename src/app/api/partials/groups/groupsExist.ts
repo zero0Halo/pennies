@@ -1,6 +1,6 @@
 import type { GroupData } from '@/app/types';
-import toReturn from '../../utils/toReturn';
-import responseFactory from '../../utils/responseFactory';
+import toReturn from '../../../../utils/utils/toReturn';
+import responseFactory from '../../../../utils/utils/responseFactory';
 
 interface GroupsExistArgs {
 	data: { description: string }[] | undefined | null;

@@ -1,4 +1,4 @@
-import responseFactory from '@/app/api/utils/responseFactory';
+import responseFactory from '@/utils/utils/responseFactory';
 
 export default function alphaSort(arr: string[] | null) {
 	if (!Array.isArray(arr))

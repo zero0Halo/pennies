@@ -1,8 +1,8 @@
 // src/app/api/category/delete/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase/server';
-import { alphaSort, responseFactory } from '@/app/api/utils';
+import { createServerClient } from '@/utils/supabase';
+import { alphaSort, responseFactory } from '@/utils/api';
 import { USER, USERS } from '@/app/constants';
 
 export async function POST(req: Request) {

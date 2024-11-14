@@ -1,5 +1,5 @@
-import responseFactory from './responseFactory';
-import toReturn, { type ReturnData } from './toReturn';
+import { responseFactory, toReturn } from '@/utils/api';
+import type { ReturnData } from '@/app/types';
 
 interface UpsertIsGoodArgs {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>

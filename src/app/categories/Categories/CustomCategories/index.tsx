@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import apiCall from '@/app/utils/apiCall';
 import CategoriesTable from './CategoriesTable';
 import useCategories from '@/app/hooks/useCategories';
+import { apiCall } from '@/utils/app';
 
 interface CustomCategoriesProps {
 	uid: string | false;

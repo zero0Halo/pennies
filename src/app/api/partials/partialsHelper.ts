@@ -17,8 +17,8 @@ import transactionsUpsertFn from '../partials/transactions/transactionsUpsert';
 // types
 import type { GroupData, TransactionData } from '@/app/types';
 import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase/server';
-import toReturn from '../utils/toReturn';
+import { createServerClient } from '@/utils/supabase';
+import { toReturn } from '@/utils/api';
 
 interface PartialHelperArgs {
 	account_uid?: string;

@@ -1,10 +1,5 @@
 import type { NextResponse } from 'next/server';
-
-export type ReturnData = {
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	data?: null | any[];
-	error?: NextResponse | null;
-};
+import type { ReturnData } from '@/app/types';
 
 interface ToReturnArgs {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>

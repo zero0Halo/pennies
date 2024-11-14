@@ -1,10 +1,10 @@
 import type { MonthlySumData, TransactionData } from '@/app/types';
-import monthlySumPayload from '../../utils/monthlySumPayload';
-import type { ReturnData } from '../../utils/toReturn';
+import monthlySumPayload from '../../../../utils/utils/monthlySumPayload';
+import type { ReturnData } from '../../../../utils/utils/toReturn';
 import { MONTHLY_SUMS } from '@/app/constants';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import toReturn from '../../utils/toReturn';
-import responseFactory from '../../utils/responseFactory';
+import toReturn from '../../../../utils/utils/toReturn';
+import responseFactory from '../../../../utils/utils/responseFactory';
 
 export interface MonthlySumsUpsertFnArgs {
 	sumData: MonthlySumData[] | undefined | null;
