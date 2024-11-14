@@ -1,7 +1,7 @@
 import { MONTHLY_SUMS } from '@/app/constants';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import toReturn from '../../../../utils/utils/toReturn';
-import responseFactory from '../../../../utils/utils/responseFactory';
+import { responseFactory, toReturn } from '@/utils/api';
+import type { ReturnData } from '@/app/types';
 
 interface MonthlySumsSelectArgs {
 	account_uid: string;
@@ -13,7 +13,7 @@ export default async function monthlySumsSelect({
 	account_uid,
 	supabase,
 	user_uid,
-}: MonthlySumsSelectArgs) {
+}: MonthlySumsSelectArgs): Promise<ReturnData> {
 	const { data, error } = await supabase
 		.from(MONTHLY_SUMS)
 		.select('*')

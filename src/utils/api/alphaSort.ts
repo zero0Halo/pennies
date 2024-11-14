@@ -1,4 +1,6 @@
-import responseFactory from '@/utils/utils/responseFactory';
+// TODO: Utils should not be async unless they are hitting an api, though that's not what utils are supposed to do
+
+import { responseFactory } from '@/utils/api';
 
 export default function alphaSort(arr: string[] | null) {
 	if (!Array.isArray(arr))

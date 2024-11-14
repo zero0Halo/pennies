@@ -1,6 +1,6 @@
 // src/app/api/group/create/route.ts
 import { NextResponse } from 'next/server';
-import partialHelper from '@/app/api/partials/partialsHelper';
+import partials from '@/app/api/partials';
 import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
 import { MONTHLY_SUMS } from '@/app/constants';
 
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 			monthlySumsUpsert,
 			transactionsDelete,
 			transactionsUpsert,
-		} = partialHelper({
+		} = partials({
 			account_uid,
 			user_uid,
 		});

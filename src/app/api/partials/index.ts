@@ -1,34 +1,31 @@
+import { cookies } from 'next/headers';
 // groups
-import groupsDeleteFn from '../partials/groups/groupsDelete';
-import groupsExist from '../partials/groups/groupsExist';
-import groupsInsertFn from '../partials/groups/groupsInsert';
-import groupsSelectFn from '../partials/groups/groupsSelect';
+import groupsDeleteFn from './groups/groupsDelete';
+import groupsExist from './groups/groupsExist';
+import groupsInsertFn from './groups/groupsInsert';
+import groupsSelectFn from './groups/groupsSelect';
 // monthly_sums
 import monthlySumsRollbackFn, {
 	type MonthlySumSnapshot,
 } from './monthlySums/monthlySumsRollback';
-import monthlySumsSelectFn from '../partials/monthlySums/monthlySumsSelect';
+import monthlySumsSelectFn from './monthlySums/monthlySumsSelect';
 import monthlySumsUpsertFn, {
 	type MonthlySumsUpsertFnArgs,
-} from '../partials/monthlySums/monthlySumsUpsert';
+} from './monthlySums/monthlySumsUpsert';
 // transactions
 import transactionsDeleteFn from './transactions/transactionsDelete';
-import transactionsUpsertFn from '../partials/transactions/transactionsUpsert';
+import transactionsUpsertFn from './transactions/transactionsUpsert';
 // types
-import type { GroupData, TransactionData } from '@/app/types';
-import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase';
 import { toReturn } from '@/utils/api';
+import type { GroupData, TransactionData } from '@/app/types';
 
-interface PartialHelperArgs {
+interface PartialsArgs {
 	account_uid?: string;
 	user_uid?: string;
 }
 
-export default function partialHelper({
-	account_uid,
-	user_uid,
-}: PartialHelperArgs) {
+export default function partials({ account_uid, user_uid }: PartialsArgs) {
 	const cookieStore = cookies();
 	const supabase = createServerClient(cookieStore);
 

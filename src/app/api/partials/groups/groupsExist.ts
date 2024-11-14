@@ -1,13 +1,15 @@
-import type { GroupData } from '@/app/types';
-import toReturn from '../../../../utils/utils/toReturn';
-import responseFactory from '../../../../utils/utils/responseFactory';
+import { responseFactory, toReturn } from '@/utils/api';
+import type { GroupData, ReturnData } from '@/app/types';
 
 interface GroupsExistArgs {
 	data: { description: string }[] | undefined | null;
 	group: GroupData;
 }
 
-export default async function groupsExist({ data, group }: GroupsExistArgs) {
+export default async function groupsExist({
+	data,
+	group,
+}: GroupsExistArgs): Promise<ReturnData> {
 	if (data) {
 		const descriptions = data?.map((m) => m.description);
 		const exists = descriptions.includes(group.description);

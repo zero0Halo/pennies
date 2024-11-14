@@ -1,5 +1,5 @@
-import type { MonthlySumData, TransactionData } from '@/app/types';
 import { v4 as uuidv4 } from 'uuid';
+import type { MonthlySumData, TransactionData } from '@/app/types';
 
 export default function monthlySumPayload(
 	transactions: TransactionData[],

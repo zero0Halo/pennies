@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { GROUPS } from '@/app/constants';
-import type { GroupData, ReturnData } from '@/app/types';
 import { responseFactory, toReturn } from '@/utils/api';
+import type { GroupData, ReturnData } from '@/app/types';
+import { GROUPS } from '@/app/constants';
 
 interface GroupsInsertArgs {
 	group: GroupData;
