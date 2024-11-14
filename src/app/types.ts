@@ -10,10 +10,6 @@ export type AccountData = {
 	user_uid: string;
 };
 
-export interface AccountDBData extends AccountData {
-	uid: string; // The UID automatically is created in supabase when a new account is inserted
-}
-
 export interface ActiveRowData {
 	mode: string | false;
 	index: number | false;

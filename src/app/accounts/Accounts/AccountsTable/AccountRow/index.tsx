@@ -6,12 +6,12 @@ import Input from '@/app/components/Input';
 import AlertMessages from './AlertMessages';
 import ButtonGroup from './ButtonGroup';
 import { useClientCookie } from '@/app/hooks/client';
-import { apiCall } from '@/utils/app';
-import type { AccountDBData, ActiveRowData, UserData } from '@/app/types';
+import { apiCall, isoDate } from '@/utils/app';
+import type { AccountData, ActiveRowData, UserData } from '@/app/types';
 import { accountTypes, DELETE, EDIT, USER } from '@/app/constants';
 
 interface AccountRowProps {
-	account: AccountDBData;
+	account: AccountData;
 	index: number;
 	isEditing: boolean;
 	isDeleting: boolean;
@@ -77,16 +77,18 @@ export default function AccountRow({
 			return;
 		}
 
+		const updatedAccount: AccountData = {
+			...account,
+			is_default,
+			name,
+			type,
+			updated: isoDate(),
+		};
+
 		apiCall('/api/accounts/update', {
 			onError: (msg) => setError(msg),
 			onSuccess: (msg) => setSuccess(msg),
-			payload: {
-				is_default,
-				name,
-				type,
-				uid: account.uid,
-				user_uid: (userCookieData as UserData).uid,
-			},
+			payload: updatedAccount,
 			reload: '/accounts',
 		});
 	}

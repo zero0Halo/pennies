@@ -44,18 +44,20 @@ export default function AccountCreate({
 			return;
 		}
 
+		const newAccount: AccountData = {
+			created: isoDate(),
+			is_default: is_default ?? noAccounts,
+			name,
+			type,
+			uid: uuidv4(),
+			updated: isoDate(),
+			user_uid: (userCookieData as UserData).uid,
+		};
+
 		apiCall('/api/accounts/create', {
 			onError: (msg) => setError(msg),
 			onSuccess: (msg) => setSuccess(msg),
-			payload: {
-				created: isoDate(),
-				is_default: is_default ?? noAccounts,
-				name,
-				type,
-				uid: uuidv4(),
-				updated: isoDate(),
-				user_uid: (userCookieData as UserData).uid,
-			},
+			payload: newAccount,
 			reload: '/accounts',
 		});
 	}
