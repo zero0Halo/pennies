@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import Accounts from './Accounts';
-import useServerCookie from '../hooks/useServerCookie';
+import { useServerCookie } from '@/app/hooks/server';
 import { createServerClient } from '@/utils/supabase';
 import type { UserData } from '@/app/types';
 import { ACCOUNTS, USER } from '@/app/constants';

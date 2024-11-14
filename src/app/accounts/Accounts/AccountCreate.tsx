@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Input from '@/app/components/Input';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import useClientCookie from '@/app/hooks/useClientCookie';
+import { useClientCookie } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 import type { AccountData, UserData } from '@/app/types';
 import { accountTypes, USER } from '@/app/constants';

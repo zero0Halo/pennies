@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import useIsLoggedIn from '../../hooks/useIsLoggedIn';
 import SignIn from './SignIn';
 import SignOut from './SignOut';
 import NavLink from './NavLink';
+import { useIsLoggedIn } from '@/app/hooks/server';
 
 export default function LoginBar() {
 	const isLoggedIn = useIsLoggedIn();

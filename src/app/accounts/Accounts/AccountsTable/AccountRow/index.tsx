@@ -5,8 +5,8 @@ import Label from '@/app/components/Label';
 import Input from '@/app/components/Input';
 import AlertMessages from './AlertMessages';
 import ButtonGroup from './ButtonGroup';
+import { useClientCookie } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
-import useClientCookie from '@/app/hooks/useClientCookie';
 import type { AccountDBData, ActiveRowData, UserData } from '@/app/types';
 import { accountTypes, DELETE, EDIT, USER } from '@/app/constants';
 

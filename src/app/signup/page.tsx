@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
-import useIsLoggedIn from '../hooks/useIsLoggedIn';
 import SignUpForm from './SignUpForm';
+import { useIsLoggedIn } from '@/app/hooks/server';
 
 export default function SignUp() {
 	const isLoggedIn = useIsLoggedIn();

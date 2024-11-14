@@ -1,8 +1,8 @@
 'use client';
 
-import useClientCookie from '@/app/hooks/useClientCookie';
+import useClientCookie from '@/app/hooks/client/useClientCookie';
 import { defaultCategories, USER } from '@/app/constants';
-import type { UserData } from '../types';
+import type { UserData } from '../../types';
 
 export default function useCategories() {
 	const [userCookieData] = useClientCookie(USER);

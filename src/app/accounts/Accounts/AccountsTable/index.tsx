@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import type { AccountDBData, ActiveRowData } from '../../../types';
 import AccountRow from './AccountRow';
+import { useLoading } from '@/app/hooks/client';
+import type { AccountDBData, ActiveRowData } from '@/app/types';
 import { DELETE, EDIT } from '@/app/constants';
-import useLoading from '@/app/hooks/useLoading';
 
 interface AccountsTableProps {
 	accountsData: AccountDBData[];

@@ -1,6 +1,6 @@
-import useIsLoggedIn from '@/app/hooks/useIsLoggedIn';
-import CsvUpload from './CsvUpload';
 import { redirect } from 'next/navigation';
+import CsvUpload from './CsvUpload';
+import { useIsLoggedIn } from '@/app/hooks/server';
 
 export default function CsvUploadPage() {
 	const isLoggedIn = useIsLoggedIn();

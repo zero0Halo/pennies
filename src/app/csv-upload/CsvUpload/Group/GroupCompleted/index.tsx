@@ -1,9 +1,9 @@
 import type React from 'react';
-import type { GroupsData } from '@/app/types';
 import Badge from './Badge';
 import Field from './Field';
 import TransactionsTable from '../../TransactionsTable';
-import useAccounts from '@/app/hooks/useAccounts';
+import { useAccounts } from '@/app/hooks/client';
+import type { GroupsData } from '@/app/types';
 import { TRANSFER } from '@/app/constants';
 
 interface GroupCompletedProps {

@@ -1,6 +1,6 @@
 'use client';
 
-import useClientCookie from '@/app/hooks/useClientCookie';
+import useClientCookie from '@/app/hooks/client/useClientCookie';
 import { ACCOUNTS } from '@/app/constants';
 import type { AccountData } from '@/app/types';
 import { useEffect, useState } from 'react';

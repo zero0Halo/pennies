@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import useIsLoggedIn from '@/app/hooks/useIsLoggedIn';
+import { useIsLoggedIn } from '@/app/hooks/server';
 import Categories from './Categories';
 
 export default function CategoriesPage() {

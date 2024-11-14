@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import CategoriesTable from './CategoriesTable';
-import useCategories from '@/app/hooks/useCategories';
+import { useCategories } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 
 interface CustomCategoriesProps {

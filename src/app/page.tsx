@@ -1,9 +1,8 @@
 import Link from 'next/link';
-import useIsLoggedIn from './hooks/useIsLoggedIn';
-import useServerCookie from './hooks/useServerCookie';
-import { ACCOUNTS, USER } from '@/app/constants';
-import type { AccountData, UserData } from './types';
 import NextCruft from './components/NextCruft';
+import { useIsLoggedIn, useServerCookie } from '@/app/hooks/server';
+import type { AccountData, UserData } from './types';
+import { ACCOUNTS, USER } from '@/app/constants';
 
 export default function Home() {
 	const isLoggedIn = useIsLoggedIn();

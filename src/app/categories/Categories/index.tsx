@@ -1,7 +1,7 @@
-import useServerCookie from '@/app/hooks/useServerCookie';
+import CustomCategories from './CustomCategories';
+import { useServerCookie } from '@/app/hooks/server';
 import type { UserData } from '@/app/types';
 import { defaultCategories, USER } from '@/app/constants';
-import CustomCategories from './CustomCategories';
 
 export default function Categories() {
 	const [userCookieData] = useServerCookie<UserData>(USER);
