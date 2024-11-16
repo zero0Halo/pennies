@@ -1,4 +1,10 @@
-import type { GroupData, TransactionData } from '@/app/types';
+import {
+	createGroupData,
+	createTransactionData,
+	type GroupData,
+	type TransactionData,
+} from '@/app/types';
+import { isoDate as isoDateFn } from '@/utils/supabase';
 
 interface FormatPayloadArgs {
 	formData: GroupData;
@@ -11,20 +17,20 @@ export default function formatPayload({
 	group,
 	transactions,
 }: FormatPayloadArgs) {
-	const date = new Date();
-	const isoDate = date.toISOString();
+	const isoDate = isoDateFn();
 	const updatedTransactions: TransactionData[] = transactions.map(
-		(transaction) => ({
-			...transaction,
-			category: formData.category,
-			created: isoDate,
-			terms: Array.isArray(transaction.terms)
-				? transaction.terms
-				: transaction.terms.split(', '),
-			updated: isoDate,
-		}),
+		(transaction) =>
+			createTransactionData({
+				...transaction,
+				category: formData.category,
+				created: isoDate,
+				terms: Array.isArray(transaction.terms)
+					? transaction.terms
+					: transaction.terms.split(', '),
+				updated: isoDate,
+			}),
 	);
-	const updatedGroup: GroupData = {
+	const updatedGroup: GroupData = createGroupData({
 		...group,
 		...formData,
 		created: isoDate,
@@ -33,7 +39,7 @@ export default function formatPayload({
 			? formData.terms
 			: formData.terms.split(',').map((term) => term.trim()),
 		updated: isoDate,
-	};
+	});
 
 	return { updatedGroup, updatedTransactions };
 }

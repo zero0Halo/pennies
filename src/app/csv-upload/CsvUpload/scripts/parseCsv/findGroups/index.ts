@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import clone from './clone';
 import getDescriptionScore from './getDescriptionScore';
-import type {
-	FindGroupsData,
-	TransactionData,
-	GroupData,
-	GroupsData,
+import {
+	type FindGroupsData,
+	type TransactionData,
+	type GroupData,
+	type GroupsData,
+	createGroupData,
 } from '@/app/types';
 
 export default function findGroups(rowData: TransactionData[]): FindGroupsData {
@@ -30,7 +31,7 @@ export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 
 		if (matches.length) {
 			const groupUid = uuidv4();
-			const group: GroupData = {
+			const group: GroupData = createGroupData({
 				account_uid: transaction.account_uid,
 				category: '',
 				count: matches.length + 1,
@@ -47,7 +48,7 @@ export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 				uid: groupUid,
 				updated: '',
 				user_uid: transaction.user_uid,
-			};
+			});
 
 			transaction.prime = true;
 			transaction.group_uid = groupUid;

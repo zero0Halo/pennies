@@ -1,23 +1,25 @@
 import { z } from 'zod';
 
-export const GroupDataSchema = z.object({
-	account_uid: z.string(),
-	category: z.string(),
-	count: z.number(),
-	created: z.string(),
-	description: z.string(),
-	name: z.union([z.boolean(), z.string()]),
-	notes: z.string(),
-	prime: z.string(),
-	recurring: z.union([z.boolean(), z.string()]),
-	siteurl: z.string(),
-	still_recurring: z.union([z.boolean(), z.string()]),
-	terms: z.union([z.boolean(), z.string()]),
-	transfer_uid: z.string().optional(),
-	uid: z.string(),
-	updated: z.string(),
-	user_uid: z.string(),
-});
+export const GroupDataSchema = z
+	.object({
+		account_uid: z.string(),
+		category: z.string(),
+		count: z.number(),
+		created: z.string(),
+		description: z.string(),
+		name: z.union([z.boolean(), z.string()]),
+		notes: z.string(),
+		prime: z.string(),
+		recurring: z.union([z.boolean(), z.string()]),
+		siteurl: z.string(),
+		still_recurring: z.union([z.boolean(), z.string()]),
+		terms: z.union([z.array(z.string()), z.string()]),
+		transfer_uid: z.string().optional(),
+		uid: z.string(),
+		updated: z.string(),
+		user_uid: z.string(),
+	})
+	.strict();
 
 export type GroupData = z.infer<typeof GroupDataSchema>;
 
