@@ -15,6 +15,10 @@ import {
 	type UserData,
 } from '@/app/types';
 import { accountTypes, USER } from '@/app/constants';
+import {
+	createAccountData,
+	createAccountPayload,
+} from '@/app/types/AccountData';
 
 interface AccountCreateProps {
 	accountsData: AccountData[];
@@ -41,13 +45,8 @@ export default function AccountCreate({
 		return null;
 	}
 
-	const valid: boolean = validateAccountData(accountsData);
-
-	const defaultAccount =
-		valid && accountsData.length > 0
-			? accountsData.find((f) => f.is_default)
-			: false;
-	const noAccounts = valid && accountsData.length === 0;
+	const defaultAccount = accountsData.find((f) => f.is_default);
+	const noAccounts = accountsData.length === 0;
 
 	async function handleCreateAccount({ is_default, name, type }: AccountData) {
 		setError('');
@@ -57,24 +56,24 @@ export default function AccountCreate({
 			return;
 		}
 
-		const isoDate = getIsoDate();
-
-		const newAccount: AccountData = {
-			created: isoDate,
-			is_default: is_default ?? noAccounts,
-			name,
-			type,
-			uid: uuidv4(),
-			updated: isoDate,
-			user_uid: (userData as UserData).uid,
-		};
-
-		apiCall('/api/accounts/create', {
-			onError: (msg) => setError(msg),
-			onSuccess: (msg) => setSuccess(msg),
-			payload: newAccount,
-			reload: '/accounts',
+		const newAccountData = createAccountData({ is_default, name, type });
+		const payload = createAccountPayload({
+			accountsData,
+			data: newAccountData,
+			userData,
 		});
+
+		if (!payload) {
+			console.error('No user data found', userData);
+			setError('No user data found');
+		} else {
+			apiCall('/api/accounts/create', {
+				onError: (msg) => setError(msg),
+				onSuccess: (msg) => setSuccess(msg),
+				payload,
+				reload: '/accounts',
+			});
+		}
 	}
 
 	return (

@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import AccountRow from './AccountRow';
 import { useLoading } from '@/app/hooks/client';
-import type { AccountDBData, ActiveRowData } from '@/app/types';
+import type { AccountData, ActiveRowData } from '@/app/types';
 import { DELETE, EDIT } from '@/app/constants';
 
 interface AccountsTableProps {
-	accountsData: AccountDBData[];
+	accountsData: AccountData[];
 	creatingAccount: boolean;
 }
 
