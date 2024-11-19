@@ -1,6 +1,7 @@
 import { ACCOUNTS } from '@/app/constants';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { isoDate, responseFactory, toReturn } from '@/utils/api';
+import { responseFactory, toReturn } from '@/utils/api';
+import { getIsoDate } from '@/utils/general';
 import type { AccountData, ReturnData } from '@/app/types';
 
 interface AccountsUpsertArgs {
@@ -14,7 +15,7 @@ export default async function accountsUpsert({
 }: AccountsUpsertArgs): Promise<ReturnData> {
 	const updatedAccounts = accounts.map((account) => ({
 		...account,
-		updated: isoDate(),
+		updated: getIsoDate(),
 	}));
 	const { data, error } = await supabase.from(ACCOUNTS).upsert(updatedAccounts);
 

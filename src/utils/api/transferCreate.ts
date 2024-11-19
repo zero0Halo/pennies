@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase';
 import { responseFactory } from '@/utils/api';
+import { getIsoDate } from '@/utils/general';
 import type { TransactionData, TransferData } from '@/app/types';
 import { TRANSFER, TRANSFERS } from '@/app/constants';
 
@@ -19,7 +20,7 @@ export default async function transferCreate(
 	const cookieStore = cookies();
 	const supabase = createServerClient(cookieStore);
 	const { user_uid } = transactions[0];
-	const isoDate = new Date().toISOString();
+	const isoDate = getIsoDate();
 	const transferPayload: TransferData[] = transfers.map((transaction) => ({
 		amount: transaction.amount * -1,
 		created: isoDate,

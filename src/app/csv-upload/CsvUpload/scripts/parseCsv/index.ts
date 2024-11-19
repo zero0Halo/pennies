@@ -4,13 +4,12 @@ import {
 	type TransactionData,
 	type FindGroupsData,
 	type UserData,
-	validateTransactionData,
 } from '@/app/types';
 import { CSV_UPLOAD } from '@/app/constants';
 import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 import findRecurring from './findRecurring';
-import { isoDate } from '@/utils/supabase';
+import { getIsoDate } from '@/utils/general';
 
 const regex = {
 	creditCard: /card \d+/g,
@@ -67,7 +66,7 @@ export default async function parseCsv(
 				.replace(regex.mixedIds, '')
 				.split(' ')
 				.filter((term) => !blacklist.includes(term) && term.length > 0);
-			const timestamp = isoDate(date);
+			const timestamp = getIsoDate(date);
 			const uid = uuidv4();
 
 			const transactionData: TransactionData = createTransactionData({

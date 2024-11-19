@@ -1,6 +1,7 @@
 import { ACCOUNTS } from '@/app/constants';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { isoDate, responseFactory, toReturn } from '@/utils/api';
+import { responseFactory, toReturn } from '@/utils/api';
+import { getIsoDate } from '@/utils/general';
 import type { AccountData, ReturnData } from '@/app/types';
 
 interface AccountsUpdateArgs {
@@ -18,7 +19,7 @@ export default async function accountsUpdate({
 
 	const { data, error } = await supabase
 		.from(ACCOUNTS)
-		.update({ ...account, updated: isoDate() })
+		.update({ ...account, updated: getIsoDate() })
 		.eq('uid', uid)
 		.eq('user_uid', user_uid);
 

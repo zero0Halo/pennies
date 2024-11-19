@@ -6,7 +6,8 @@ import Input from '@/app/components/Input';
 import AlertMessages from './AlertMessages';
 import ButtonGroup from './ButtonGroup';
 import { useClientCookie } from '@/app/hooks/client';
-import { apiCall, isoDate } from '@/utils/app';
+import { apiCall } from '@/utils/app';
+import { getIsoDate } from '@/utils/general';
 import type { AccountData, ActiveRowData, UserData } from '@/app/types';
 import { accountTypes, DELETE, EDIT, USER } from '@/app/constants';
 
@@ -82,7 +83,7 @@ export default function AccountRow({
 			is_default,
 			name,
 			type,
-			updated: isoDate(),
+			updated: getIsoDate(),
 		};
 
 		apiCall('/api/accounts/update', {

@@ -7,7 +7,8 @@ import Input from '@/app/components/Input';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import { useClientCookie } from '@/app/hooks/client';
-import { apiCall, isoDate } from '@/utils/app';
+import { apiCall } from '@/utils/app';
+import { getIsoDate } from '@/utils/general';
 import {
 	validateAccountData,
 	type AccountData,
@@ -50,13 +51,15 @@ export default function AccountCreate({
 			return;
 		}
 
+		const isoDate = getIsoDate();
+
 		const newAccount: AccountData = {
-			created: isoDate(),
+			created: isoDate,
 			is_default: is_default ?? noAccounts,
 			name,
 			type,
 			uid: uuidv4(),
-			updated: isoDate(),
+			updated: isoDate,
 			user_uid: (userCookieData as UserData).uid,
 		};
 

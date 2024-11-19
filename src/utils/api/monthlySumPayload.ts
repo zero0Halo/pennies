@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { MonthlySumData, TransactionData } from '@/app/types';
+import { getIsoDate } from '@/utils/general';
 
 export default function monthlySumPayload(
 	transactions: TransactionData[],
@@ -11,7 +12,7 @@ export default function monthlySumPayload(
 	const payloadArr: MonthlySumData[] = transactions.map(
 		({ account_uid, amount, timestamp, user_uid }) => {
 			const date = new Date(timestamp);
-			const isoDate = new Date().toISOString();
+			const isoDate = getIsoDate();
 			const month = date.getMonth() + 1;
 			const year = date.getFullYear();
 			const month_uid_key = `${month}-${year}-${user_uid}-${account_uid}`;
