@@ -1,12 +1,12 @@
 'use client';
 
-import type { AccountDBData } from '@/app/types';
+import type { AccountData } from '@/app/types';
 import AccountCreate from './AccountCreate';
 import AccountsTable from './AccountsTable';
 import { useState } from 'react';
 
 interface AccountsProps {
-	accountsData: AccountDBData[];
+	accountsData: AccountData[];
 }
 
 export default function Accounts({ accountsData }: AccountsProps) {

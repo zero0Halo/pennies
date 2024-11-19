@@ -19,5 +19,8 @@ export const createAccountData = (
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export const validateAccountData = (data: any) =>
-	AccountDataSchema.safeParse(data);
+export const validateAccountData = (data: any) => {
+	const result = AccountDataSchema.safeParse(data);
+
+	return !!result?.success;
+};

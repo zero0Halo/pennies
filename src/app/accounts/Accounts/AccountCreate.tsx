@@ -8,7 +8,11 @@ import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import { useClientCookie } from '@/app/hooks/client';
 import { apiCall, isoDate } from '@/utils/app';
-import type { AccountData, UserData } from '@/app/types';
+import {
+	validateAccountData,
+	type AccountData,
+	type UserData,
+} from '@/app/types';
 import { accountTypes, USER } from '@/app/constants';
 
 interface AccountCreateProps {
@@ -30,11 +34,13 @@ export default function AccountCreate({
 		handleSubmit,
 	} = useForm<AccountData>();
 
+	const valid: boolean = validateAccountData(accountsData);
+
 	const defaultAccount =
-		Array.isArray(accountsData) && accountsData.length > 0
+		valid && accountsData.length > 0
 			? accountsData.find((f) => f.is_default)
 			: false;
-	const noAccounts = Array.isArray(accountsData) && accountsData.length === 0;
+	const noAccounts = valid && accountsData.length === 0;
 
 	async function handleCreateAccount({ is_default, name, type }: AccountData) {
 		setError('');
