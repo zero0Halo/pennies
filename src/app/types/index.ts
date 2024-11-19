@@ -2,10 +2,12 @@ import type { NextResponse } from 'next/server';
 import type { TransactionData } from './TransactionData';
 import type { GroupData } from './GroupData';
 
+// Account
 export {
 	type AccountData,
 	AccountDataSchema,
 	createAccountData,
+	createAccountPayload,
 	validateAccountData,
 } from './AccountData';
 
