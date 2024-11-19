@@ -27,7 +27,8 @@ export default function CsvUpload() {
 		FindGroupsData | false | undefined
 	>(undefined);
 	const { props, setSuccess, setError, FormMessaging } = useFormMessaging();
-	const [userData] = useClientCookie<UserData>(USER);
+	const { data: userData, error: userDataError } =
+		useClientCookie<UserData>(USER);
 	const { options } = useAccounts();
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
@@ -35,6 +36,11 @@ export default function CsvUpload() {
 		groupsData !== undefined
 			? groupsData.groups.filter(({ group }) => group.name !== false)
 			: [];
+
+	if (userDataError) {
+		console.error(userDataError);
+		return null;
+	}
 
 	// Check for CSV data in local storage
 	useEffect(() => {

@@ -28,12 +28,18 @@ export default function AccountCreate({
 	const [error, setError] = useState('');
 	const [defaultWarning, setDefaultWarning] = useState(false);
 	const [success, setSuccess] = useState('');
-	const [userCookieData] = useClientCookie<UserData>(USER);
+	const { data: userData, error: userDataError } =
+		useClientCookie<UserData>(USER);
 	const {
 		formState: { errors },
 		register,
 		handleSubmit,
 	} = useForm<AccountData>();
+
+	if (userDataError) {
+		console.error(userDataError);
+		return null;
+	}
 
 	const valid: boolean = validateAccountData(accountsData);
 
@@ -60,7 +66,7 @@ export default function AccountCreate({
 			type,
 			uid: uuidv4(),
 			updated: isoDate,
-			user_uid: (userCookieData as UserData).uid,
+			user_uid: (userData as UserData).uid,
 		};
 
 		apiCall('/api/accounts/create', {
@@ -70,8 +76,6 @@ export default function AccountCreate({
 			reload: '/accounts',
 		});
 	}
-
-	if (!userCookieData) return null;
 
 	return (
 		<form

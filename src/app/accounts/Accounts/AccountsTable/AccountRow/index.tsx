@@ -29,7 +29,13 @@ export default function AccountRow({
 	const [defaultWarning, setDefaultWarning] = useState(false);
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
-	const [userCookieData] = useClientCookie<UserData>(USER);
+	const { data: userData, error: userDataError } =
+		useClientCookie<UserData>(USER);
+
+	if (userDataError) {
+		console.error(userDataError);
+		return null;
+	}
 
 	const {
 		formState: { errors, isDirty },
@@ -57,7 +63,7 @@ export default function AccountRow({
 			onSuccess: (msg) => setSuccess(msg),
 			payload: {
 				account,
-				user_uid: (userCookieData as UserData).uid,
+				user_uid: (userData as UserData).uid,
 			},
 			reload: '/accounts',
 		});
