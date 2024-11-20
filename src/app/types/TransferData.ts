@@ -47,7 +47,7 @@ interface CreateTransferPayloadArgs {
 	transactions: TransactionData[];
 }
 
-interface CreateTransferPayloadData {
+export interface CreateTransferPayloadData {
 	group?: GroupData | null;
 	transfers?: TransferData[] | null;
 	transactions?: TransactionData[] | null;
@@ -56,11 +56,11 @@ interface CreateTransferPayloadData {
 export function createTransferPayload({
 	group,
 	transactions,
-}: CreateTransferPayloadArgs): CreateTransferPayloadData | null {
+}: CreateTransferPayloadArgs): CreateTransferPayloadData {
 	const returnData: CreateTransferPayloadData = {
-		group: null,
+		group,
 		transfers: null,
-		transactions: null,
+		transactions,
 	};
 	const transfers = transactions.filter(
 		(

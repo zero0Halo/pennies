@@ -31,6 +31,7 @@ export interface FindGroupsData {
 	total: number;
 }
 
+// Group
 export {
 	type GroupData,
 	GroupDataSchema,
@@ -82,11 +83,13 @@ export {
 	validateTransactionData,
 } from './TransactionData';
 
+// TRANSFER
 export {
 	type TransferData,
 	TransferDataSchema,
 	createTransferData,
 	createTransferPayload,
+	type CreateTransferPayloadData,
 	validateTransferData,
 } from './TransferData';
 

@@ -1,17 +1,15 @@
-import type { FindGroupsData, GroupData, TransactionData } from '@/app/types';
+import type { CreateTransferPayloadData, FindGroupsData } from '@/app/types';
 
 interface UpdateStateArgs {
+	payload: CreateTransferPayloadData;
 	state: FindGroupsData | undefined;
-	updatedGroup: GroupData;
-	updatedTransactions: TransactionData[];
 }
 
 export default function updateState({
+	payload: { group: updatedGroup, transactions: updatedTransactions },
 	state,
-	updatedGroup,
-	updatedTransactions,
 }: UpdateStateArgs) {
-	if (state) {
+	if (state && updatedGroup && updatedTransactions) {
 		const newState = {
 			groups: [...state.groups],
 			singletons: [...state.singletons],

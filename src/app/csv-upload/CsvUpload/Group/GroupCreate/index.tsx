@@ -9,7 +9,12 @@ import { useAccounts, useCategories, useLoading } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 import formatPayload from './scripts/formatPayload';
 import updateState from './scripts/updateState';
-import type { FindGroupsData, TransactionData, GroupData } from '@/app/types';
+import type {
+	FindGroupsData,
+	TransactionData,
+	GroupData,
+	CreateTransferPayloadData,
+} from '@/app/types';
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 
 interface GroupCreateProps {
@@ -75,7 +80,7 @@ export default function GroupCreate({
 		if (Object.keys(errors).length === 0) {
 			setLoading(true);
 
-			const { updatedGroup, updatedTransactions } = formatPayload({
+			const payload: CreateTransferPayloadData = formatPayload({
 				formData,
 				group,
 				transactions,
@@ -92,8 +97,7 @@ export default function GroupCreate({
 					setCSVData((state) => {
 						const updatedState = updateState({
 							state,
-							updatedGroup,
-							updatedTransactions,
+							payload,
 						});
 
 						localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
@@ -102,16 +106,17 @@ export default function GroupCreate({
 					});
 					setActiveElement(undefined);
 				},
-				payload: {
-					group: updatedGroup,
-					transactions: updatedTransactions,
-				},
+				payload,
 			});
 		}
 	}
 
 	// function test(formData: GroupData) {
-	// 	console.log({ formData });
+	// 	const payload = formatPayload({
+	// 		formData,
+	// 		group,
+	// 		transactions,
+	// 	});
 	// }
 
 	return (

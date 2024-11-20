@@ -1,6 +1,8 @@
 import {
 	createGroupData,
 	createTransactionData,
+	createTransferPayload,
+	type CreateTransferPayloadData,
 	type GroupData,
 	type TransactionData,
 } from '@/app/types';
@@ -16,7 +18,7 @@ export default function formatPayload({
 	formData,
 	group,
 	transactions,
-}: FormatPayloadArgs) {
+}: FormatPayloadArgs): CreateTransferPayloadData {
 	const isoDate = getIsoDate();
 	const updatedTransactions: TransactionData[] = transactions.map(
 		(transaction) =>
@@ -41,6 +43,10 @@ export default function formatPayload({
 			: formData.terms.split(',').map((term) => term.trim()),
 		updated: isoDate,
 	});
+	const payload: CreateTransferPayloadData = createTransferPayload({
+		group: updatedGroup,
+		transactions: updatedTransactions,
+	});
 
-	return { updatedGroup, updatedTransactions };
+	return payload;
 }
