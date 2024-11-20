@@ -75,6 +75,7 @@ export default async function parseCsv(
 				prime: false,
 				terms,
 				timestamp,
+				to_account_uid: undefined,
 				transfer_uid: undefined,
 				updated: '',
 				uid,

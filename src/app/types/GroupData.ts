@@ -14,6 +14,7 @@ export const GroupDataSchema = z
 		siteurl: z.string(),
 		still_recurring: z.union([z.boolean(), z.string()]),
 		terms: z.union([z.array(z.string()), z.string()]),
+		to_account_uid: z.string().optional(),
 		transfer_uid: z.string().optional(),
 		uid: z.string(),
 		updated: z.string(),

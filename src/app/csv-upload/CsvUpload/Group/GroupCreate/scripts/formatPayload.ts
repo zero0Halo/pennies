@@ -27,6 +27,7 @@ export default function formatPayload({
 				terms: Array.isArray(transaction.terms)
 					? transaction.terms
 					: transaction.terms.split(', '),
+				to_account_uid: formData.to_account_uid,
 				updated: isoDate,
 			}),
 	);

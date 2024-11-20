@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
@@ -30,6 +30,10 @@ export default function GroupCreate({
 	transactions,
 }: GroupCreateProps) {
 	const { options } = useAccounts();
+	const selectOptions = useMemo(
+		() => options.filter((g) => g.value !== group.account_uid),
+		[options, group],
+	);
 	const { categories } = useCategories();
 	const { props, setLoading, Loading } = useLoading();
 	const {
@@ -59,7 +63,13 @@ export default function GroupCreate({
 		if (group.account_uid && options.length) {
 			setValue('account_uid', group.account_uid);
 		}
-	}, [group.account_uid, options, setValue]);
+		if (watchCategory === TRANSFER && selectOptions.length > 0) {
+			setValue('to_account_uid', selectOptions[0].value);
+		}
+		if (watchCategory !== TRANSFER) {
+			setValue('to_account_uid', undefined);
+		}
+	}, [group.account_uid, options, selectOptions, setValue, watchCategory]);
 
 	async function handleCreateGroup(formData: GroupData) {
 		if (Object.keys(errors).length === 0) {
@@ -99,6 +109,10 @@ export default function GroupCreate({
 			});
 		}
 	}
+
+	// function test(formData: GroupData) {
+	// 	console.log({ formData });
+	// }
 
 	return (
 		<div className={'bg-secondary pt-1 p-8 rounded-lg relative'}>
@@ -160,14 +174,16 @@ export default function GroupCreate({
 						<Select options={categories} {...register('category')} />
 					</Label>
 
-					<Label className="join-item w-1/2" htmlFor="transfer_uid">
-						Transfer To
-						<Select
-							disabled={watchCategory !== TRANSFER}
-							options={options.filter((g) => g.value !== group.account_uid)}
-							{...register('transfer_uid')}
-						/>
-					</Label>
+					{selectOptions.length > 0 && (
+						<Label className="join-item w-1/2" htmlFor="to_account_uid">
+							Transfer To
+							<Select
+								disabled={watchCategory !== TRANSFER}
+								options={selectOptions}
+								{...register('to_account_uid')}
+							/>
+						</Label>
+					)}
 				</div>
 
 				<Label htmlFor="siteurl">

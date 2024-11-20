@@ -86,6 +86,7 @@ export {
 	type TransferData,
 	TransferDataSchema,
 	createTransferData,
+	createTransferPayload,
 	validateTransferData,
 } from './TransferData';
 
