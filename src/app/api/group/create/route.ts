@@ -6,7 +6,7 @@ import { MONTHLY_SUMS } from '@/app/constants';
 
 export async function POST(req: Request) {
 	try {
-		const { group, transactions } = await req.json();
+		const { group, transfers, transactions } = await req.json();
 		const { account_uid, user_uid } = group;
 		const {
 			groupsDelete,
@@ -16,6 +16,7 @@ export async function POST(req: Request) {
 			monthlySumsRollback,
 			monthlySumsSelect,
 			monthlySumsUpsert,
+			transfersInsert,
 			transactionsDelete,
 			transactionsUpsert,
 		} = partials({
@@ -62,6 +63,21 @@ export async function POST(req: Request) {
 
 			if (transactionsError) return transactionsError;
 			if (transactionsUpsertIsBad) return transactionsUpsertIsBad;
+			if (transactionsDeleteError) return transactionsDeleteError;
+			if (groupDeleteError) return groupDeleteError;
+		}
+
+		// Insert the transfers
+		const { data: transfersData, error: transfersDataError } =
+			await transfersInsert(transfers);
+
+		// If there was a problem inserting the transfers, rollback everything so far
+		if (transfersDataError) {
+			const { error: transactionsDeleteError } =
+				await transactionsDelete(transactions);
+			const { error: groupDeleteError } = await groupsDelete(group);
+
+			if (transfersDataError) return transactionsError;
 			if (transactionsDeleteError) return transactionsDeleteError;
 			if (groupDeleteError) return groupDeleteError;
 		}

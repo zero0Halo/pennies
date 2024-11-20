@@ -17,13 +17,20 @@ import monthlySumsSelectFn from './monthlySums/monthlySumsSelect';
 import monthlySumsUpsertFn, {
 	type MonthlySumsUpsertFnArgs,
 } from './monthlySums/monthlySumsUpsert';
+// TRANSFERS
+import transfersInsertFn from './transfers/transfersInsert';
 // transactions
 import transactionsDeleteFn from './transactions/transactionsDelete';
 import transactionsUpsertFn from './transactions/transactionsUpsert';
 // types
 import { createServerClient } from '@/utils/supabase';
 import { toReturn } from '@/utils/api';
-import type { AccountData, GroupData, TransactionData } from '@/app/types';
+import type {
+	AccountData,
+	GroupData,
+	TransactionData,
+	TransferData,
+} from '@/app/types';
 
 interface PartialsArgs {
 	account_uid?: string;
@@ -76,5 +83,9 @@ export default function partials({ account_uid, user_uid }: PartialsArgs) {
 			transactionsDeleteFn({ data, supabase }),
 		transactionsUpsert: (transactions: TransactionData[]) =>
 			transactionsUpsertFn({ supabase, transactions }),
+
+		// TRANSFERS
+		transfersInsert: (transfers: TransferData[]) =>
+			transfersInsertFn({ supabase, transfers }),
 	};
 }
