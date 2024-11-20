@@ -16,6 +16,7 @@ export async function POST(req: Request) {
 			monthlySumsRollback,
 			monthlySumsSelect,
 			monthlySumsUpsert,
+			transfersDelete,
 			transfersInsert,
 			transactionsDelete,
 			transactionsUpsert,
@@ -68,8 +69,7 @@ export async function POST(req: Request) {
 		}
 
 		// Insert the transfers
-		const { data: transfersData, error: transfersDataError } =
-			await transfersInsert(transfers);
+		const { error: transfersDataError } = await transfersInsert(transfers);
 
 		// If there was a problem inserting the transfers, rollback everything so far
 		if (transfersDataError) {
@@ -85,7 +85,8 @@ export async function POST(req: Request) {
 		// Upsert/Update the updated data back into monthly_sums
 		const { data: monthlySumsUpsertData, error: monthlySumsUpsertError } =
 			await monthlySumsUpsert({
-				sumData: monthlySumsSnapshot,
+				snapshot: monthlySumsSnapshot,
+				transfers,
 				transactions,
 			});
 
@@ -95,10 +96,11 @@ export async function POST(req: Request) {
 			original: monthlySumsSnapshot,
 		});
 
-		// If there is a problem upserting monthly_sums, rollback monthly_sums, transactions & group
+		// If there is a problem upserting monthly_sums, rollback monthly_sums, transfers, transactions & group
 		if (monthlySumsUpsertNotEqual || monthlySumsUpsertError) {
 			const { error: monthlySumsRollbackError } =
 				await monthlySumsRollback(monthlySumsSnapshot);
+			const { error: transfersDeleteError } = await transfersDelete(transfers);
 			const { error: transactionsDeleteError } =
 				await transactionsDelete(transactions);
 			const { error: groupDeleteError } = await groupsDelete(group);
@@ -106,6 +108,7 @@ export async function POST(req: Request) {
 			if (monthlySumsUpsertError) return monthlySumsUpsertError;
 			if (monthlySumsUpsertNotEqual) return monthlySumsUpsertNotEqual;
 			if (monthlySumsRollbackError) return monthlySumsRollbackError;
+			if (transfersDeleteError) return transfersDeleteError;
 			if (transactionsDeleteError) return transactionsDeleteError;
 			if (groupDeleteError) return groupDeleteError;
 		}

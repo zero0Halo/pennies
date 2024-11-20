@@ -18,6 +18,7 @@ import monthlySumsUpsertFn, {
 	type MonthlySumsUpsertFnArgs,
 } from './monthlySums/monthlySumsUpsert';
 // TRANSFERS
+import transfersDeleteFn from './transfers/transfersDelete';
 import transfersInsertFn from './transfers/transfersInsert';
 // transactions
 import transactionsDeleteFn from './transactions/transactionsDelete';
@@ -75,8 +76,12 @@ export default function partials({ account_uid, user_uid }: PartialsArgs) {
 			account_uid && user_uid
 				? monthlySumsSelectFn({ account_uid, supabase, user_uid })
 				: toReturn({}),
-		monthlySumsUpsert: ({ sumData, transactions }: MonthlySumsUpsertFnArgs) =>
-			monthlySumsUpsertFn({ sumData, supabase, transactions }),
+		monthlySumsUpsert: ({
+			snapshot,
+			transfers,
+			transactions,
+		}: MonthlySumsUpsertFnArgs) =>
+			monthlySumsUpsertFn({ snapshot, supabase, transfers, transactions }),
 
 		// transactions
 		transactionsDelete: (data: TransactionData[]) =>
@@ -85,6 +90,8 @@ export default function partials({ account_uid, user_uid }: PartialsArgs) {
 			transactionsUpsertFn({ supabase, transactions }),
 
 		// TRANSFERS
+		transfersDelete: (data: TransferData[]) =>
+			transfersDeleteFn({ supabase, data }),
 		transfersInsert: (transfers: TransferData[]) =>
 			transfersInsertFn({ supabase, transfers }),
 	};

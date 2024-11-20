@@ -1,10 +1,17 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { monthlySumPayload, responseFactory, toReturn } from '@/utils/api';
-import type { MonthlySumData, ReturnData, TransactionData } from '@/app/types';
+import type {
+	MonthlySumData,
+	ReturnData,
+	TransactionData,
+	TransferData,
+} from '@/app/types';
 import { MONTHLY_SUMS } from '@/app/constants';
+import { createMonthlySumPayload } from '@/app/types/MonthlySumData';
 
 export interface MonthlySumsUpsertFnArgs {
-	sumData: MonthlySumData[] | undefined | null;
+	snapshot: MonthlySumData[] | undefined | null;
+	transfers: TransferData[] | null;
 	transactions: TransactionData[];
 }
 
@@ -13,15 +20,20 @@ interface MonthlySumsUpsertArgs extends MonthlySumsUpsertFnArgs {
 }
 
 export default async function monthlySumsUpsert({
-	sumData,
+	snapshot,
 	supabase,
+	transfers,
 	transactions,
 }: MonthlySumsUpsertArgs): Promise<ReturnData> {
 	let dataResponse = null;
 	let errorResponse = null;
 
-	if (sumData) {
-		const payload: MonthlySumData[] = monthlySumPayload(transactions, sumData);
+	if (snapshot) {
+		const payload: MonthlySumData[] = createMonthlySumPayload({
+			snapshot,
+			transfers,
+			transactions,
+		});
 
 		const { data, error } = await supabase
 			.from(MONTHLY_SUMS)
