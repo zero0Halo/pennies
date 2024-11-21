@@ -35,10 +35,12 @@ export const createAccountData = (
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export const validateAccountData = (data: any) => {
-	const result = AccountDataSchema.safeParse(data);
+export const validateAccountData = (data: any): boolean => {
+	if (Array.isArray(data)) {
+		return data.every((entry) => !!AccountDataSchema.safeParse(entry).success);
+	}
 
-	return !!result?.success;
+	return !!AccountDataSchema.safeParse(data).success;
 };
 
 interface CreateAccountPayloadProps {

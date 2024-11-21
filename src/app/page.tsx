@@ -1,75 +1,86 @@
-import Link from 'next/link';
 import NextCruft from './components/NextCruft';
+import HomeHero from './components/home/HomeHero';
 import { useIsLoggedIn, useServerCookie } from '@/app/hooks/server';
-import type { AccountData, UserData } from './types';
+import {
+	validateAccountData,
+	validateUserData,
+	type AccountData,
+	type ReturnData,
+	type UserData,
+} from '@/app/types';
 import { ACCOUNTS, USER } from '@/app/constants';
+import { fakePromise } from '@/utils/api';
 
-export default function Home() {
+interface GetDataArgs {
+	accountsData: AccountData[] | boolean | undefined;
+	userData: UserData | boolean | undefined;
+}
+
+async function getData({
+	accountsData,
+	userData,
+}: GetDataArgs): Promise<ReturnData | null> {
+	const userDataValid: boolean = validateUserData(userData);
+	const accountsDataValid: boolean = validateAccountData(accountsData);
+
+	if (!userDataValid || !accountsDataValid) return fakePromise(null);
+
+	const defaultAccount = !Array.isArray(accountsData)
+		? undefined
+		: accountsData.find((account) => account.is_default);
+	const user_uid = !userDataValid ? undefined : (userData as UserData).uid;
+	const thisMonth: number = new Date().getMonth() + 1;
+	const data = fetch('/api/home/select');
+
+	return fakePromise(null);
+}
+
+export default async function Home() {
 	const isLoggedIn = useIsLoggedIn();
-	const [accountsCookieData] = useServerCookie<AccountData[]>(ACCOUNTS);
-	const [userCookieData] = useServerCookie<UserData>(USER);
-	const noAccounts =
-		Array.isArray(accountsCookieData) && accountsCookieData.length === 0;
-	const noCategories =
-		typeof userCookieData === 'object' && !userCookieData?.categories;
+	const [accountsData] = useServerCookie<AccountData[]>(ACCOUNTS);
+	const [userData] = useServerCookie<UserData>(USER);
+	const noAccounts = Array.isArray(accountsData) && accountsData.length === 0;
+	const noCategories = typeof userData === 'object' && !userData?.categories;
+
+	const data = await getData({ accountsData, userData });
 
 	return (
 		<div>
+			{/* If the user isn't logged in */}
 			{!isLoggedIn && (
-				<div className="hero bg-accent">
-					<div className="hero-content text-center pb-8">
-						<div className="max-w-md">
-							<h2>Don't Have an Signin?</h2>
-							<h3>Click the Signup Button Below!</h3>
-
-							<Link href="signup" className="btn btn-primary">
-								Signup!
-							</Link>
-						</div>
-					</div>
-				</div>
+				<HomeHero
+					heading="Don't Have an Signin?"
+					linkText="Signup!"
+					linkUrl="signup"
+					subHeading="Click the Signup Button Below!"
+				/>
 			)}
 
+			{/* If there user is logged in but has no accounts */}
 			{isLoggedIn && noAccounts && (
-				<div className="hero bg-accent">
-					<div className="hero-content text-center pb-8">
-						<div className="max-w-md">
-							<h2>You Need An Account To Start Saving Pennies!</h2>
-
-							<Link href="accounts" className="btn btn-primary">
-								Go To Accounts
-							</Link>
-						</div>
-					</div>
-				</div>
+				<HomeHero
+					heading="You Need An Account To Start Saving Pennies!"
+					linkText="Go To Accounts!"
+					linkUrl="accounts"
+				/>
 			)}
 
+			{/* If the user is logged in, has accounts but no categories */}
 			{isLoggedIn && !noAccounts && noCategories && (
-				<div className="hero bg-accent">
-					<div className="hero-content text-center pb-8">
-						<div className="max-w-md">
-							<h2>Create Your Categories!</h2>
-
-							<Link href="categories" className="btn btn-primary">
-								Go To Categories
-							</Link>
-						</div>
-					</div>
-				</div>
+				<HomeHero
+					heading="Create Your Categories!"
+					linkText="Go To Categories!"
+					linkUrl="categories"
+				/>
 			)}
 
+			{/* If the user is logged in, has accounts has categories */}
 			{isLoggedIn && !noAccounts && !noCategories && (
-				<div className="hero bg-accent">
-					<div className="hero-content text-center pb-8">
-						<div className="max-w-md">
-							<h2>Import Your Bank Data!</h2>
-
-							<Link href="csv-upload" className="btn btn-primary">
-								Go To CSV Upload
-							</Link>
-						</div>
-					</div>
-				</div>
+				<HomeHero
+					heading="Import Your Bank Data!"
+					linkText="Go To CSV Upload!"
+					linkUrl="csv-upload"
+				/>
 			)}
 
 			{false && <NextCruft />}

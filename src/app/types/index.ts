@@ -93,11 +93,10 @@ export {
 	validateTransferData,
 } from './TransferData';
 
-export interface UserData {
-	accounts: string[] | null;
-	categories: string[] | null;
-	email: string;
-	first_name?: string;
-	last_name?: string;
-	uid: string;
-}
+// USER
+export {
+	type UserData,
+	UserDataSchema,
+	createUserData,
+	validateUserData,
+} from './UserData';
