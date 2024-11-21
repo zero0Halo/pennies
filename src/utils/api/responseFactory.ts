@@ -19,12 +19,12 @@ export default function responseFactory(
 	);
 }
 
-export function responseError(data: Data, message: string): NextResponse {
-	console.error({ message, data });
+export function responseError(message: string, data?: Data): NextResponse {
+	console.error('responseError', { message, data });
 	return responseFactory(message, data, 400);
 }
 
-export function responseSuccess(data: Data, message: string): NextResponse {
-	console.log({ message, data });
+export function responseSuccess(message: string, data?: Data): NextResponse {
+	console.log('responseSuccess', { message, data });
 	return responseFactory(message, data, 200);
 }

@@ -1,10 +1,12 @@
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
+import { getIsoDate } from '@/utils/general';
 
 export const UserDataSchema = z
 	.object({
-		accounts: z.union([z.array(z.string()), z.null()]),
-		categories: z.union([z.array(z.string()), z.null()]),
+		accounts: z.array(z.string()).nullable(),
+		categories: z.array(z.string()).nullable(),
+		created: z.string(),
 		email: z.string(),
 		first_name: z.string().optional(),
 		last_name: z.string().optional(),
@@ -15,15 +17,16 @@ export const UserDataSchema = z
 export type UserData = z.infer<typeof UserDataSchema>;
 
 export const createUserData = (overrides: Partial<UserData> = {}): UserData => {
-	// TODO: Should really add these fields to the db table
-	// const isoDate = getIsoDate();
-	// created: isoDate,
-	// updated: isoDate,
+	const isoDate = getIsoDate();
+
 	const defaultValues = {
 		accounts: null,
+		categories: null,
+		created: isoDate,
 		email: '',
+		first_name: undefined,
+		last_name: undefined,
 		uid: uuidv4(),
-		user_uid: '',
 	};
 
 	return UserDataSchema.parse({ ...defaultValues, ...overrides });
@@ -32,6 +35,6 @@ export const createUserData = (overrides: Partial<UserData> = {}): UserData => {
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const validateUserData = (data: any) => {
 	const result = UserDataSchema.safeParse(data);
-
+	console.log({ data }, result.error);
 	return !!result?.success;
 };

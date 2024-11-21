@@ -5,45 +5,39 @@ import {
 	validateAccountData,
 	validateUserData,
 	type AccountData,
-	type ReturnData,
 	type UserData,
 } from '@/app/types';
 import { ACCOUNTS, USER } from '@/app/constants';
-import { fakePromise } from '@/utils/api';
+import { apiCall } from '@/utils/app';
 
 interface GetDataArgs {
-	accountsData: AccountData[] | boolean | undefined;
-	userData: UserData | boolean | undefined;
+	accounts: AccountData[] | boolean | undefined;
+	user: UserData | boolean | undefined;
 }
 
-async function getData({
-	accountsData,
-	userData,
-}: GetDataArgs): Promise<ReturnData | null> {
-	const userDataValid: boolean = validateUserData(userData);
-	const accountsDataValid: boolean = validateAccountData(accountsData);
+async function getData({ accounts, user }: GetDataArgs) {
+	const userDataValid: boolean = validateUserData(user);
+	const accountsDataValid: boolean = validateAccountData(accounts);
 
-	if (!userDataValid || !accountsDataValid) return fakePromise(null);
+	if (!userDataValid || !accountsDataValid) return null;
 
-	const defaultAccount = !Array.isArray(accountsData)
-		? undefined
-		: accountsData.find((account) => account.is_default);
-	const user_uid = !userDataValid ? undefined : (userData as UserData).uid;
-	const thisMonth: number = new Date().getMonth() + 1;
-	const data = fetch('/api/home/select');
+	const month = new Date().getMonth() + 1;
+	const response = await apiCall('/api/home/select', {
+		payload: { accounts, month, user },
+	});
 
-	return fakePromise(null);
+	return response;
 }
 
 export default async function Home() {
 	const isLoggedIn = useIsLoggedIn();
-	const [accountsData] = useServerCookie<AccountData[]>(ACCOUNTS);
-	const [userData] = useServerCookie<UserData>(USER);
-	const noAccounts = Array.isArray(accountsData) && accountsData.length === 0;
-	const noCategories = typeof userData === 'object' && !userData?.categories;
+	const [accounts] = useServerCookie<AccountData[]>(ACCOUNTS);
+	const [user] = useServerCookie<UserData>(USER);
+	const noAccounts = Array.isArray(accounts) && accounts.length === 0;
+	const noCategories = typeof user === 'object' && !user?.categories;
 
-	const data = await getData({ accountsData, userData });
-
+	const data = await getData({ accounts, user });
+	console.log({ data });
 	return (
 		<div>
 			{/* If the user isn't logged in */}
