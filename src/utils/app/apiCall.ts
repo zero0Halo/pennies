@@ -1,14 +1,14 @@
 interface SettingsData {
-	onError: (arg: string) => void;
-	onSuccess: (arg: string) => void;
+	onError?: (arg: string) => void;
+	onSuccess?: (arg: string) => void;
 	payload: object;
 	reload?: string;
 }
 
-export default async function apiCall(
+export default async function apiCall<T>(
 	endpoint: string,
 	settings: SettingsData,
-) {
+): Promise<{ data: T | null; message: string | null }> {
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
@@ -16,25 +16,25 @@ export default async function apiCall(
 		},
 		body: JSON.stringify(settings.payload),
 	});
-
 	const body = await response.json();
-	let msg: string[] | string = [body.message];
-
-	if (body?.data?.message) msg.push(body?.data?.message);
-
-	msg = msg.join(': ');
+	const data = (body?.data as T) || null;
+	const message =
+		[body?.message, body?.data?.message].filter(Boolean).join(': ') || '';
 
 	if (response.ok) {
-		settings.onSuccess(msg);
+		settings.onSuccess?.(message);
 
-		if (settings?.reload) {
+		if (settings.reload && window !== undefined) {
 			setTimeout(() => {
-				window.location.href = settings.reload as string;
+				// biome-ignore lint/style/noNonNullAssertion: <explanation>
+				window.location.href = settings.reload!;
 			}, 2000);
 		}
 
-		return new Promise((resolve) => resolve(msg));
+		return { data, message };
 	}
-	settings.onError(msg);
-	return new Promise((_, reject) => reject(msg));
+
+	settings.onError?.(message);
+
+	return { data, message };
 }
