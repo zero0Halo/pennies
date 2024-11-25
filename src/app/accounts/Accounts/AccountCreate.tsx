@@ -50,7 +50,11 @@ export default function AccountCreate({
 			return;
 		}
 
-		const newAccountData = createAccountData({ is_default, name, type });
+		const newAccountData = createAccountData({
+			is_default: is_default ?? false,
+			name,
+			type,
+		});
 		const payload = createAccountPayload({
 			accountsData,
 			data: newAccountData,
