@@ -3,7 +3,8 @@
 import partials from '@/app/api/partials';
 import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
 import type { AccountData } from '@/app/types';
-import { ACCOUNTS } from '@/app/constants';
+import { ACCOUNTS, USERS } from '@/app/constants';
+import superiorBaseFactory from '@/utils/superiorBaseFactory';
 
 export async function POST(req: Request) {
 	const payload = await req.json();
@@ -12,6 +13,11 @@ export async function POST(req: Request) {
 	const { accountsSelect, accountsUpsert } = partials({
 		user_uid: payload.user_uid,
 	});
+
+	const superiorBase = await superiorBaseFactory();
+	const test = await superiorBase.from(USERS).select('*').go();
+
+	console.log(test.data);
 
 	// Get the default account if it exists
 	const { data, error: defaultAccountError } =

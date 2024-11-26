@@ -8,11 +8,12 @@ import Select from '@/app/components/Select';
 import { useClientCookie } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 import type { AccountData, UserData } from '@/app/types';
-import { accountTypes, USER } from '@/app/constants';
+import { accountTypes, USER, USERS } from '@/app/constants';
 import {
 	createAccountData,
 	createAccountPayload,
 } from '@/app/types/AccountData';
+import superiorBaseFactory from '@/utils/superiorBaseFactory';
 
 interface AccountCreateProps {
 	accountsData: AccountData[];
@@ -65,11 +66,19 @@ export default function AccountCreate({
 			console.error('No user data found', userData);
 			setError('No user data found');
 		} else {
+			const superiorBase = await superiorBaseFactory();
+			const responsive = await superiorBase
+				.from(USERS)
+				.select('*')
+				.onSuccess((data) => console.log({ data }))
+				.go();
+			console.log(responsive);
+
 			apiCall('/api/accounts/create', {
 				onError: (msg) => setError(msg),
 				onSuccess: (msg) => setSuccess(msg),
 				payload,
-				reload: '/accounts',
+				// reload: '/accounts',
 			});
 		}
 	}
