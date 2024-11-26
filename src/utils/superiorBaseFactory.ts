@@ -40,6 +40,7 @@ class SuperiorBase {
 	private querySteps: string[] = [];
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	private payload?: any;
+	private reloadPath?: string;
 	private response: DynamicResponse;
 	private successFn?: (arg: string) => void;
 	private type: string;
@@ -48,6 +49,7 @@ class SuperiorBase {
 
 	constructor({ client, response, type, user_uid }: SuperiorBaseArgs) {
 		this.client = client;
+		this.reloadPath = undefined;
 		this.response = response;
 		this.type = type;
 		this.use_user_uid = true;
@@ -87,6 +89,11 @@ class SuperiorBase {
 		return this;
 	}
 
+	reload(reloadPath: string) {
+		this.reloadPath = reloadPath;
+		return this;
+	}
+
 	select(value: string) {
 		this.fromCheck();
 
@@ -108,7 +115,15 @@ class SuperiorBase {
 	async go<T>() {
 		this.fromCheck(); // Throw an error if this.from wasn't called first
 
-		const { errorFn, response, successFn, type, user_uid, use_user_uid } = this;
+		const {
+			errorFn,
+			reloadPath,
+			response,
+			successFn,
+			type,
+			user_uid,
+			use_user_uid,
+		} = this;
 		const query = use_user_uid
 			? this.query.eq('user_uid', user_uid)
 			: this.query;
@@ -118,6 +133,13 @@ class SuperiorBase {
 		if (type === CLIENT) {
 			if (data) {
 				successFn?.('Successful Operation');
+
+				if (reloadPath) {
+					setTimeout(() => {
+						window.location.href = reloadPath;
+					}, 2500);
+				}
+
 				return { ...response, data };
 			}
 			if (error) {

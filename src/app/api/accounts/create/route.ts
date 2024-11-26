@@ -2,9 +2,8 @@
 // Also handles account updates. Refer to next config file.
 import partials from '@/app/api/partials';
 import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
-import type { AccountData, UserData } from '@/app/types';
-import { ACCOUNTS, USERS } from '@/app/constants';
-import superiorBaseFactory from '@/utils/superiorBaseFactory';
+import type { AccountData } from '@/app/types';
+import { ACCOUNTS } from '@/app/constants';
 
 export async function POST(req: Request) {
 	const payload = await req.json();
@@ -13,15 +12,6 @@ export async function POST(req: Request) {
 	const { accountsSelect, accountsUpsert } = partials({
 		user_uid: payload.user_uid,
 	});
-
-	const superiorBase = await superiorBaseFactory();
-	const responsive = await superiorBase
-		.from(ACCOUNTS)
-		.select('*')
-		.noUserId()
-		.onSuccess((data) => console.log(data))
-		.go<AccountData[]>();
-	console.log(responsive);
 
 	// Get the default account if it exists
 	const { data, error: defaultAccountError } =
