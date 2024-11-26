@@ -1,9 +1,11 @@
+import type { NextResponse } from 'next/server';
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { createBrowserClient, createServerClient } from '@/utils/supabase';
-import type { NextResponse } from 'next/server';
 import type { Data } from '@/utils/api/responseFactory';
-import { CLIENT, SERVER } from '@/app/constants';
-import type { UpsertOptions as UpsertOptionsBase } from '@/app/types';
+import type { UpsertOptions as UpsertOptionsBase, UserData } from '@/app/types';
+import { CLIENT, SERVER, USER } from '@/app/constants';
+import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
+import type Cookies from 'js-cookie';
 
 let nextHeaders: typeof import('next/headers');
 
@@ -11,6 +13,7 @@ type BrowserReturn = {
 	data: null | object | string;
 	error: null | object | string;
 };
+type CookieStore = typeof Cookies | ReadonlyRequestCookies;
 type DynamicResponse =
 	| BrowserReturn
 	| [
@@ -22,26 +25,33 @@ type UpsertOptions = UpsertOptionsBase & {
 	revertOnFail: boolean;
 };
 
+interface SuperiorBaseArgs {
+	client: SupabaseClient;
+	response: DynamicResponse;
+	type: string;
+	user_uid: string;
+}
+
 class SuperiorBase {
-	private supabase: SupabaseClient;
+	private client: SupabaseClient;
+	private errorFn?: (arg: string) => void;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	private query: any;
 	private querySteps: string[] = [];
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	private payload?: any;
-	private errorFn?: (arg: string) => void;
 	private response: DynamicResponse;
 	private successFn?: (arg: string) => void;
 	private type: string;
+	private use_user_uid: boolean;
+	private user_uid: string;
 
-	constructor(
-		supabase: SupabaseClient,
-		response: DynamicResponse,
-		type: string,
-	) {
+	constructor({ client, response, type, user_uid }: SuperiorBaseArgs) {
+		this.client = client;
 		this.response = response;
-		this.supabase = supabase;
 		this.type = type;
+		this.use_user_uid = true;
+		this.user_uid = user_uid;
 	}
 
 	eq(field: string, value: string | boolean | number) {
@@ -54,12 +64,17 @@ class SuperiorBase {
 
 	from(table: string) {
 		this.querySteps.push('from');
-		this.query = this.supabase.from(table); // Start the query
+		this.query = this.client.from(table); // Start the query
 		return this;
 	}
 
 	fromCheck() {
 		if (!this.query) throw new Error('Call `from()` before chaining queries.');
+	}
+
+	noUserId() {
+		this.use_user_uid = false;
+		return this;
 	}
 
 	onError(fn: (arg: string) => void) {
@@ -89,13 +104,15 @@ class SuperiorBase {
 		return this;
 	}
 
-	// Must be called to make the query execute. It's not in alpha. order because it's the last step.
+	// Must be called to make the query execute. It's not in alpha-order because it's the last step.
 	async go<T>() {
 		this.fromCheck(); // Throw an error if this.from wasn't called first
 
-		const { errorFn, payload, query, querySteps, response, successFn, type } =
-			this;
-		const isUpsert = querySteps.includes('upsert');
+		const { errorFn, response, successFn, type, user_uid, use_user_uid } = this;
+		const query = use_user_uid
+			? this.query.eq('user_uid', user_uid)
+			: this.query;
+
 		const { data, error }: QueryResponse<T> = await query; // Execute the supabase query
 
 		if (type === CLIENT) {
@@ -134,9 +151,11 @@ class SuperiorBase {
 export default async function superiorBaseFactory(
 	supabase?: SupabaseClient,
 ): Promise<SuperiorBase> {
+	let cookieStore: CookieStore;
 	let client: SupabaseClient | undefined = supabase;
 	let response: DynamicResponse = { data: null, error: null };
 	let type: string = CLIENT;
+	let user_uid = '';
 
 	if (typeof window === 'undefined') {
 		nextHeaders = await import('next/headers');
@@ -144,13 +163,18 @@ export default async function superiorBaseFactory(
 			'@/utils/api/responseFactory'
 		);
 		const { cookies } = nextHeaders;
-		const cookieStore = cookies();
+		cookieStore = cookies();
 		client = client ?? createServerClient(cookieStore);
 		response = [responseSuccess, responseError];
 		type = SERVER;
+		user_uid = (JSON.parse(cookieStore.get(USER)?.value ?? '') as UserData)
+			?.uid;
 	} else {
 		client = client ?? createBrowserClient();
+		cookieStore = ((await import('js-cookie')) as typeof import('js-cookie'))
+			?.default;
+		user_uid = (JSON.parse(cookieStore.get(USER) ?? '') as UserData)?.uid;
 	}
 
-	return new SuperiorBase(client, response, type);
+	return new SuperiorBase({ client, response, type, user_uid });
 }

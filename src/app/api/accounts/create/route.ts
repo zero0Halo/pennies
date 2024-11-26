@@ -16,10 +16,11 @@ export async function POST(req: Request) {
 
 	const superiorBase = await superiorBaseFactory();
 	const responsive = await superiorBase
-		.from(USERS)
+		.from(ACCOUNTS)
 		.select('*')
-		.onSuccess((data) => console.log({ data }))
-		.go<UserData[]>();
+		.noUserId()
+		.onSuccess((data) => console.log(data))
+		.go<AccountData[]>();
 	console.log(responsive);
 
 	// Get the default account if it exists

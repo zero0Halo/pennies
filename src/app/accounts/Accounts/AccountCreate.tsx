@@ -8,7 +8,7 @@ import Select from '@/app/components/Select';
 import { useClientCookie } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 import type { AccountData, UserData } from '@/app/types';
-import { accountTypes, USER, USERS } from '@/app/constants';
+import { ACCOUNTS, accountTypes, USER, USERS } from '@/app/constants';
 import {
 	createAccountData,
 	createAccountPayload,
@@ -68,10 +68,10 @@ export default function AccountCreate({
 		} else {
 			const superiorBase = await superiorBaseFactory();
 			const responsive = await superiorBase
-				.from(USERS)
+				.from(ACCOUNTS)
 				.select('*')
-				.onSuccess((data) => console.log({ data }))
-				.go<UserData[]>();
+				.onSuccess((msg) => console.log(msg))
+				.go<AccountData[]>();
 			console.log(responsive);
 
 			apiCall('/api/accounts/create', {
