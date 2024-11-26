@@ -2,7 +2,7 @@
 // Also handles account updates. Refer to next config file.
 import partials from '@/app/api/partials';
 import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
-import type { AccountData } from '@/app/types';
+import type { AccountData, UserData } from '@/app/types';
 import { ACCOUNTS, USERS } from '@/app/constants';
 import superiorBaseFactory from '@/utils/superiorBaseFactory';
 
@@ -15,9 +15,12 @@ export async function POST(req: Request) {
 	});
 
 	const superiorBase = await superiorBaseFactory();
-	const test = await superiorBase.from(USERS).select('*').go();
-
-	console.log(test.data);
+	const responsive = await superiorBase
+		.from(USERS)
+		.select('*')
+		.onSuccess((data) => console.log({ data }))
+		.go<UserData[]>();
+	console.log(responsive);
 
 	// Get the default account if it exists
 	const { data, error: defaultAccountError } =

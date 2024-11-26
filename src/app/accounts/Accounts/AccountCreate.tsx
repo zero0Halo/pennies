@@ -71,7 +71,7 @@ export default function AccountCreate({
 				.from(USERS)
 				.select('*')
 				.onSuccess((data) => console.log({ data }))
-				.go();
+				.go<UserData[]>();
 			console.log(responsive);
 
 			apiCall('/api/accounts/create', {

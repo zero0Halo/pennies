@@ -93,6 +93,12 @@ export {
 	validateTransferData,
 } from './TransferData';
 
+export type UpsertOptions = {
+	onConflict?: string | string[];
+	ignoreDuplicates?: boolean;
+	count?: 'exact' | 'planned' | 'estimated';
+};
+
 export interface UserData {
 	accounts: string[] | null;
 	categories: string[] | null;

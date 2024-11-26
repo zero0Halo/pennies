@@ -1,7 +1,26 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { createBrowserClient, createServerClient } from '@/utils/supabase';
+import type { NextResponse } from 'next/server';
+import type { Data } from '@/utils/api/responseFactory';
+import { CLIENT, SERVER } from '@/app/constants';
+import type { UpsertOptions as UpsertOptionsBase } from '@/app/types';
 
 let nextHeaders: typeof import('next/headers');
+
+type BrowserReturn = {
+	data: null | object | string;
+	error: null | object | string;
+};
+type DynamicResponse =
+	| BrowserReturn
+	| [
+			(message: string, data: Data) => NextResponse,
+			(message: string, data: Data) => NextResponse,
+	  ];
+type QueryResponse<T> = { data: T | null; error: PostgrestError | null };
+type UpsertOptions = UpsertOptionsBase & {
+	revertOnFail: boolean;
+};
 
 class SuperiorBase {
 	private supabase: SupabaseClient;
@@ -11,10 +30,18 @@ class SuperiorBase {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	private payload?: any;
 	private errorFn?: (arg: string) => void;
+	private response: DynamicResponse;
 	private successFn?: (arg: string) => void;
+	private type: string;
 
-	constructor(supabase: SupabaseClient) {
+	constructor(
+		supabase: SupabaseClient,
+		response: DynamicResponse,
+		type: string,
+	) {
+		this.response = response;
 		this.supabase = supabase;
+		this.type = type;
 	}
 
 	eq(field: string, value: string | boolean | number) {
@@ -53,8 +80,7 @@ class SuperiorBase {
 		return this;
 	}
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	upsert(data: any, options?: any | undefined) {
+	upsert<T>(data: T, options?: UpsertOptions) {
 		this.fromCheck();
 
 		this.querySteps.push('upsert');
@@ -63,23 +89,43 @@ class SuperiorBase {
 		return this;
 	}
 
-	// This must be called to make the query execute. It's not in alpha. order because it's the last step.
-	async go() {
-		this.fromCheck();
+	// Must be called to make the query execute. It's not in alpha. order because it's the last step.
+	async go<T>() {
+		this.fromCheck(); // Throw an error if this.from wasn't called first
 
-		this.querySteps = [];
+		const { errorFn, payload, query, querySteps, response, successFn, type } =
+			this;
+		const isUpsert = querySteps.includes('upsert');
+		const { data, error }: QueryResponse<T> = await query; // Execute the supabase query
 
-		const { data, error } = await this.query;
-		const isUpsert = this.querySteps.includes('upsert');
-
-		if (isUpsert && data.length !== this.payload.length) {
-			this.errorFn?.(
-				'The length of the success data does not match the length of the original payload',
-			);
+		if (type === CLIENT) {
+			if (data) {
+				successFn?.('Successful Operation');
+				return { ...response, data };
+			}
+			if (error) {
+				errorFn?.(`Unsuccessful Operation: ${error.message}`);
+				return { ...response, error };
+			}
 		}
 
-		if (data) this.successFn?.(data);
-		if (error) this.errorFn?.(error);
+		if (type === SERVER) {
+			const [responseSuccess, responseError] = Array.isArray(response)
+				? response
+				: [];
+
+			if (data)
+				return {
+					data: responseSuccess?.('Successful Operation', data),
+					error: null,
+				};
+
+			if (error)
+				return {
+					data: null,
+					error: responseError?.('Error performing operation', error),
+				};
+		}
 
 		return { data, error };
 	}
@@ -89,15 +135,22 @@ export default async function superiorBaseFactory(
 	supabase?: SupabaseClient,
 ): Promise<SuperiorBase> {
 	let client: SupabaseClient | undefined = supabase;
+	let response: DynamicResponse = { data: null, error: null };
+	let type: string = CLIENT;
 
-	if (typeof window === 'undefined' && !client) {
+	if (typeof window === 'undefined') {
 		nextHeaders = await import('next/headers');
+		const { responseSuccess, responseError } = await import(
+			'@/utils/api/responseFactory'
+		);
 		const { cookies } = nextHeaders;
 		const cookieStore = cookies();
-		client = createServerClient(cookieStore);
-	} else if (!client) {
-		client = createBrowserClient();
+		client = client ?? createServerClient(cookieStore);
+		response = [responseSuccess, responseError];
+		type = SERVER;
+	} else {
+		client = client ?? createBrowserClient();
 	}
 
-	return new SuperiorBase(client);
+	return new SuperiorBase(client, response, type);
 }
