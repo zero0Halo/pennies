@@ -93,17 +93,16 @@ export {
 	validateTransferData,
 } from './TransferData';
 
+// Supabase. They don't export this type.
 export type UpsertOptions = {
 	onConflict?: string | string[];
 	ignoreDuplicates?: boolean;
 	count?: 'exact' | 'planned' | 'estimated';
 };
 
-export interface UserData {
-	accounts: string[] | null;
-	categories: string[] | null;
-	email: string;
-	first_name?: string;
-	last_name?: string;
-	uid: string;
-}
+export {
+	type UserData,
+	UserDataSchema,
+	createUserData,
+	validateUserData,
+} from './UserData';
