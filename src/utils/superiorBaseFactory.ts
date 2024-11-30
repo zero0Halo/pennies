@@ -3,7 +3,16 @@ import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { createServerClient } from '@/utils/supabase';
 import { responseError, responseSuccess } from '@/utils/api/responseFactory';
 import type { UpsertOptions as UpsertOptionsBase, UserData } from '@/app/types';
-import { EQ, FROM, INSERT, SELECT, UPSERT, USER } from '@/app/constants';
+import {
+	EQ,
+	FROM,
+	INSERT,
+	SELECT,
+	UPDATE,
+	UPSERT,
+	USER,
+	USERS,
+} from '@/app/constants';
 import type { NextResponse } from 'next/server';
 import { getIsoDate } from './general';
 
@@ -25,6 +34,12 @@ type SuperiorBaseMessageData = {
 	from: string;
 	operation: string;
 	payloadSize?: undefined | number;
+};
+
+const superiorBaseResponse = {
+	data: null,
+	error: null,
+	success: null,
 };
 
 class SuperiorBase {
@@ -117,11 +132,11 @@ class SuperiorBase {
 		this.use_user_uid = true;
 	}
 
-	select(value: string) {
+	select(value?: string) {
 		this.fromCheck();
 		this.messagePieces.operation = SELECT;
 		this.querySteps.push(SELECT);
-		this.query = this.query.select(value);
+		this.query = value ? this.query.select(value) : this.query.select();
 		return this;
 	}
 
@@ -137,6 +152,16 @@ class SuperiorBase {
 		return this;
 	}
 
+	update<T>(data: T) {
+		this.fromCheck();
+
+		this.querySteps.push(UPDATE);
+		this.messagePieces.operation = UPDATE;
+		this.messagePieces.payloadSize = Array.isArray(data) ? data.length : 1;
+		this.query = this.query.update(this.whenUpdated(data));
+		return this;
+	}
+
 	upsert<T>(data: T, options?: UpsertOptions) {
 		this.fromCheck();
 
@@ -145,6 +170,18 @@ class SuperiorBase {
 		this.messagePieces.payloadSize = Array.isArray(data) ? data.length : 1;
 		this.query = this.query.upsert(this.whenUpdated(data), options);
 		return this;
+	}
+
+	upsertCheck<T>(data: T): boolean {
+		const { use_upsert_check, messagePieces } = this;
+
+		return (
+			data &&
+			Array.isArray(data) &&
+			use_upsert_check &&
+			messagePieces.operation === UPSERT &&
+			messagePieces.payloadSize !== data.length
+		);
 	}
 
 	whenUpdated<T>(data: T): T | T[] | null {
@@ -157,62 +194,37 @@ class SuperiorBase {
 	async go<T>(): Promise<SuperiorBaseResponse<T>> {
 		this.fromCheck();
 
-		const {
-			errorMsg,
-			messagePieces: { operation, payloadSize },
-			successMsg,
-			use_upsert_check,
-			user_uid,
-			use_user_uid,
-		} = this;
-		const query = use_user_uid
-			? this.query.eq('user_uid', user_uid)
+		const { messagePieces } = this;
+		const query = this.use_user_uid
+			? this.query.eq(
+					messagePieces.from !== USERS ? 'user_uid' : 'uid',
+					this.user_uid,
+				)
 			: this.query;
-
 		const { data, error }: QueryResponse<T> = await query; // Execute the supabase query
+		const response: SuperiorBaseResponse<T> = {
+			...superiorBaseResponse,
+		};
 
 		// TODO: NEED TO ACTUALLY ROLLBACK THE UPSERT AND NOT JUST THROW AN ERROR
-		if (
-			data &&
-			Array.isArray(data) &&
-			use_upsert_check &&
-			operation === UPSERT &&
-			payloadSize !== data.length
-		) {
-			this.reset();
-			return {
-				data: null,
-				error: responseError?.('Upsert payload sizes do not match', error),
-				success: null,
-			};
-		}
+		const upsertCheck = this.upsertCheck(data);
+		if (upsertCheck) console.error('Shit. Upsert size is wrong.');
 
 		if (data) {
-			this.reset();
-			return {
+			response.data = data;
+			response.success = responseSuccess(
+				this.successMsg ?? this.buildMessage({ success: true }),
 				data,
-				error: null,
-				success: responseSuccess?.(
-					successMsg ?? this.buildMessage({ success: true }),
-					data,
-				),
-			};
-		}
-
-		if (error) {
-			this.reset();
-			return {
-				data: null,
-				error: responseError?.(
-					errorMsg ?? this.buildMessage({ success: false }),
-					error,
-				),
-				success: null,
-			};
+			);
+		} else if (error) {
+			response.error = responseError(
+				this.errorMsg ?? this.buildMessage({ success: false }),
+				error,
+			);
 		}
 
 		this.reset();
-		return { data, error, success: null };
+		return response;
 	}
 }
 

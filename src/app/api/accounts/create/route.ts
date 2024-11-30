@@ -2,8 +2,8 @@
 // Also handles account updates. Refer to next config file.
 import type { NextResponse } from 'next/server';
 import { cookieJar } from '@/utils/api';
-import type { AccountData } from '@/app/types';
-import { ACCOUNTS } from '@/app/constants';
+import type { AccountData, UserData } from '@/app/types';
+import { ACCOUNTS, USER, USERS } from '@/app/constants';
 import superiorBaseFactory from '@/utils/superiorBaseFactory';
 
 export async function POST(req: Request) {
@@ -35,20 +35,38 @@ export async function POST(req: Request) {
 	if (upsertError) return upsertError;
 
 	// Get all of the accounts
-	const {
-		data: accountsData,
-		success: accountsSuccess,
-		error: accountsDataError,
-	} = await superiorBase
+	const { data: accountsData, error: accountsDataError } = await superiorBase
 		.from(ACCOUNTS)
 		.select('*')
-		.successMessage(`Account "${payload?.name}" Added!`)
-		.go<AccountData[]>();
+		.go<AccountData>();
 	if (accountsDataError) return accountsDataError;
 
-	(accountsSuccess as NextResponse).cookies.set(
+	// Update the user record with the new account data
+	const {
+		data: userData,
+		success: response,
+		error: userDataError,
+	} = await superiorBase
+		.from(USERS)
+		.update({
+			accounts: Array.isArray(accountsData)
+				? accountsData.map((accountData) => accountData?.uid)
+				: [],
+		})
+		.successMessage(`Account "${payload?.name}" Added!`)
+		.select() // Needed in order for something to be returned on success
+		.go<UserData>();
+	if (userDataError) return userDataError;
+
+	// Update the accounts cookie with the new data
+	(response as NextResponse).cookies.set(
 		...cookieJar({ name: ACCOUNTS, data: accountsData }),
 	);
 
-	return accountsSuccess;
+	// Update the user cookie with the new data
+	(response as NextResponse).cookies.set(
+		...cookieJar({ name: USER, data: userData }),
+	);
+
+	return response;
 }

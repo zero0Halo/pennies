@@ -35,6 +35,7 @@ export const GROUPS = 'groups';
 export const MONTHLY_SUMS = 'monthly_sums';
 export const SELECT = 'select';
 export const UPSERT = 'upsert';
+export const UPDATE = 'update';
 export const INSERT = 'insert';
 export const FROM = 'from';
 export const EQ = 'eq';

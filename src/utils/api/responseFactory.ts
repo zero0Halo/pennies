@@ -17,6 +17,5 @@ export function responseError(message: string, data?: Data): NextResponse {
 }
 
 export function responseSuccess(message: string, data?: Data): NextResponse {
-	console.log({ message, data });
 	return responseFactory(message, data, 200);
 }
