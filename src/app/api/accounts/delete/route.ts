@@ -1,48 +1,79 @@
 // src/app/api/accounts/delete/route.ts
-import { cookieJar, responseFactory } from '@/utils/api';
-import { ACCOUNTS } from '@/app/constants';
-import partials from '../../partials';
-import type { AccountData } from '@/app/types';
+import { cookieJar } from '@/utils/api';
+import { ACCOUNTS, USER, USERS } from '@/app/constants';
+import type { AccountData, UserData } from '@/app/types';
+import superiorBaseFactory from '@/utils/superiorBaseFactory';
+import { responseError } from '@/utils/api/responseFactory';
 
 export async function POST(req: Request) {
-	const { account, user_uid } = await req.json();
-	const { accountsDelete, accountsSelect, accountsUpdate } = partials({
-		user_uid,
-	});
+	const { account } = await req.json();
+	const superiorBase = await superiorBaseFactory();
 
-	// Get all the accounts
-	const { data, error: accountsError } = await accountsSelect('*');
-	if (accountsError) return accountsError;
+	// Get all of the accounts
+	const { data: accountsData, error: accountsDataError } = await superiorBase
+		.from(ACCOUNTS)
+		.select('*')
+		.go<AccountData>();
+	if (accountsDataError || !Array.isArray(accountsData))
+		return accountsDataError;
 
 	// Find the default account
-	const accounts = data as AccountData[];
-	const defaultAccount = accounts.find((account) => account.is_default);
+	const defaultAccount = Array.isArray(accountsData)
+		? accountsData.find((account) => account.is_default)
+		: false;
+	if (defaultAccount === false)
+		return responseError('No Default Account, which shouldnt be possible');
 
 	// If the account being deleted is the default and there will be an account left when it's gone,
 	// assign the first account as the new default
-	if (defaultAccount?.uid === account.uid && accounts.length > 1) {
-		const [accountNoDefault] = accounts.filter(
+	if (
+		defaultAccount?.uid === account.uid &&
+		Array.isArray(accountsData) &&
+		accountsData.length > 1
+	) {
+		const [accountNoDefault] = accountsData.filter(
 			(account) => !account.is_default,
 		);
-		const { error: updateNewDefaultError } =
-			await accountsUpdate(accountNoDefault);
-		if (updateNewDefaultError) return updateNewDefaultError;
+		const { error: accountNewDefaultError } = await superiorBase
+			.from(ACCOUNTS)
+			.update(accountNoDefault)
+			.go<AccountData>();
+		if (accountNewDefaultError) return accountNewDefaultError;
 	}
 
 	// Delete the specified account.
-	const { error: accountsDeleteError } = await accountsDelete(account);
+	const { error: accountsDeleteError } = await superiorBase
+		.from(ACCOUNTS)
+		.delete()
+		.eq('uid', account.uid)
+		.go();
 	if (accountsDeleteError) return accountsDeleteError;
 
 	// Get all accounts
-	const { data: allAccounts, error: allAccountsError } =
-		await accountsSelect('*');
-	if (allAccountsError) return allAccountsError;
+	const allAccounts = accountsData.filter(
+		(accountData) => accountData.uid !== account.uid,
+	);
 
-	// All done. Create the final response.
-	const response = responseFactory('Account Deleted Successfully!', {}, 200);
+	// Update user record
+	const {
+		data: userData,
+		success: response,
+		error: userDataError,
+	} = await superiorBase
+		.from(USERS)
+		.update({
+			accounts: Array.isArray(accountsData)
+				? accountsData.map((accountData) => accountData?.uid)
+				: [],
+		})
+		.successMessage(`Account "${account.name}" Deleted`)
+		.single()
+		.go<UserData>();
+	if (userDataError || response === null) return userDataError;
 
-	// Set the accounts cookie with the updated listing of all accounts
+	// Set the accounts & user cookies with the updated data
 	response.cookies.set(...cookieJar({ name: ACCOUNTS, data: allAccounts }));
+	response.cookies.set(...cookieJar({ name: USER, data: userData }));
 
 	return response;
 }
