@@ -1,11 +1,10 @@
 // src/app/api/accounts/create/route.ts
 // Also handles account updates. Refer to next config file.
-import partials from '@/app/api/partials';
-import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
+import type { NextResponse } from 'next/server';
+import { cookieJar } from '@/utils/api';
 import type { AccountData } from '@/app/types';
 import { ACCOUNTS } from '@/app/constants';
 import superiorBaseFactory from '@/utils/superiorBaseFactory';
-import type { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
 	const payload = await req.json();

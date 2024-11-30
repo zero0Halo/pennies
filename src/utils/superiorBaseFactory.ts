@@ -44,6 +44,7 @@ class SuperiorBase {
 			operation: '',
 			payloadSize: undefined,
 		};
+		this.query = undefined;
 		this.use_upsert_check = true;
 		this.use_user_uid = true;
 		this.user_uid = user_uid;
@@ -91,6 +92,18 @@ class SuperiorBase {
 	noUserId() {
 		this.use_user_uid = false;
 		return this;
+	}
+
+	reset() {
+		this.query = undefined;
+		this.querySteps = [];
+		this.messagePieces = {
+			from: '',
+			operation: '',
+			payloadSize: undefined,
+		};
+		this.use_upsert_check = true;
+		this.use_user_uid = true;
 	}
 
 	select(value: string) {
@@ -148,6 +161,7 @@ class SuperiorBase {
 			operation === UPSERT &&
 			payloadSize !== data.length
 		) {
+			this.reset();
 			return {
 				data: null,
 				error: responseError?.('Upsert payload sizes do not match', error),
@@ -155,20 +169,25 @@ class SuperiorBase {
 			};
 		}
 
-		if (data)
+		if (data) {
+			this.reset();
 			return {
 				data,
 				error: null,
 				success: responseSuccess?.(this.buildMessage({ success: true }), data),
 			};
+		}
 
-		if (error)
+		if (error) {
+			this.reset();
 			return {
 				data: null,
 				error: responseError?.(this.buildMessage({ success: false }), error),
 				success: null,
 			};
+		}
 
+		this.reset();
 		return { data, error, success: null };
 	}
 }
