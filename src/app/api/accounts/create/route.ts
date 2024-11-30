@@ -54,19 +54,13 @@ export async function POST(req: Request) {
 				: [],
 		})
 		.successMessage(`Account "${payload?.name}" Added!`)
-		.select() // Needed in order for something to be returned on success
+		.single()
 		.go<UserData>();
-	if (userDataError) return userDataError;
+	if (userDataError || response === null) return userDataError;
 
-	// Update the accounts cookie with the new data
-	(response as NextResponse).cookies.set(
-		...cookieJar({ name: ACCOUNTS, data: accountsData }),
-	);
-
-	// Update the user cookie with the new data
-	(response as NextResponse).cookies.set(
-		...cookieJar({ name: USER, data: userData }),
-	);
+	// Update the accounts & user cookies with the new data
+	response.cookies.set(...cookieJar({ name: ACCOUNTS, data: accountsData }));
+	response.cookies.set(...cookieJar({ name: USER, data: userData }));
 
 	return response;
 }

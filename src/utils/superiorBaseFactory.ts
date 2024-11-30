@@ -4,6 +4,7 @@ import { createServerClient } from '@/utils/supabase';
 import { responseError, responseSuccess } from '@/utils/api/responseFactory';
 import type { UpsertOptions as UpsertOptionsBase, UserData } from '@/app/types';
 import {
+	DELETE,
 	EQ,
 	FROM,
 	INSERT,
@@ -50,6 +51,7 @@ class SuperiorBase {
 	private messagePieces: SuperiorBaseMessageData;
 	private querySteps: string[] = [];
 	private successMsg: string | undefined;
+	private use_auto_select: boolean;
 	private use_upsert_check: boolean;
 	private use_user_uid: boolean;
 	private user_uid: string;
@@ -64,6 +66,7 @@ class SuperiorBase {
 		};
 		this.query = undefined;
 		this.successMsg = undefined;
+		this.use_auto_select = true;
 		this.use_upsert_check = true;
 		this.use_user_uid = true;
 		this.user_uid = user_uid;
@@ -73,9 +76,27 @@ class SuperiorBase {
 		const { from, operation, payloadSize }: SuperiorBaseMessageData =
 			this.messagePieces;
 
-		const message = `Query to ${operation} ${payloadSize ? `${payloadSize} ` : ''}${from} was ${success ? 'successful.' : 'failed.'}`;
+		const message = `Query to ${operation} ${payloadSize ? `${payloadSize} ` : ''}${from} ${success ? 'successful.' : 'failed.'}`;
 
 		return message;
+	}
+
+	debug() {
+		console.log('\n');
+		console.log(this.querySteps);
+		console.log(this.messagePieces);
+		console.log('\n');
+		return this;
+	}
+
+	delete() {
+		this.fromCheck();
+
+		this.querySteps.push(DELETE);
+		this.messagePieces.operation = DELETE;
+		this.query = this.query.delete();
+		this.query = this.use_auto_select ? this.query.select() : this.query;
+		return this;
 	}
 
 	eq(field: string, value: string | boolean | number) {
@@ -159,6 +180,7 @@ class SuperiorBase {
 		this.messagePieces.operation = UPDATE;
 		this.messagePieces.payloadSize = Array.isArray(data) ? data.length : 1;
 		this.query = this.query.update(this.whenUpdated(data));
+		this.query = this.use_auto_select ? this.query.select() : this.query;
 		return this;
 	}
 
