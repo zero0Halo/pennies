@@ -69,7 +69,7 @@ export default function AccountCreate({
 				onError: (msg) => setError(msg),
 				onSuccess: (msg) => setSuccess(msg),
 				payload,
-				reload: '/accounts',
+				// reload: '/accounts',
 			});
 		}
 	}

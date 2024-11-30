@@ -4,49 +4,48 @@ import partials from '@/app/api/partials';
 import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
 import type { AccountData } from '@/app/types';
 import { ACCOUNTS } from '@/app/constants';
+import superiorBaseFactory from '@/utils/superiorBaseFactory';
+import type { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
 	const payload = await req.json();
 	const payloadArr = [payload];
 
-	const { accountsSelect, accountsUpsert } = partials({
-		user_uid: payload.user_uid,
-	});
-
-	// Get the default account if it exists
-	const { data, error: defaultAccountError } =
-		await accountsSelect('is_default');
+	const superiorBase = await superiorBaseFactory();
+	const { data: defaultAccount, error: defaultAccountError } =
+		await superiorBase
+			.from(ACCOUNTS)
+			.select('*')
+			.eq('is_default', true)
+			.single()
+			.go<AccountData>();
 	if (defaultAccountError) return defaultAccountError;
-
-	const defaultAccount = data as AccountData[];
 
 	// If there is a default account and the account being inserted is a default account, update the
 	// existing account to no longer be the default
-	if (defaultAccount.length && payload.is_default) {
-		const noLongerDefault = { ...defaultAccount[0], is_default: false };
+	if (defaultAccount !== null && payload.is_default) {
+		const noLongerDefault = { ...defaultAccount, is_default: false };
 		payloadArr.push(noLongerDefault);
 	}
 
 	// Upsert the account data into the accounts table
-	const { data: upsertData, error: upsertError } =
-		await accountsUpsert(payloadArr);
+	const { error: upsertError } = await superiorBase
+		.from(ACCOUNTS)
+		.upsert(payloadArr)
+		.go<AccountData[]>();
 	if (upsertError) return upsertError;
 
-	// Check to make sure the upsert is good
-	const { error: upsertMal } = await upsertIsGood({
-		data: upsertData,
-		original: payload,
-	});
-	if (upsertMal) return upsertMal;
-
 	// Get all of the accounts
-	const { data: accountsCookie, error: accountsCookieError } =
-		await accountsSelect();
-	if (accountsCookieError) return accountsCookieError;
+	const {
+		data: accountsData,
+		success: accountsSuccess,
+		error: accountsDataError,
+	} = await superiorBase.from(ACCOUNTS).select('*').go<AccountData[]>();
+	if (accountsDataError) return accountsDataError;
 
-	// Create a response and put the updated accounts data into the accounts cookie
-	const response = responseFactory('Account Created!', {}, 200);
-	response.cookies.set(...cookieJar({ name: ACCOUNTS, data: accountsCookie }));
+	(accountsSuccess as NextResponse).cookies.set(
+		...cookieJar({ name: ACCOUNTS, data: accountsData }),
+	);
 
-	return response;
+	return accountsSuccess;
 }

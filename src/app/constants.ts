@@ -33,6 +33,11 @@ export const UTILITY = 'Utility';
 export const WEEKLY = 'Weekly';
 export const GROUPS = 'groups';
 export const MONTHLY_SUMS = 'monthly_sums';
+export const SELECT = 'select';
+export const UPSERT = 'upsert';
+export const INSERT = 'insert';
+export const FROM = 'from';
+export const EQ = 'eq';
 
 // Arrays of options
 export const accountTypes = [CHECKING, CREDIT_CARD, INVESTMENT, SAVINGS];
