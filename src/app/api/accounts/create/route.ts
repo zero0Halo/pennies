@@ -39,7 +39,11 @@ export async function POST(req: Request) {
 		data: accountsData,
 		success: accountsSuccess,
 		error: accountsDataError,
-	} = await superiorBase.from(ACCOUNTS).select('*').go<AccountData[]>();
+	} = await superiorBase
+		.from(ACCOUNTS)
+		.select('*')
+		.successMessage(`Account "${payload?.name}" Added!`)
+		.go<AccountData[]>();
 	if (accountsDataError) return accountsDataError;
 
 	(accountsSuccess as NextResponse).cookies.set(

@@ -31,20 +31,24 @@ class SuperiorBase {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	private query: any;
 	private client: SupabaseClient;
+	private errorMsg: string | undefined;
 	private messagePieces: SuperiorBaseMessageData;
 	private querySteps: string[] = [];
+	private successMsg: string | undefined;
 	private use_upsert_check: boolean;
 	private use_user_uid: boolean;
 	private user_uid: string;
 
 	constructor({ client, user_uid }: SuperiorBaseArgs) {
 		this.client = client;
+		this.errorMsg = undefined;
 		this.messagePieces = {
 			from: '',
 			operation: '',
 			payloadSize: undefined,
 		};
 		this.query = undefined;
+		this.successMsg = undefined;
 		this.use_upsert_check = true;
 		this.use_user_uid = true;
 		this.user_uid = user_uid;
@@ -64,6 +68,11 @@ class SuperiorBase {
 
 		this.querySteps.push(EQ);
 		this.query = this.query.eq(field, value);
+		return this;
+	}
+
+	errorMessage(value: string) {
+		this.errorMsg = value;
 		return this;
 	}
 
@@ -95,6 +104,7 @@ class SuperiorBase {
 	}
 
 	reset() {
+		this.errorMsg = undefined;
 		this.query = undefined;
 		this.querySteps = [];
 		this.messagePieces = {
@@ -102,6 +112,7 @@ class SuperiorBase {
 			operation: '',
 			payloadSize: undefined,
 		};
+		this.successMsg = undefined;
 		this.use_upsert_check = true;
 		this.use_user_uid = true;
 	}
@@ -121,11 +132,9 @@ class SuperiorBase {
 		return this;
 	}
 
-	whenUpdated<T>(data: T): T | T[] | null {
-		const updated = getIsoDate();
-		if (!Array.isArray(data)) return { ...data, updated };
-
-		return Array.isArray(data) ? data.map((d) => ({ ...d, updated })) : null;
+	successMessage(value: string) {
+		this.successMsg = value;
+		return this;
 	}
 
 	upsert<T>(data: T, options?: UpsertOptions) {
@@ -138,11 +147,20 @@ class SuperiorBase {
 		return this;
 	}
 
+	whenUpdated<T>(data: T): T | T[] | null {
+		const updated = getIsoDate();
+		if (!Array.isArray(data)) return { ...data, updated };
+
+		return Array.isArray(data) ? data.map((d) => ({ ...d, updated })) : null;
+	}
+
 	async go<T>(): Promise<SuperiorBaseResponse<T>> {
 		this.fromCheck();
 
 		const {
+			errorMsg,
 			messagePieces: { operation, payloadSize },
+			successMsg,
 			use_upsert_check,
 			user_uid,
 			use_user_uid,
@@ -174,7 +192,10 @@ class SuperiorBase {
 			return {
 				data,
 				error: null,
-				success: responseSuccess?.(this.buildMessage({ success: true }), data),
+				success: responseSuccess?.(
+					successMsg ?? this.buildMessage({ success: true }),
+					data,
+				),
 			};
 		}
 
@@ -182,7 +203,10 @@ class SuperiorBase {
 			this.reset();
 			return {
 				data: null,
-				error: responseError?.(this.buildMessage({ success: false }), error),
+				error: responseError?.(
+					errorMsg ?? this.buildMessage({ success: false }),
+					error,
+				),
 				success: null,
 			};
 		}
