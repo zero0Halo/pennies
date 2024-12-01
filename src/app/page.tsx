@@ -15,6 +15,7 @@ export default function Home() {
 
 	return (
 		<div>
+			{/* If not logged in */}
 			{!isLoggedIn && (
 				<HeroStep
 					link="signup"
@@ -24,6 +25,7 @@ export default function Home() {
 				/>
 			)}
 
+			{/* Logged in, but no accounts */}
 			{isLoggedIn && noAccounts && (
 				<HeroStep
 					link="accounts"
@@ -32,6 +34,7 @@ export default function Home() {
 				/>
 			)}
 
+			{/* Logged in, has accounts but no categories */}
 			{isLoggedIn && !noAccounts && noCategories && (
 				<HeroStep
 					link="categories"
@@ -40,6 +43,7 @@ export default function Home() {
 				/>
 			)}
 
+			{/* Logged in, has accounts, has categories */}
 			{isLoggedIn && !noAccounts && !noCategories && (
 				<HeroStep
 					link="csv-upload"
