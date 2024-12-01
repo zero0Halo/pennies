@@ -3,6 +3,7 @@ import NextCruft from './components/NextCruft';
 import { useIsLoggedIn, useServerCookie } from '@/app/hooks/server';
 import type { AccountData, UserData } from './types';
 import { ACCOUNTS, USER } from '@/app/constants';
+import HeroStep from './components/home/HeroStep';
 
 export default function Home() {
 	const isLoggedIn = useIsLoggedIn();
@@ -16,18 +17,12 @@ export default function Home() {
 	return (
 		<div>
 			{!isLoggedIn && (
-				<div className="hero bg-accent">
-					<div className="hero-content text-center pb-8">
-						<div className="max-w-md">
-							<h2>Don't Have an Signin?</h2>
-							<h3>Click the Signup Button Below!</h3>
-
-							<Link href="signup" className="btn btn-primary">
-								Signup!
-							</Link>
-						</div>
-					</div>
-				</div>
+				<HeroStep
+					link="signup"
+					linkText="Signup!"
+					subTitle="Click the Signup button below!"
+					title="Don't have a signin?"
+				/>
 			)}
 
 			{isLoggedIn && noAccounts && (
