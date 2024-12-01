@@ -19,7 +19,7 @@ export default function HeroStep({
 			<div className="hero-content text-center pb-8">
 				<div className="max-w-md">
 					<h2>{title}</h2>
-					<h3>{subTitle}</h3>
+					{subTitle && <h3>{subTitle}</h3>}
 
 					<Link href={link} className="btn btn-primary text-xl">
 						{linkText}
