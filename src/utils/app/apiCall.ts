@@ -1,6 +1,6 @@
 interface SettingsData {
-	onError: (arg: string) => void;
-	onSuccess: (arg: string) => void;
+	onError?: (arg: string) => void;
+	onSuccess?: (arg: string) => void;
 	payload: object;
 	reload?: string;
 }
@@ -10,6 +10,15 @@ export default async function apiCall(
 	settings: SettingsData,
 ) {
 	try {
+		const isServer = typeof window === 'undefined';
+		let path = endpoint;
+
+		if (isServer) {
+			const { headers } = await import('next/headers');
+			const host = headers().get('host');
+			path = `https://${host}/api/some-endpoint`;
+		}
+
 		const response = await fetch(endpoint, {
 			method: 'POST',
 			headers: {
@@ -19,7 +28,7 @@ export default async function apiCall(
 		});
 
 		const body = await response.json();
-		console.log({ body });
+
 		let msg: string[] | string = [body.message];
 
 		if (body?.data?.message) msg.push(body?.data?.message);
@@ -27,18 +36,18 @@ export default async function apiCall(
 		msg = msg.join(': ');
 
 		if (response.ok) {
-			settings.onSuccess(msg);
+			settings?.onSuccess?.(msg);
 
 			if (settings?.reload) {
 				setTimeout(() => {
 					window.location.href = settings.reload as string;
 				}, 2000);
 			}
-
-			return new Promise((resolve) => resolve(msg));
+		} else {
+			settings?.onError?.(msg);
 		}
-		settings.onError(msg);
-		return new Promise((_, reject) => reject(msg));
+
+		return body;
 	} catch (err) {
 		console.error(err);
 		return new Promise((_, reject) => reject('Fuckin didnt work'));
