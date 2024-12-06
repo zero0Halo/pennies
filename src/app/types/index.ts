@@ -56,6 +56,13 @@ export interface SetGroupNameData {
 	name: string | boolean;
 }
 
+export interface SettingsData {
+	onError?: (arg: string) => void;
+	onSuccess?: (arg: string) => void;
+	payload: object;
+	reload?: string;
+}
+
 export type SignInData = {
 	email: string;
 	password: string;

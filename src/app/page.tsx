@@ -1,20 +1,62 @@
 import NextCruft from './components/NextCruft';
 import { useIsLoggedIn, useServerCookie } from '@/app/hooks/server';
-import type { AccountData, UserData } from './types';
+import type { AccountData, TransactionData, UserData } from './types';
 import { ACCOUNTS, USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
+import { apiCall } from '@/utils/app';
 
-export default function Home() {
+interface GetTransactionsArguments {
+	accountsData: AccountData[];
+	userData: UserData;
+}
+
+type GetTransactionsData = {
+	data: TransactionData[];
+	message: string;
+};
+
+async function getTransactions({
+	accountsData,
+	userData,
+}: GetTransactionsArguments): Promise<GetTransactionsData | boolean> {
+	const today = new Date().toDateString();
+	const default_account_uid: string =
+		accountsData.find(({ is_default }) => is_default)?.uid ?? '';
+	const account_uid: string | false = userData.accounts?.includes(
+		default_account_uid,
+	)
+		? default_account_uid
+		: false;
+	if (!account_uid) return false;
+
+	const response = await apiCall('/api/transactions/select', {
+		payload: {
+			account_uid,
+			date: today,
+		},
+	});
+
+	return response;
+}
+
+export default async function Home() {
 	const isLoggedIn = useIsLoggedIn();
-	const [accountsCookieData] = useServerCookie<AccountData[]>(ACCOUNTS);
-	const [userCookieData] = useServerCookie<UserData>(USER);
-	const noAccounts =
-		Array.isArray(accountsCookieData) && accountsCookieData.length === 0;
-	const noCategories =
-		typeof userCookieData === 'object' && !userCookieData?.categories;
+	const [accountsData] = useServerCookie<AccountData[]>(ACCOUNTS);
+	const [userData] = useServerCookie<UserData>(USER);
+	const noAccounts = Array.isArray(accountsData) && accountsData.length === 0;
+	const noCategories = typeof userData === 'object' && !userData?.categories;
+	const transactionsResponse: GetTransactionsData | boolean =
+		Array.isArray(accountsData) && typeof userData === 'object'
+			? await getTransactions({ accountsData, userData })
+			: false;
 
 	return (
 		<div>
+			{typeof transactionsResponse !== 'boolean' &&
+				transactionsResponse.data.map((m) => (
+					<h2 key={m.uid}>{m.description}</h2>
+				))}
+
 			{/* If not logged in */}
 			{!isLoggedIn && (
 				<HeroStep

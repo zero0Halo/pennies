@@ -124,6 +124,13 @@ class SuperiorBase {
 		if (!this.query) throw new Error('Call `from()` before chaining queries.');
 	}
 
+	gte(field: string, value: string) {
+		this.fromCheck();
+		this.querySteps.push('gte');
+		this.query = this.query.gte(field, value);
+		return this;
+	}
+
 	insert<T>(data: T, options?: UpsertOptions) {
 		this.fromCheck();
 
@@ -131,6 +138,13 @@ class SuperiorBase {
 		this.messagePieces.operation = INSERT;
 		this.messagePieces.payloadSize = Array.isArray(data) ? data.length : 1;
 		this.query = this.query.insert(this.whenUpdated(data), options);
+		return this;
+	}
+
+	lt(field: string, value: string) {
+		this.fromCheck();
+		this.querySteps.push('lt');
+		this.query = this.query.lt(field, value);
 		return this;
 	}
 

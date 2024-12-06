@@ -1,9 +1,4 @@
-interface SettingsData {
-	onError?: (arg: string) => void;
-	onSuccess?: (arg: string) => void;
-	payload: object;
-	reload?: string;
-}
+import type { SettingsData } from '@/app/types';
 
 export default async function apiCall(
 	endpoint: string,
@@ -12,27 +7,34 @@ export default async function apiCall(
 	try {
 		const isServer = typeof window === 'undefined';
 		let path = endpoint;
+		const headers: Record<string, string> = {
+			'Content-Type': 'application/json', // Default headers
+		};
 
 		if (isServer) {
-			const { headers } = await import('next/headers');
-			const host = headers().get('host');
-			path = `https://${host}/api/some-endpoint`;
+			// Dynamically import next/headers only in server context
+			const { headers: nextHeaders } = await import('next/headers');
+			const currentHeaders = nextHeaders();
+			const host = currentHeaders.get('host');
+			path = `http://${host}${endpoint}`;
+
+			// Forward all headers from the original server request
+			for (const [key, value] of currentHeaders.entries()) {
+				headers[key] = value;
+			}
 		}
 
-		const response = await fetch(endpoint, {
+		const response = await fetch(path, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
+			headers,
 			body: JSON.stringify(settings.payload),
 		});
 
 		const body = await response.json();
 
+		// Handle response and invoke settings callbacks
 		let msg: string[] | string = [body.message];
-
 		if (body?.data?.message) msg.push(body?.data?.message);
-
 		msg = msg.join(': ');
 
 		if (response.ok) {
@@ -49,7 +51,7 @@ export default async function apiCall(
 
 		return body;
 	} catch (err) {
-		console.error(err);
-		return new Promise((_, reject) => reject('Fuckin didnt work'));
+		console.error('Error during API call:', err);
+		return new Promise((_, reject) => reject('Error occurred during API call'));
 	}
 }
