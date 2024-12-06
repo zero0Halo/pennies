@@ -111,16 +111,8 @@ export default function GroupCreate({
 		}
 	}
 
-	// function test(formData: GroupData) {
-	// 	const payload = formatPayload({
-	// 		formData,
-	// 		group,
-	// 		transactions,
-	// 	});
-	// }
-
 	return (
-		<div className={'bg-secondary pt-1 p-8 rounded-lg relative'}>
+		<div className={'bg-primary pt-1 p-8 rounded-lg relative'}>
 			<Loading {...props} />
 
 			<h3>Create Group</h3>

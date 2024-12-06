@@ -90,6 +90,11 @@ export {
 	validateTransactionData,
 } from './TransactionData';
 
+export type TransactionWithGroupData = TransactionData & {
+	group_name?: 'string';
+	group_site_url?: 'string';
+};
+
 // TRANSFER
 export {
 	type TransferData,

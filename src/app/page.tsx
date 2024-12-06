@@ -1,6 +1,6 @@
 import NextCruft from './components/NextCruft';
 import { useIsLoggedIn, useServerCookie } from '@/app/hooks/server';
-import type { AccountData, TransactionData, UserData } from './types';
+import type { AccountData, TransactionWithGroupData, UserData } from './types';
 import { ACCOUNTS, USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
@@ -11,7 +11,7 @@ interface GetTransactionsArguments {
 }
 
 type GetTransactionsData = {
-	data: TransactionData[];
+	data: TransactionWithGroupData[];
 	message: string;
 };
 
@@ -54,7 +54,10 @@ export default async function Home() {
 		<div>
 			{typeof transactionsResponse !== 'boolean' &&
 				transactionsResponse.data.map((m) => (
-					<h2 key={m.uid}>{m.description}</h2>
+					<div key={m.uid}>
+						<h1>{m.group_name}</h1>
+						<h4>{m.description}</h4>
+					</div>
 				))}
 
 			{/* If not logged in */}

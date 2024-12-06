@@ -1,6 +1,11 @@
 // src/app/api/transactions/select/route.ts
 import { cookieJar } from '@/utils/api';
-import type { AccountData, UserData } from '@/app/types';
+import type {
+	AccountData,
+	TransactionData,
+	TransactionWithGroupData,
+	UserData,
+} from '@/app/types';
 import { ACCOUNTS, TRANSACTIONS, USER, USERS } from '@/app/constants';
 import superiorBaseFactory from '@/utils/superiorBaseFactory';
 
@@ -9,20 +14,28 @@ import { responseSuccess } from '@/utils/api/responseFactory';
 
 export async function POST(req: Request) {
 	const { account_uid, date } = await req.json();
-	const startDate = dayjs('Wed Oct 02 2024').startOf('month').toISOString();
-	const endDate = dayjs('Wed Oct 02 2024').endOf('month').toISOString();
+	const startDate = dayjs('Fri Nov 08 2024').startOf('month').toISOString();
+	const endDate = dayjs('Fri Nov 08 2024').endOf('month').toISOString();
 	const superiorBase = await superiorBaseFactory();
 
-	console.log({ endDate, startDate });
-
-	const { data, error, success } = await superiorBase
-		.from(TRANSACTIONS)
+	// Get transactions for the specified month
+	const {
+		data: transactionsData,
+		error: transactionsDataError,
+		success,
+	} = await superiorBase
+		.from('transactions_with_group')
 		.select('*')
 		.eq('account_uid', account_uid)
 		.gte('timestamp', startDate)
 		.lt('timestamp', endDate)
-		.go();
-	if (data === null && error) return error;
+		.go<TransactionWithGroupData[]>();
+	if (
+		transactionsData === null ||
+		transactionsDataError ||
+		!Array.isArray(transactionsData)
+	)
+		return transactionsDataError;
 
 	return success;
 
