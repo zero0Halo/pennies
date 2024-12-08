@@ -1,0 +1,70 @@
+// src/app/api/transactions/select/route.ts
+import dayjs from 'dayjs';
+import { responseSuccess } from '@/utils/api/responseFactory';
+import superiorBaseFactory from '@/utils/superiorBaseFactory';
+import type {
+	TransactionDateMetaData,
+	TransactionGroupByDayData,
+	TransactionWithDateData,
+	TransactionWithGroupData,
+} from '@/app/types';
+
+export async function POST(req: Request) {
+	const { account_uid, date } = await req.json();
+	const startDate = dayjs('Fri Nov 08 2024').startOf('month').toISOString();
+	const endDate = dayjs('Fri Nov 08 2024').endOf('month').toISOString();
+	const superiorBase = await superiorBaseFactory();
+
+	// Get transactions for the specified month
+	const { data: _transactionsData, error: transactionsDataError } =
+		await superiorBase
+			.from('transactions_with_group')
+			.select('*')
+			.eq('account_uid', account_uid)
+			.gte('timestamp', startDate)
+			.lt('timestamp', endDate)
+			.order('timestamp')
+			.go<TransactionWithGroupData[]>();
+	if (
+		_transactionsData === null ||
+		transactionsDataError ||
+		!Array.isArray(_transactionsData)
+	)
+		return transactionsDataError;
+
+	const transactionsData = _transactionsData as TransactionWithGroupData[];
+
+	// Group the transactions by day
+	const byDay: TransactionGroupByDayData = transactionsData.reduce(
+		(acc, current) => {
+			const day = +dayjs(current.timestamp).date();
+
+			if (!Object.hasOwn(acc, day)) {
+				acc[day] = [current];
+			} else {
+				acc[day].push(current);
+			}
+
+			return acc;
+		},
+		{} as TransactionGroupByDayData,
+	);
+
+	// Convert data to an array for easier mapping, add in a bit of metadata
+	const byDayArray: TransactionWithDateData[] = Object.entries(byDay)
+		.map((m) => {
+			const dayMeta: TransactionDateMetaData = {
+				day: +m[0],
+				isToday: +dayjs('Fri Nov 08 2024').date() === +m[0],
+			};
+			return [dayMeta, m[1]] as [
+				TransactionDateMetaData,
+				TransactionWithGroupData[],
+			];
+		})
+		.sort((a, b) => {
+			return a[0].day - b[0].day;
+		});
+
+	return responseSuccess('Successfully retrieved transactions!', byDayArray);
+}

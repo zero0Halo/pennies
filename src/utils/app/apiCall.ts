@@ -47,6 +47,7 @@ export default async function apiCall(
 			}
 		} else {
 			settings?.onError?.(msg);
+			return { error: true, message: msg };
 		}
 
 		return body;

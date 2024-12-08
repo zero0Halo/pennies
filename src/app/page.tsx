@@ -1,9 +1,9 @@
 import NextCruft from './components/NextCruft';
 import { useIsLoggedIn, useServerCookie } from '@/app/hooks/server';
-import type { AccountData, TransactionWithGroupData, UserData } from './types';
+import type { AccountData, TransactionWithDateData, UserData } from './types';
 import { ACCOUNTS, USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
-import { apiCall } from '@/utils/app';
+import { apiCall, dateFormat } from '@/utils/app';
 
 interface GetTransactionsArguments {
 	accountsData: AccountData[];
@@ -11,7 +11,7 @@ interface GetTransactionsArguments {
 }
 
 type GetTransactionsData = {
-	data: TransactionWithGroupData[];
+	data: TransactionWithDateData[];
 	message: string;
 };
 
@@ -29,14 +29,14 @@ async function getTransactions({
 		: false;
 	if (!account_uid) return false;
 
-	const response = await apiCall('/api/transactions/select', {
+	const response = await apiCall('/api/transactions/select/by-day', {
 		payload: {
 			account_uid,
 			date: today,
 		},
 	});
 
-	return response;
+	return response?.error ? false : response;
 }
 
 export default async function Home() {
@@ -53,10 +53,18 @@ export default async function Home() {
 	return (
 		<div>
 			{typeof transactionsResponse !== 'boolean' &&
-				transactionsResponse.data.map((m) => (
-					<div key={m.uid}>
-						<h1>{m.group_name}</h1>
-						<h4>{m.description}</h4>
+				transactionsResponse.data.map(([dayMeta, transactions]) => (
+					<div
+						key={dayMeta.day}
+						className={dayMeta.isToday ? 'bg-primary' : ''}
+					>
+						{transactions.map((m) => (
+							<div key={m.uid}>
+								<h3>{m.group_name}</h3>
+								<h4>{m.description}</h4>
+								<strong>{dateFormat(m.timestamp)}</strong>
+							</div>
+						))}
 					</div>
 				))}
 

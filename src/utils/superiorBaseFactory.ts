@@ -153,6 +153,13 @@ class SuperiorBase {
 		return this;
 	}
 
+	order(field: string, options?: object) {
+		this.fromCheck();
+		this.querySteps.push('order');
+		this.query = this.query.order(field, options);
+		return this;
+	}
+
 	reset() {
 		this.errorMsg = undefined;
 		this.query = undefined;

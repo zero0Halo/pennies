@@ -83,17 +83,28 @@ export type ReturnData = {
 	error?: NextResponse | null;
 };
 
+// TRANSACTIONS
 export {
 	type TransactionData,
 	TransactionDataSchema,
 	createTransactionData,
 	validateTransactionData,
 } from './TransactionData';
-
 export type TransactionWithGroupData = TransactionData & {
 	group_name?: 'string';
 	group_site_url?: 'string';
 };
+export type TransactionGroupByDayData = {
+	[key: number]: TransactionWithGroupData[];
+};
+export type TransactionDateMetaData = {
+	day: number;
+	isToday: boolean;
+};
+export type TransactionWithDateData = [
+	TransactionDateMetaData,
+	TransactionWithGroupData[],
+];
 
 // TRANSFER
 export {
