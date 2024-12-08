@@ -4,6 +4,7 @@ import type { AccountData, TransactionWithDateData, UserData } from './types';
 import { ACCOUNTS, USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall, dateFormat } from '@/utils/app';
+import TransactionsMonth from './components/home/TransactionsMonth';
 
 interface GetTransactionsArguments {
 	accountsData: AccountData[];
@@ -52,21 +53,9 @@ export default async function Home() {
 
 	return (
 		<div>
-			{typeof transactionsResponse !== 'boolean' &&
-				transactionsResponse.data.map(([dayMeta, transactions]) => (
-					<div
-						key={dayMeta.day}
-						className={dayMeta.isToday ? 'bg-primary' : ''}
-					>
-						{transactions.map((m) => (
-							<div key={m.uid}>
-								<h3>{m.group_name}</h3>
-								<h4>{m.description}</h4>
-								<strong>{dateFormat(m.timestamp)}</strong>
-							</div>
-						))}
-					</div>
-				))}
+			{typeof transactionsResponse !== 'boolean' && (
+				<TransactionsMonth transactionsData={transactionsResponse.data} />
+			)}
 
 			{/* If not logged in */}
 			{!isLoggedIn && (
