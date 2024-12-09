@@ -91,8 +91,10 @@ export {
 	validateTransactionData,
 } from './TransactionData';
 export type TransactionWithGroupData = TransactionData & {
-	group_name?: 'string';
-	group_site_url?: 'string';
+	group_name?: string;
+	group_recurring?: string | boolean;
+	group_still_recurring?: boolean;
+	group_site_url?: string;
 };
 export type TransactionGroupByDayData = {
 	[key: number]: TransactionWithGroupData[];

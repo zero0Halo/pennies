@@ -29,8 +29,9 @@ export default function TransactionsMonth({
 						<thead>
 							<tr className="bg-neutral">
 								<th className="text-white text-base py-1 w-6/12">Name</th>
-								<th className="text-white text-base py-1 w-3/12">Amount</th>
-								<th className="text-white text-base py-1 w-3/12">Category</th>
+								<th className="text-white text-base py-1 w-2/12">Amount</th>
+								<th className="text-white text-base py-1 w-2/12">Category</th>
+								<th className="text-white text-base py-1 w-2/12">Recurring</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -39,6 +40,7 @@ export default function TransactionsMonth({
 									<td>{m.group_name || m.description}</td>
 									<td>{displayAmount(m.amount)}</td>
 									<td>{m.category}</td>
+									<td>{m.group_recurring !== 'false' && m.group_recurring}</td>
 								</tr>
 							))}
 						</tbody>
