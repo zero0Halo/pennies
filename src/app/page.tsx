@@ -53,7 +53,7 @@ export default async function Home() {
 
 	return (
 		<div>
-			{typeof transactionsResponse !== 'boolean' && (
+			{typeof transactionsResponse !== 'boolean' && isLoggedIn && (
 				<TransactionsMonth transactionsData={transactionsResponse.data} />
 			)}
 
