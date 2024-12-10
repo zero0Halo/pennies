@@ -91,6 +91,7 @@ export {
 	validateTransactionData,
 } from './TransactionData';
 export type TransactionWithGroupData = TransactionData & {
+	account_name: string;
 	group_name?: string;
 	group_recurring?: string | boolean;
 	group_still_recurring?: boolean;
@@ -100,7 +101,8 @@ export type TransactionGroupByDayData = {
 	[key: number]: TransactionWithGroupData[];
 };
 export type TransactionDateMetaData = {
-	day: number;
+	date: number;
+	day: string;
 	isToday: boolean;
 };
 export type TransactionWithDateData = [
