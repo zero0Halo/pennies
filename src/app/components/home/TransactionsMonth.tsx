@@ -83,15 +83,17 @@ export default function TransactionsMonth({
 					</span>
 				</h2>
 
-				<Select options={options} {...register('account')} />
-				<Select options={months} {...register('month')} />
-				<Select options={years} {...register('year')} />
-				<Button
-					className="btn-primary btn-xs text-black"
-					onClick={handleGetTransactions}
-				>
-					Go
-				</Button>
+				<div className="pb-1">
+					<Select options={options} {...register('account')} />
+					<Select options={months} {...register('month')} />
+					<Select options={years} {...register('year')} />
+					<Button
+						className="btn-primary btn-xs text-black"
+						onClick={handleGetTransactions}
+					>
+						Go
+					</Button>
+				</div>
 
 				{transactionsData.map(([dayMeta, transactions]) => (
 					<div key={dayMeta.date} className="flex mb-8">

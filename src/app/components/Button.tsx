@@ -12,14 +12,13 @@ export default function Button({
 	type = 'button',
 	...rest
 }: ButtonProps) {
+	let classes: string | string[] = ['btn font-bold shadow', className];
 	const textColors = ['text-white', 'text-black'];
 	const sizes = ['btn-xs', 'btn-sm', 'btn-md', 'btn-lg'];
-	let classes: string | string[] = ['btn font-bold shadow', className];
 	const hasSize = className.split(' ').some((word) => sizes.includes(word));
 	const hasTextColor = className
 		.split(' ')
 		.some((word) => textColors.includes(word));
-	console.log({ hasTextColor });
 
 	if (className?.includes('btn-warning') && !hasTextColor)
 		classes.push('text-black');
