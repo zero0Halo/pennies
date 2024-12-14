@@ -1,14 +1,26 @@
+'use client';
+
+import dayjs from 'dayjs';
+import { apiCall, displayAmount, zebra } from '@/utils/app';
 import type {
 	TransactionWithDateData,
 	TransactionWithGroupData,
 } from '@/app/types';
-import { dateFormat, zebra } from '@/utils/app';
-import displayAmount from '@/utils/app/displayAmount';
-import dayjs from 'dayjs';
+import { useAccounts } from '@/app/hooks/client';
+import Select from '../Select';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import Button from '../Button';
 
 interface TransactionsMonthProps {
-	transactionsData: TransactionWithDateData[];
+	defaultDate: string;
+	defaultTransactionsData: TransactionWithDateData[];
 }
+
+const months = [...new Array(12)].map((_, i) =>
+	dayjs(`${i + 1}-01-2019`).format('MMMM'),
+);
+const years = [...new Array(20)].map((_, i) => `${i + 2020}`);
 
 function recurringText(transaction: TransactionWithGroupData): string {
 	const { group_recurring, group_still_recurring } = transaction;
@@ -22,55 +34,100 @@ function recurringText(transaction: TransactionWithGroupData): string {
 }
 
 export default function TransactionsMonth({
-	transactionsData,
+	defaultDate,
+	defaultTransactionsData,
 }: TransactionsMonthProps) {
-	const headlineDate = dayjs(transactionsData[0][1][0].timestamp).format(
-		'MMMM, YYYY',
+	const [transactionsData, setTransactionsData] = useState(
+		defaultTransactionsData,
 	);
-	const headlineAccount = transactionsData[0][1][0].account_name;
+	const { getAccountByUid, options } = useAccounts();
+	const { getValues, register, setValue, watch } = useForm();
+
+	useEffect(() => {
+		const account = getValues('account');
+		if (account === '' && options.length > 1) {
+			const account_uid = transactionsData[0][1][0].account_uid;
+			const date = dayjs(defaultDate).format('MMMM, YYYY');
+			const [month, year] = date.split(', ');
+			setValue('month', month);
+			setValue('year', year);
+			setValue('account', account_uid);
+		}
+	}, [defaultDate, getValues, options, setValue, transactionsData]);
+
+	const handleGetTransactions = async () => {
+		const account = getValues('account');
+		const month = getValues('month');
+		const year = getValues('year');
+
+		const response = await apiCall('/api/transactions/select/by-day', {
+			payload: { account_uid: account, date: `${month} ${year}` },
+		});
+
+		if (response.data) {
+			setTransactionsData(response.data);
+		}
+	};
 
 	return (
-		<section>
-			<h2>
-				Transactions: <span className="text-neutral">{headlineDate}</span>{' '}
-				<span className="text-sm">from</span>{' '}
-				<span className="text-neutral text-sm">{headlineAccount}</span>
-			</h2>
+		true && (
+			<section>
+				<h2>
+					Transactions:{' '}
+					<span className="text-neutral">
+						{watch('month')}, {watch('year')}
+					</span>{' '}
+					<span className="text-sm">from</span>{' '}
+					<span className="text-neutral text-sm">
+						{options.length > 1 && getAccountByUid(watch('account'))?.name}
+					</span>
+				</h2>
 
-			{transactionsData.map(([dayMeta, transactions]) => (
-				<div key={dayMeta.date} className="flex mb-8">
-					<div className="relative">
-						<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
-							{dayMeta.date}
+				<Select options={options} {...register('account')} />
+				<Select options={months} {...register('month')} />
+				<Select options={years} {...register('year')} />
+				<Button
+					className="btn-primary btn-xs text-black"
+					onClick={handleGetTransactions}
+				>
+					Go
+				</Button>
+
+				{transactionsData.map(([dayMeta, transactions]) => (
+					<div key={dayMeta.date} className="flex mb-8">
+						<div className="relative">
+							<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
+								{dayMeta.date}
+							</div>
+							<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
+								{dayMeta.day}
+							</div>
 						</div>
-						<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
-							{dayMeta.day}
-						</div>
-					</div>
 
-					<table className="align-top pl-4 table overflow-hidden rounded-lg rounded-tl-none mt-0">
-						<thead>
-							<tr className="bg-neutral">
-								<th className="text-white text-sm py-1 w-6/12">Name</th>
-								<th className="text-white text-sm py-1 w-2/12">Amount</th>
-								<th className="text-white text-sm py-1 w-2/12">Category</th>
-								<th className="text-white text-sm py-1 w-2/12">Recurring</th>
-							</tr>
-						</thead>
-
-						<tbody>
-							{transactions.map((m, index) => (
-								<tr key={m.uid} className={zebra(index, m)}>
-									<td>{m.group_name || m.description}</td>
-									<td>{displayAmount(m.amount)}</td>
-									<td>{m.category}</td>
-									<td>{recurringText(m)}</td>
+						<table className="align-top pl-4 table overflow-hidden rounded-lg rounded-tl-none mt-0">
+							<thead>
+								<tr className="bg-neutral">
+									<th className="text-white text-sm py-1 w-6/12">Name</th>
+									<th className="text-white text-sm py-1 w-2/12">Amount</th>
+									<th className="text-white text-sm py-1 w-2/12">Category</th>
+									<th className="text-white text-sm py-1 w-2/12">Recurring</th>
 								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			))}
-		</section>
+							</thead>
+
+							<tbody>
+								{transactions.map((m, index) => (
+									<tr key={m.uid} className={zebra(index, m)}>
+										<td>{m.group_name || m.description}</td>
+										<td>{displayAmount(m.amount)}</td>
+										<td>{m.category}</td>
+										<td>{recurringText(m)}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				))}
+			</section>
+		)
 	);
 }

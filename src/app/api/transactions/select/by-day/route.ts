@@ -11,8 +11,8 @@ import type {
 
 export async function POST(req: Request) {
 	const { account_uid, date } = await req.json();
-	const startDate = dayjs('Oct 08 2024').startOf('month').toISOString();
-	const endDate = dayjs('Oct 08 2024').endOf('month').toISOString();
+	const startDate = dayjs(date).startOf('month').toISOString();
+	const endDate = dayjs(date).endOf('month').toISOString();
 	const superiorBase = await superiorBaseFactory();
 
 	// Get transactions for the specified month
@@ -53,11 +53,10 @@ export async function POST(req: Request) {
 	// Convert data to an array for easier mapping, add in a bit of metadata
 	const byDayArray: TransactionWithDateData[] = Object.entries(byDay)
 		.map((m) => {
-			console.log(m[1]);
 			const dayMeta: TransactionDateMetaData = {
 				date: +m[0],
 				day: dayjs(m[1][0].timestamp).format('ddd'),
-				isToday: +dayjs('Oct 08 2024').date() === +m[0],
+				isToday: +dayjs(date).date() === +m[0],
 			};
 			return [dayMeta, m[1]] as [
 				TransactionDateMetaData,

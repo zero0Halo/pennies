@@ -8,6 +8,7 @@ import TransactionsMonth from './components/home/TransactionsMonth';
 
 interface GetTransactionsArguments {
 	accountsData: AccountData[];
+	date: string;
 	userData: UserData;
 }
 
@@ -18,9 +19,9 @@ type GetTransactionsData = {
 
 async function getTransactions({
 	accountsData,
+	date,
 	userData,
 }: GetTransactionsArguments): Promise<GetTransactionsData | boolean> {
-	const today = new Date().toDateString();
 	const default_account_uid: string =
 		accountsData.find(({ is_default }) => is_default)?.uid ?? '';
 	const account_uid: string | false = userData.accounts?.includes(
@@ -33,7 +34,7 @@ async function getTransactions({
 	const response = await apiCall('/api/transactions/select/by-day', {
 		payload: {
 			account_uid,
-			date: today,
+			date,
 		},
 	});
 
@@ -46,15 +47,19 @@ export default async function Home() {
 	const [userData] = useServerCookie<UserData>(USER);
 	const noAccounts = Array.isArray(accountsData) && accountsData.length === 0;
 	const noCategories = typeof userData === 'object' && !userData?.categories;
+	const defaultDate = new Date().toDateString();
 	const transactionsResponse: GetTransactionsData | boolean =
 		Array.isArray(accountsData) && typeof userData === 'object'
-			? await getTransactions({ accountsData, userData })
+			? await getTransactions({ accountsData, date: defaultDate, userData })
 			: false;
 
 	return (
 		<div>
 			{typeof transactionsResponse !== 'boolean' && isLoggedIn && (
-				<TransactionsMonth transactionsData={transactionsResponse.data} />
+				<TransactionsMonth
+					defaultDate={defaultDate}
+					defaultTransactionsData={transactionsResponse.data}
+				/>
 			)}
 
 			{/* If not logged in */}
