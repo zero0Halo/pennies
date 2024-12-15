@@ -10,6 +10,7 @@ import fauxAsync from './fauxAsync';
 import findGroups from './findGroups';
 import findRecurring from './findRecurring';
 import { getIsoDate } from '@/utils/general';
+import { stringToHash } from '@/utils/app';
 
 const regex = {
 	creditCard: /card \d+/g,
@@ -72,6 +73,7 @@ export default async function parseCsv(
 				created: '',
 				description,
 				group_uid: '',
+				hash: stringToHash(`${account_uid}${amount}${description}${timestamp}`),
 				prime: false,
 				terms,
 				timestamp,
