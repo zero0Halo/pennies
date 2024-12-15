@@ -7,6 +7,7 @@ export const GroupDataSchema = z
 		count: z.number(),
 		created: z.string(),
 		description: z.string(),
+		hash: z.number(),
 		name: z.union([z.boolean(), z.string()]),
 		notes: z.string(),
 		prime: z.string(),

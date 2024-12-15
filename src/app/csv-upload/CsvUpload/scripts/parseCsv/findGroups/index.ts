@@ -8,6 +8,7 @@ import {
 	type GroupsData,
 	createGroupData,
 } from '@/app/types';
+import { stringToHash } from '@/utils/app';
 
 export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 	const groups: GroupsData[] = [];
@@ -37,6 +38,7 @@ export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 				count: matches.length + 1,
 				created: '',
 				description: transaction.description,
+				hash: stringToHash(`group${transaction.hash}`),
 				name: false,
 				notes: '',
 				prime: transaction.uid,
