@@ -1,5 +1,9 @@
 import { dateFormat, zebra } from '@/utils/app';
 import type { TransactionData } from '@/app/types';
+import Button from '@/app/components/Button';
+import { Fragment, useState } from 'react';
+import TransactionRow from './TransactionRow';
+import TransactionCreate from './TransactionCreate';
 
 interface TransactionsTableProps {
 	className?: string;
@@ -17,6 +21,7 @@ export default function TransactionsTable({
 	tableClassName = '',
 	transactions,
 }: TransactionsTableProps) {
+	const [activeElement, setActiveElement] = useState<number | undefined>();
 	const classes = ['overflow-hidden', className].join(' ');
 	const tableClasses = [
 		'table overflow-hidden rounded-lg',
@@ -38,12 +43,20 @@ export default function TransactionsTable({
 				<tbody>
 					{transactions.length > 0 &&
 						transactions.map((transaction, index) => (
-							<tr className={zebra(index, transaction)} key={transaction.uid}>
-								<th>{index + 1}</th>
-								<td>{transaction.description}</td>
-								<td>{displayAmount.format(transaction.amount)}</td>
-								<td>{dateFormat(transaction.timestamp)}</td>
-							</tr>
+							<Fragment key={transaction.uid}>
+								<TransactionRow
+									activeElement={activeElement}
+									creating={activeElement === index}
+									index={index}
+									setActiveElement={setActiveElement}
+									transaction={transaction}
+								/>
+								<TransactionCreate
+									creating={activeElement === index}
+									setActiveElement={setActiveElement}
+									transaction={transaction}
+								/>
+							</Fragment>
 						))}
 				</tbody>
 			</table>
