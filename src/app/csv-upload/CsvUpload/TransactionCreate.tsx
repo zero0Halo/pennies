@@ -1,23 +1,27 @@
+import type React from 'react';
+import { useEffect, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { produce } from 'immer';
 import Button from '@/app/components/Button';
 import Input from '@/app/components/Input';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import { TRANSFER } from '@/app/constants';
 import { useAccounts, useCategories } from '@/app/hooks/client';
-import type { TransactionData } from '@/app/types';
+import type { FindGroupsData, TransactionData } from '@/app/types';
 import { dateFormat, displayAmount } from '@/utils/app';
-import { useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
 
 interface TransactionCreateProps {
 	creating: boolean;
 	setActiveElement: (arg: undefined) => void;
+	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	transaction: TransactionData;
 }
 
 export default function TransactionCreate({
 	creating,
 	setActiveElement,
+	setCSVData,
 	transaction,
 }: TransactionCreateProps) {
 	if (!creating) return null;
@@ -69,6 +73,17 @@ export default function TransactionCreate({
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const handleTransactionCreate = (x: any) => {
 		console.log({ ...transaction, ...x });
+		setCSVData((state) => {
+			const transactionIndex = state?.singletons.findIndex(
+				(f) => f.uid === transaction.uid,
+			);
+			const updatedState = produce(state, (draft) => {
+				if (draft !== undefined && transactionIndex !== undefined)
+					draft.singletons[transactionIndex] = { ...transaction, ...x };
+			});
+			console.log({ updatedState });
+			return state;
+		});
 	};
 
 	return (

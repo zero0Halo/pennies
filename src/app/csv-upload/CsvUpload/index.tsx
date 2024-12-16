@@ -202,7 +202,10 @@ export default function CsvUpload() {
 
 					<h3>Ungrouped (Singletons)</h3>
 
-					<TransactionsTable transactions={groupsData.singletons} />
+					<TransactionsTable
+						setCSVData={setCSVData}
+						transactions={groupsData.singletons}
+					/>
 				</>
 			)}
 		</section>

@@ -1,12 +1,14 @@
 import { dateFormat, zebra } from '@/utils/app';
-import type { TransactionData } from '@/app/types';
+import type { FindGroupsData, TransactionData } from '@/app/types';
 import Button from '@/app/components/Button';
+import type React from 'react';
 import { Fragment, useState } from 'react';
 import TransactionRow from './TransactionRow';
 import TransactionCreate from './TransactionCreate';
 
 interface TransactionsTableProps {
 	className?: string;
+	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	tableClassName?: string;
 	transactions: TransactionData[];
 }
@@ -18,6 +20,7 @@ const displayAmount = new Intl.NumberFormat('en-US', {
 
 export default function TransactionsTable({
 	className = '',
+	setCSVData,
 	tableClassName = '',
 	transactions,
 }: TransactionsTableProps) {
@@ -54,6 +57,7 @@ export default function TransactionsTable({
 								<TransactionCreate
 									creating={activeElement === index}
 									setActiveElement={setActiveElement}
+									setCSVData={setCSVData}
 									transaction={transaction}
 								/>
 							</Fragment>
