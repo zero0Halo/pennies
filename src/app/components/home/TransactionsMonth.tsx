@@ -45,7 +45,7 @@ export default function TransactionsMonth({
 
 	useEffect(() => {
 		const account = getValues('account');
-		if (account === '' && options.length > 1) {
+		if (account === '' && options.length > 1 && transactionsData.length) {
 			const account_uid = transactionsData[0][1][0].account_uid;
 			const date = dayjs(defaultDate).format('MMMM, YYYY');
 			const [month, year] = date.split(', ');

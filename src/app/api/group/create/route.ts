@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import partials from '@/app/api/partials';
 import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
 import { MONTHLY_SUMS } from '@/app/constants';
+import type { MonthlySumData } from '@/app/types';
 
 export async function POST(req: Request) {
 	try {
@@ -85,7 +86,7 @@ export async function POST(req: Request) {
 		// Upsert/Update the updated data back into monthly_sums
 		const { data: monthlySumsUpsertData, error: monthlySumsUpsertError } =
 			await monthlySumsUpsert({
-				snapshot: monthlySumsSnapshot,
+				snapshot: monthlySumsSnapshot as MonthlySumData[],
 				transfers,
 				transactions,
 			});

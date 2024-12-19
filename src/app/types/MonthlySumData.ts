@@ -43,8 +43,8 @@ export const validateMonthlySumData = (data: any) => {
 };
 
 interface CreateMonthlySumPayloadArgs {
-	snapshot: MonthlySumData[];
-	transfers?: TransferData[] | undefined | null;
+	snapshot?: MonthlySumData[] | undefined | null;
+	transfers?: TransferData[] | null;
 	transactions: TransactionData[];
 }
 
@@ -52,7 +52,9 @@ export function createMonthlySumPayload({
 	snapshot,
 	transfers,
 	transactions,
-}: CreateMonthlySumPayloadArgs) {
+}: CreateMonthlySumPayloadArgs): MonthlySumData[] | null {
+	if (snapshot === null || snapshot === undefined) return null;
+
 	const payloadMap = new Map<string, MonthlySumData[]>();
 
 	// Format the transactions data into MonthlySumData
@@ -73,7 +75,7 @@ export function createMonthlySumPayload({
 	);
 
 	// If they exist, format the transfers data into MonthlySumData and concatenate it into payloadArr
-	if (transfers && transfers.length > 0) {
+	if (transfers && transfers !== null && transfers.length > 0) {
 		const transfersToPayload = transfers.map(
 			({ amount, user_uid, timestamp, to_account_uid: account_uid }) => {
 				const date = new Date(timestamp);

@@ -45,14 +45,14 @@ export const validateTransferData = (data: any) =>
 	TransferDataSchema.parse(data);
 
 interface CreateTransferPayloadArgs {
-	group?: GroupData | undefined;
+	group: GroupData | null;
 	transactions: TransactionData[];
 }
 
 export interface CreateTransferPayloadData {
-	group?: GroupData | null;
-	transfers?: TransferData[] | null;
-	transactions?: TransactionData[] | null;
+	group: GroupData | null;
+	transfers: TransferData[] | null;
+	transactions: TransactionData[] | null;
 }
 
 export function createTransferPayload({

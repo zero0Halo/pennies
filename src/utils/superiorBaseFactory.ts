@@ -19,7 +19,7 @@ import { getIsoDate } from './general';
 
 type QueryResponse<T> = { data: T | null; error: PostgrestError | null };
 type UpsertOptions = UpsertOptionsBase & {
-	revertOnFail: boolean;
+	revertOnFail?: boolean;
 };
 type SuperiorBaseResponse<T> = {
 	data: T | T[] | null;
@@ -212,6 +212,7 @@ class SuperiorBase {
 		this.messagePieces.operation = UPSERT;
 		this.messagePieces.payloadSize = Array.isArray(data) ? data.length : 1;
 		this.query = this.query.upsert(this.whenUpdated(data), options);
+		this.query = this.use_auto_select ? this.query.select() : this.query;
 		return this;
 	}
 
@@ -250,9 +251,10 @@ class SuperiorBase {
 		};
 
 		// TODO: NEED TO ACTUALLY ROLLBACK THE UPSERT AND NOT JUST THROW AN ERROR
-		const upsertCheck = this.upsertCheck(data);
-		if (upsertCheck) console.error('Shit. Upsert size is wrong.');
-
+		// const upsertCheck = this.upsertCheck(data);
+		// if (upsertCheck) console.error('Shit. Upsert size is wrong.');
+		console.log({ data });
+		console.log({ error });
 		if (data) {
 			response.data = data;
 			response.success = responseSuccess(

@@ -200,7 +200,10 @@ export default function GroupCreate({
 				>
 					<div className="collapse-title text-md font-bold">Transactions</div>
 					<div className="collapse-content">
-						<TransactionsTable transactions={transactions} />
+						<TransactionsTable
+							setCSVData={setCSVData}
+							transactions={transactions}
+						/>
 					</div>
 				</div>
 

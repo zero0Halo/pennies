@@ -1,3 +1,5 @@
+'use client';
+
 import type React from 'react';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
@@ -7,9 +9,9 @@ import Input from '@/app/components/Input';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import { TRANSFER } from '@/app/constants';
-import { useAccounts, useCategories } from '@/app/hooks/client';
+import { useAccounts, useCategories, useLoading } from '@/app/hooks/client';
 import type { FindGroupsData, TransactionData } from '@/app/types';
-import { dateFormat, displayAmount } from '@/utils/app';
+import { apiCall, dateFormat, displayAmount } from '@/utils/app';
 
 interface TransactionCreateProps {
 	creating: boolean;
@@ -27,6 +29,7 @@ export default function TransactionCreate({
 	if (!creating) return null;
 
 	const { options } = useAccounts();
+	const { Loading, props, setLoading } = useLoading();
 	const selectOptions = useMemo(
 		() => options.filter((g) => g.value !== transaction.account_uid),
 		[options, transaction],
@@ -71,15 +74,23 @@ export default function TransactionCreate({
 	]);
 
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const handleTransactionCreate = (x: any) => {
-		console.log({ ...transaction, ...x });
+	const handleTransactionCreate = async (x: any) => {
+		setLoading(true);
+
+		const payload = { ...transaction, ...x, terms: x.terms.split(', ') };
+		const result = await apiCall('/api/transactions/create', { payload });
+
+		if (result?.error) console.log('Fuck.');
+
+		setLoading(false);
+
 		setCSVData((state) => {
 			const transactionIndex = state?.singletons.findIndex(
 				(f) => f.uid === transaction.uid,
 			);
 			const updatedState = produce(state, (draft) => {
 				if (draft !== undefined && transactionIndex !== undefined)
-					draft.singletons[transactionIndex] = { ...transaction, ...x };
+					draft.singletons[transactionIndex] = payload;
 			});
 			console.log({ updatedState });
 			return state;
@@ -90,7 +101,10 @@ export default function TransactionCreate({
 		<tr>
 			<td colSpan={4}>
 				<div className={'bg-primary pt-1 p-8 rounded-lg relative'}>
+					<Loading {...props} />
+
 					<h3>Create Transaction</h3>
+
 					<form
 						className="form-control"
 						onSubmit={handleSubmit(handleTransactionCreate)}

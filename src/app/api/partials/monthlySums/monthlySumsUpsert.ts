@@ -10,7 +10,7 @@ import { MONTHLY_SUMS } from '@/app/constants';
 import { createMonthlySumPayload } from '@/app/types/MonthlySumData';
 
 export interface MonthlySumsUpsertFnArgs {
-	snapshot: MonthlySumData[] | undefined | null;
+	snapshot: MonthlySumData[] | null;
 	transfers: TransferData[] | null;
 	transactions: TransactionData[];
 }
@@ -29,7 +29,7 @@ export default async function monthlySumsUpsert({
 	let errorResponse = null;
 
 	if (snapshot) {
-		const payload: MonthlySumData[] = createMonthlySumPayload({
+		const payload: MonthlySumData[] | null = createMonthlySumPayload({
 			snapshot,
 			transfers,
 			transactions,

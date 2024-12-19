@@ -29,7 +29,6 @@ export default async function apiCall(
 			headers,
 			body: JSON.stringify(settings.payload),
 		});
-
 		const body = await response.json();
 
 		// Handle response and invoke settings callbacks
