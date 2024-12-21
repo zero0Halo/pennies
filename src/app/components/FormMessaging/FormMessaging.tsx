@@ -1,3 +1,5 @@
+'use client';
+
 import {
 	useFormMessagingContext,
 	type FormMessagingContextData,

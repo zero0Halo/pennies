@@ -13,8 +13,8 @@ import { useAccounts, useClientCookie } from '@/app/hooks/client';
 import parseCsv from './scripts/parseCsv';
 import { USER } from '@/app/constants';
 import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
-import { useFormMessagingContext } from '@/app/context/FormMessagingProvider';
-import FormMessaging from '@/app/context/FormMessaging';
+import { useFormMessagingContext } from '@/app/components/FormMessaging/FormMessagingProvider';
+import FormMessaging from '@/app/components/FormMessaging/FormMessaging';
 
 export default function CsvUpload() {
 	const [activeElement, setActiveElement] = useState<number | undefined>();

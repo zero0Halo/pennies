@@ -1,21 +1,19 @@
-'use client';
-
 import { redirect } from 'next/navigation';
 import CsvUpload from './CsvUpload';
-import { useIsLoggedIn } from '@/app/hooks/client';
-import FormMessagingProvider from '../context/FormMessagingProvider';
+import { useIsLoggedIn } from '@/app/hooks/server';
+import { FormMessagingWrapper } from '../components/FormMessaging';
 
 export default function CsvUploadPage() {
-	// const isLoggedIn = useIsLoggedIn();
+	const isLoggedIn = useIsLoggedIn();
 
-	// if (!isLoggedIn) redirect('/');
+	if (!isLoggedIn) redirect('/');
 
 	return (
 		<div>
 			<h2>CSV Upload</h2>
-			<FormMessagingProvider>
+			<FormMessagingWrapper>
 				<CsvUpload />
-			</FormMessagingProvider>
+			</FormMessagingWrapper>
 		</div>
 	);
 }

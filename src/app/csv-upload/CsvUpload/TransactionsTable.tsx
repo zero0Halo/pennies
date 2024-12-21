@@ -1,6 +1,4 @@
-import { dateFormat, zebra } from '@/utils/app';
 import type { FindGroupsData, TransactionData } from '@/app/types';
-import Button from '@/app/components/Button';
 import type React from 'react';
 import { Fragment, useState } from 'react';
 import TransactionRow from './TransactionRow';
@@ -12,11 +10,6 @@ interface TransactionsTableProps {
 	tableClassName?: string;
 	transactions: TransactionData[];
 }
-
-const displayAmount = new Intl.NumberFormat('en-US', {
-	style: 'currency',
-	currency: 'USD',
-});
 
 export default function TransactionsTable({
 	className = '',
