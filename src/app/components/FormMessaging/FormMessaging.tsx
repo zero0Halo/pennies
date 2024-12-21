@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import {
 	useFormMessagingContext,
 	type FormMessagingContextData,
@@ -8,6 +9,22 @@ import {
 export default function FormMessaging() {
 	const { close, error, setClose, success }: FormMessagingContextData =
 		useFormMessagingContext();
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+	useEffect(() => {
+		if (success) {
+			if (timerRef.current) clearTimeout(timerRef.current);
+
+			timerRef.current = setTimeout(() => {
+				setClose(true);
+				timerRef.current = null; // Reset ref
+			}, 3000);
+
+			return () => {
+				if (timerRef.current) clearTimeout(timerRef.current);
+			};
+		}
+	}, [setClose, success]);
 
 	const jsx = true && (
 		<div className="fixed top-0  left-1/2 transform -translate-x-1/2 z-50">

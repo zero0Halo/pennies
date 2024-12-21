@@ -28,6 +28,7 @@ export default function TransactionCreate({
 	transaction,
 }: TransactionCreateProps) {
 	if (!creating) return null;
+
 	const { setError, setSuccess } = useFormMessagingContext();
 	const { options } = useAccounts();
 	const { Loading, props, setLoading } = useLoading();
