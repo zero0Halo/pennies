@@ -9,14 +9,12 @@ import Select from '@/app/components/Select';
 import CompletedGroup from './Group/GroupCompleted';
 import Stats from './Stats';
 import TransactionsTable from './TransactionsTable';
-import {
-	useAccounts,
-	useClientCookie,
-	useFormMessaging,
-} from '@/app/hooks/client';
+import { useAccounts, useClientCookie } from '@/app/hooks/client';
 import parseCsv from './scripts/parseCsv';
 import { USER } from '@/app/constants';
 import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
+import { useFormMessagingContext } from '@/app/context/FormMessagingProvider';
+import FormMessaging from '@/app/context/FormMessaging';
 
 export default function CsvUpload() {
 	const [activeElement, setActiveElement] = useState<number | undefined>();
@@ -26,7 +24,7 @@ export default function CsvUpload() {
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
 	>(undefined);
-	const { props, setSuccess, setError, FormMessaging } = useFormMessaging();
+	const { setError, setSuccess } = useFormMessagingContext();
 	const { data: userData, error: userDataError } =
 		useClientCookie<UserData>(USER);
 	const { options } = useAccounts();
@@ -80,7 +78,8 @@ export default function CsvUpload() {
 	}
 
 	return (
-		<section className="px-4">
+		<section className="px-4 relative">
+			<FormMessaging />
 			{/* Show previous data warning */}
 			{previousData && !groupsData && (
 				<div className="alert bg-slate-200 shadow font-bold">
@@ -130,12 +129,7 @@ export default function CsvUpload() {
 			)}
 
 			{/* Show CSV stats */}
-			{groupsData && (
-				<>
-					<Stats groupsData={groupsData} />
-					<FormMessaging {...props} />
-				</>
-			)}
+			{groupsData && <Stats groupsData={groupsData} />}
 
 			{/* Show groups */}
 			{groupsData && groupsData.groups.length > 0 && (
@@ -165,8 +159,6 @@ export default function CsvUpload() {
 											key={groupData.group.uid}
 											setActiveElement={setActiveElement}
 											setCSVData={setCSVData}
-											setError={setError}
-											setSuccess={setSuccess}
 										/>
 									),
 							)}

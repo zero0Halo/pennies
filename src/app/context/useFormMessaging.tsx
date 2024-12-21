@@ -1,0 +1,88 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+
+interface FormMessagingProps {
+	close: boolean;
+	error?: string;
+	success?: string;
+	setClose: (arg: boolean) => void;
+}
+
+function FormMessaging({
+	close,
+	error,
+	setClose,
+	success,
+}: FormMessagingProps) {
+	const jsx = true && (
+		<div className="fixed top-0  left-1/2 transform -translate-x-1/2 z-50">
+			<div
+				className={`alert alert-${error?.length ? 'error' : 'success'} my-6 text-white font-bold shadow-xl`}
+			>
+				<button
+					className="btn btn-xs text-xs text-white x"
+					onClick={() => setClose(true)}
+					type="button"
+				/>
+				<span>{error?.length ? error : success}</span>
+			</div>
+		</div>
+	);
+
+	if (close) return null;
+
+	if (!error && !success) return null;
+
+	if (error || success) return jsx;
+}
+
+export default function useFormMessaging() {
+	const [error, _setError] = useState('');
+	const [success, _setSuccess] = useState('');
+	const [close, setClose] = useState(false);
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+	useEffect(() => {
+		if (success) {
+			// Clear any existing timer
+			if (timerRef.current) clearTimeout(timerRef.current);
+
+			// Set a new timer
+			timerRef.current = setTimeout(() => {
+				setError('');
+				setClose(false);
+				setSuccess('');
+				timerRef.current = null; // Reset ref
+			}, 3000);
+
+			// Cleanup on unmount
+			return () => {
+				if (timerRef.current) clearTimeout(timerRef.current);
+			};
+		}
+	}, [success]);
+
+	const setError = (msg: string) => {
+		_setSuccess('');
+		setClose(false);
+		_setError(msg);
+	};
+
+	const setSuccess = (msg: string) => {
+		_setError('');
+		setClose(false);
+		_setSuccess(msg);
+	};
+
+	return {
+		close,
+		error,
+		FormMessaging,
+		setClose,
+		setError,
+		setSuccess,
+		success,
+		props: { close, error, setClose, success },
+	};
+}

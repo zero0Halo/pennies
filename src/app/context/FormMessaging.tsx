@@ -1,35 +1,30 @@
-import type React from 'react';
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import {
+	useFormMessagingContext,
+	type FormMessagingContextData,
+} from './FormMessagingProvider';
 
-// Define the shape of the context
-interface MyContextType {
-	value: string;
-	setValue: (newValue: string) => void;
-}
+export default function FormMessaging() {
+	const { close, error, setClose, success }: FormMessagingContextData =
+		useFormMessagingContext();
 
-// Create the context with a default value
-const MyContext = createContext<MyContextType | undefined>(undefined);
-
-// Create a provider component
-interface MyProviderProps {
-	children: ReactNode;
-}
-
-export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
-	const [value, setValue] = useState<string>('default');
-
-	return (
-		<MyContext.Provider value={{ value, setValue }}>
-			{children}
-		</MyContext.Provider>
+	const jsx = true && (
+		<div className="fixed top-0  left-1/2 transform -translate-x-1/2 z-50">
+			<div
+				className={`alert alert-${error?.length ? 'error' : 'success'} my-6 text-white font-bold shadow-xl`}
+			>
+				<button
+					className="btn btn-xs text-xs text-white x"
+					onClick={() => setClose(true)}
+					type="button"
+				/>
+				<span>{error?.length ? error : success}</span>
+			</div>
+		</div>
 	);
-};
 
-// Custom hook to use the context
-export const useMyContext = (): MyContextType => {
-	const context = useContext(MyContext);
-	if (!context) {
-		throw new Error('useMyContext must be used within a MyProvider');
-	}
-	return context;
-};
+	if (close) return null;
+
+	if (!error && !success) return null;
+
+	if (error || success) return jsx;
+}

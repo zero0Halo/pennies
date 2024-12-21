@@ -12,6 +12,7 @@ import { TRANSFER } from '@/app/constants';
 import { useAccounts, useCategories, useLoading } from '@/app/hooks/client';
 import type { FindGroupsData, TransactionData } from '@/app/types';
 import { apiCall, dateFormat, displayAmount } from '@/utils/app';
+import { useFormMessagingContext } from '@/app/context/FormMessagingProvider';
 
 interface TransactionCreateProps {
 	creating: boolean;
@@ -27,7 +28,7 @@ export default function TransactionCreate({
 	transaction,
 }: TransactionCreateProps) {
 	if (!creating) return null;
-
+	const { setError, setSuccess } = useFormMessagingContext();
 	const { options } = useAccounts();
 	const { Loading, props, setLoading } = useLoading();
 	const selectOptions = useMemo(
@@ -80,9 +81,14 @@ export default function TransactionCreate({
 		const payload = { ...transaction, ...x, terms: x.terms.split(', ') };
 		const result = await apiCall('/api/transactions/create', { payload });
 
-		if (result?.error) console.log('Fuck.');
+		if (result?.error) {
+			setError(result.message);
+			setLoading(false);
+			return;
+		}
 
 		setLoading(false);
+		setSuccess(`Transaction "${x.name}" created successfully!`);
 
 		setCSVData((state) => {
 			const transactionIndex = state?.singletons.findIndex(

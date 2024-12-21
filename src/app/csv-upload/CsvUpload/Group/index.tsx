@@ -10,8 +10,6 @@ interface GroupProps {
 	index: number;
 	setActiveElement: React.Dispatch<React.SetStateAction<number | undefined>>;
 	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
-	setError: (arg: string) => void;
-	setSuccess: (arg: string) => void;
 }
 
 export default function Group({
@@ -20,8 +18,6 @@ export default function Group({
 	groupData: { group, transactions },
 	setActiveElement,
 	setCSVData,
-	setError,
-	setSuccess,
 }: GroupProps) {
 	const isActive = activeElement === index;
 
@@ -32,8 +28,6 @@ export default function Group({
 					group={group}
 					setActiveElement={setActiveElement}
 					setCSVData={setCSVData}
-					setError={setError}
-					setSuccess={setSuccess}
 					transactions={transactions}
 				/>
 			)}

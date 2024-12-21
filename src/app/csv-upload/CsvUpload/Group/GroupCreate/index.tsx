@@ -16,13 +16,12 @@ import type {
 	CreateTransferPayloadData,
 } from '@/app/types';
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
+import { useFormMessagingContext } from '@/app/context/FormMessagingProvider';
 
 interface GroupCreateProps {
 	group: GroupData;
 	setActiveElement: React.Dispatch<React.SetStateAction<number | undefined>>;
 	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
-	setError: (arg: string) => void;
-	setSuccess: (arg: string) => void;
 	transactions: TransactionData[];
 }
 
@@ -30,10 +29,9 @@ export default function GroupCreate({
 	group,
 	setActiveElement,
 	setCSVData,
-	setError,
-	setSuccess,
 	transactions,
 }: GroupCreateProps) {
+	const { setError, setSuccess } = useFormMessagingContext();
 	const { options } = useAccounts();
 	const selectOptions = useMemo(
 		() => options.filter((g) => g.value !== group.account_uid),
