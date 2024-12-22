@@ -1,7 +1,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Group from './Group';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
@@ -15,44 +15,35 @@ import { USER } from '@/app/constants';
 import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import { useFormMessagingContext } from '@/app/components/FormMessaging/FormMessagingProvider';
 import FormMessaging from '@/app/components/FormMessaging/FormMessaging';
+import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
 
 export default function CsvUpload() {
+	// STATE
 	const [activeElement, setActiveElement] = useState<number | undefined>();
-	const [groupsData, setCSVData] = useState<FindGroupsData | undefined>(
-		undefined,
-	);
+	const [CSVData, setCSVData] = useState<FindGroupsData | undefined>(undefined);
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
 	>(undefined);
+
+	// CUSTOM HOOKS
 	const { setError, setSuccess } = useFormMessagingContext();
 	const { data: userData, error: userDataError } =
 		useClientCookie<UserData>(USER);
 	const { options } = useAccounts();
+	const organizedCsvData = useOrganizedCsvData({ CSVData });
+
+	// REACT FORM
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
-	const completed = useMemo(() => {
-		if (groupsData !== undefined) {
-			const completedGroups = groupsData.groups.filter(
-				({ group }) => group.name !== false,
-			);
-			const completedSingletons = groupsData.singletons.filter(
-				(singleton) => singleton.name !== '',
-			);
-			return { groups: completedGroups, singletons: completedSingletons };
-		}
-		return { groups: [], singletons: [] };
-	}, [groupsData]);
 
 	if (userDataError) {
 		console.error(userDataError);
 		return null;
 	}
 
-	console.log(completed.singletons);
-
 	// Check for CSV data in local storage
 	useEffect(() => {
-		if (!groupsData && previousData === undefined) {
+		if (!CSVData && previousData === undefined) {
 			const localStorageData =
 				typeof window !== 'undefined'
 					? (localStorage.getItem('csv-upload') ?? false)
@@ -60,7 +51,7 @@ export default function CsvUpload() {
 
 			setPreviousData(localStorageData ? JSON.parse(localStorageData) : false);
 		}
-	}, [groupsData, previousData]);
+	}, [CSVData, previousData]);
 
 	async function handleCsvUpload(formData: CsvUploadData) {
 		try {
@@ -90,8 +81,9 @@ export default function CsvUpload() {
 	return (
 		<section className="px-4 relative">
 			<FormMessaging />
+
 			{/* Show previous data warning */}
-			{previousData && !groupsData && (
+			{previousData && !CSVData && (
 				<div className="alert bg-slate-200 shadow font-bold">
 					<div>A previous session was detected. Would you like to load it?</div>
 
@@ -113,7 +105,7 @@ export default function CsvUpload() {
 			)}
 
 			{/* Show CSV file uploader */}
-			{!groupsData && previousData === false && (
+			{!CSVData && previousData === false && (
 				<form
 					className="form-control py-4 join join-horizontal"
 					onSubmit={handleSubmit(handleCsvUpload)}
@@ -139,16 +131,16 @@ export default function CsvUpload() {
 			)}
 
 			{/* Show CSV stats */}
-			{groupsData && <Stats groupsData={groupsData} />}
+			{CSVData && <Stats groupsData={CSVData} />}
 
 			{/* Show groups */}
-			{groupsData && groupsData.groups.length > 0 && (
+			{organizedCsvData && organizedCsvData.notCompleted.groups.length > 0 && (
 				<>
 					<div className="divider" />
 
 					<div role="tablist" className="tabs tabs-lifted">
 						<input
-							aria-label={`Reviewing (${groupsData.groups.length - completed.groups.length})`}
+							aria-label={`Reviewing (${organizedCsvData.notCompleted.groups.length - organizedCsvData.completed.groups.length})`}
 							className="tab after:whitespace-nowrap"
 							defaultChecked
 							name="group_tabs"
@@ -159,7 +151,7 @@ export default function CsvUpload() {
 							role="tabpanel"
 							className="tab-content bg-base-100 border-base-300 rounded-box px-2 py-6"
 						>
-							{groupsData.groups?.map(
+							{organizedCsvData.notCompleted.groups?.map(
 								(groupData, index) =>
 									typeof groupData.group.name === 'boolean' && (
 										<Group
@@ -175,7 +167,7 @@ export default function CsvUpload() {
 						</div>
 
 						<input
-							aria-label={`Completed${completed.groups.length > 0 ? ` (${completed.groups.length})` : ''}`}
+							aria-label={`Completed${organizedCsvData.completed.groups.length > 0 ? ` (${organizedCsvData.completed.groups.length})` : ''}`}
 							className="tab after:whitespace-nowrap"
 							name="group_tabs"
 							role="tab"
@@ -185,7 +177,7 @@ export default function CsvUpload() {
 							role="tabpanel"
 							className="tab-content bg-base-100 border-base-300 rounded-xl p-4 pb-0"
 						>
-							{completed.groups.map((groupData, index) => (
+							{organizedCsvData.completed.groups.map((groupData, index) => (
 								<CompletedGroup
 									groupsData={groupData}
 									index={index}
@@ -198,7 +190,7 @@ export default function CsvUpload() {
 			)}
 
 			{/* Show singletons */}
-			{groupsData && groupsData.singletons.length > 0 && (
+			{organizedCsvData.notCompleted.singletons.length > 0 && (
 				<>
 					<div className="divider" />
 
@@ -206,7 +198,7 @@ export default function CsvUpload() {
 
 					<TransactionsTable
 						setCSVData={setCSVData}
-						transactions={groupsData.singletons}
+						transactions={organizedCsvData.notCompleted.singletons}
 					/>
 				</>
 			)}

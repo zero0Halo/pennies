@@ -1,0 +1,53 @@
+import type { FindGroupsData, GroupsData, TransactionData } from '@/app/types';
+import { useEffect, useState } from 'react';
+
+interface UseOrganizedCsvDataProps {
+	CSVData: FindGroupsData | undefined;
+}
+
+type OrganizedTransactionsData = {
+	groups: GroupsData[];
+	singletons: TransactionData[];
+};
+
+type OrganizedCsvData = {
+	completed: OrganizedTransactionsData;
+	notCompleted: OrganizedTransactionsData;
+};
+
+export default function useOrganizedCsvData({
+	CSVData,
+}: UseOrganizedCsvDataProps): OrganizedCsvData {
+	const [payload, setPayload] = useState<OrganizedCsvData>({
+		completed: { groups: [], singletons: [] },
+		notCompleted: { groups: [], singletons: [] },
+	});
+
+	useEffect(() => {
+		if (CSVData !== undefined) {
+			const { groups, singletons } = CSVData;
+			const completedGroups = groups.filter(
+				({ group }) => typeof group.name === 'string' && group.name.length > 0,
+			);
+			const notCompletedGroups = groups.filter(
+				({ group }) => typeof group.name === 'boolean',
+			);
+			const completedSingletons = singletons.filter(
+				(singleton) => singleton.name.length,
+			);
+			const notCompletedSingletons = singletons.filter(
+				(singleton) => !singleton.name.length,
+			);
+
+			setPayload({
+				completed: { groups: completedGroups, singletons: completedSingletons },
+				notCompleted: {
+					groups: notCompletedGroups,
+					singletons: notCompletedSingletons,
+				},
+			});
+		}
+	}, [CSVData]);
+
+	return payload;
+}
