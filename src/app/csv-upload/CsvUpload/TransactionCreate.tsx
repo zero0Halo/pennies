@@ -99,14 +99,14 @@ export default function TransactionCreate({
 				if (draft !== undefined && transactionIndex !== undefined)
 					draft.singletons[transactionIndex] = payload;
 			});
-			// console.log({ updatedState });
+
 			return updatedState;
 		});
 	};
 
 	return (
 		<tr>
-			<td colSpan={4}>
+			<td colSpan={4} className="bg-slate-100">
 				<div className={'bg-primary pt-1 p-8 rounded-lg relative'}>
 					<Loading {...props} />
 
