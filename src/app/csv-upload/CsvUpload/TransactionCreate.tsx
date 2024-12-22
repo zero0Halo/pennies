@@ -99,8 +99,8 @@ export default function TransactionCreate({
 				if (draft !== undefined && transactionIndex !== undefined)
 					draft.singletons[transactionIndex] = payload;
 			});
-			console.log({ updatedState });
-			return state;
+			// console.log({ updatedState });
+			return updatedState;
 		});
 	};
 

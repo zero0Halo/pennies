@@ -1,7 +1,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Group from './Group';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
@@ -30,15 +30,25 @@ export default function CsvUpload() {
 	const { options } = useAccounts();
 	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
-	const completed =
-		groupsData !== undefined
-			? groupsData.groups.filter(({ group }) => group.name !== false)
-			: [];
+	const completed = useMemo(() => {
+		if (groupsData !== undefined) {
+			const completedGroups = groupsData.groups.filter(
+				({ group }) => group.name !== false,
+			);
+			const completedSingletons = groupsData.singletons.filter(
+				(singleton) => singleton.name !== '',
+			);
+			return { groups: completedGroups, singletons: completedSingletons };
+		}
+		return { groups: [], singletons: [] };
+	}, [groupsData]);
 
 	if (userDataError) {
 		console.error(userDataError);
 		return null;
 	}
+
+	console.log(completed.singletons);
 
 	// Check for CSV data in local storage
 	useEffect(() => {
@@ -138,7 +148,7 @@ export default function CsvUpload() {
 
 					<div role="tablist" className="tabs tabs-lifted">
 						<input
-							aria-label={`Reviewing (${groupsData.groups.length - completed.length})`}
+							aria-label={`Reviewing (${groupsData.groups.length - completed.groups.length})`}
 							className="tab after:whitespace-nowrap"
 							defaultChecked
 							name="group_tabs"
@@ -165,7 +175,7 @@ export default function CsvUpload() {
 						</div>
 
 						<input
-							aria-label={`Completed${completed.length > 0 ? ` (${completed.length})` : ''}`}
+							aria-label={`Completed${completed.groups.length > 0 ? ` (${completed.groups.length})` : ''}`}
 							className="tab after:whitespace-nowrap"
 							name="group_tabs"
 							role="tab"
@@ -175,7 +185,7 @@ export default function CsvUpload() {
 							role="tabpanel"
 							className="tab-content bg-base-100 border-base-300 rounded-xl p-4 pb-0"
 						>
-							{completed.map((groupData, index) => (
+							{completed.groups.map((groupData, index) => (
 								<CompletedGroup
 									groupsData={groupData}
 									index={index}
