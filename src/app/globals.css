@@ -103,3 +103,7 @@ label:has(select:disabled) {
     text-align: center;
   }
 }
+
+.toggle-inset {
+  box-shadow: 0px 4px 5px -2px rgb(0 0 0 / 68%) inset;
+}

@@ -16,6 +16,7 @@ import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import { useFormMessagingContext } from '@/app/components/FormMessaging/FormMessagingProvider';
 import FormMessaging from '@/app/components/FormMessaging/FormMessaging';
 import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
+import ButtonToggles from '@/app/playground/ButtonToggles';
 
 export default function CsvUpload() {
 	// STATE
@@ -81,6 +82,15 @@ export default function CsvUpload() {
 	return (
 		<section className="px-4 relative">
 			<FormMessaging />
+
+			<ButtonToggles
+				buttons={[
+					{ label: 'All' },
+					{ label: 'Groups' },
+					{ label: 'Singletons' },
+				]}
+				onClick={(label) => console.log(label)}
+			/>
 
 			{/* Show previous data warning */}
 			{previousData && !CSVData && (
