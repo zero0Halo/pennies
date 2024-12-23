@@ -8,11 +8,13 @@ type ButtonToggleData = {
 
 interface ButtonTogglesProps {
 	buttons: ButtonToggleData[];
+	className?: string;
 	onClick: (args: string) => void;
 }
 
 export default function ButtonToggles({
 	buttons,
+	className = '',
 	onClick,
 }: ButtonTogglesProps): React.ReactNode {
 	if (!Array.isArray(buttons)) return null;
@@ -48,8 +50,11 @@ export default function ButtonToggles({
 		}
 	}, [buttons, onClick]);
 
+	// JSX
 	return (
-		<div className="join join-horizontal border-primary border-2">
+		<div
+			className={`join join-horizontal border-primary border-2 shadow my-2 ${className ?? className}`}
+		>
 			{buttons.map((button, index) => (
 				<button
 					className={active === index ? activeClasses : inactiveClasses}

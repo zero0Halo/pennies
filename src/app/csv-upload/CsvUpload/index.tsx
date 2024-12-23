@@ -17,6 +17,7 @@ import { useFormMessagingContext } from '@/app/components/FormMessaging/FormMess
 import FormMessaging from '@/app/components/FormMessaging/FormMessaging';
 import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
 import ButtonToggles from '@/app/playground/ButtonToggles';
+import TabList from '@/app/playground/TabList';
 
 export default function CsvUpload() {
 	// STATE
@@ -83,15 +84,6 @@ export default function CsvUpload() {
 		<section className="px-4 relative">
 			<FormMessaging />
 
-			<ButtonToggles
-				buttons={[
-					{ label: 'All' },
-					{ label: 'Groups' },
-					{ label: 'Singletons' },
-				]}
-				onClick={(label) => console.log(label)}
-			/>
-
 			{/* Show previous data warning */}
 			{previousData && !CSVData && (
 				<div className="alert bg-slate-200 shadow font-bold">
@@ -143,27 +135,93 @@ export default function CsvUpload() {
 			{/* Show CSV stats */}
 			{CSVData && <Stats groupsData={CSVData} />}
 
-			{/* Show groups */}
-			{organizedCsvData && organizedCsvData.notCompleted.groups.length > 0 && (
-				<>
-					<div className="divider" />
+			{/* Show not completed groups & transactions */}
+			{organizedCsvData &&
+				(organizedCsvData.notCompleted.groups.length > 0 ||
+					organizedCsvData.notCompleted.singletons.length > 0) && (
+					<>
+						<div className="divider" />
 
-					<div role="tablist" className="tabs tabs-lifted">
-						<input
-							aria-label={`Reviewing (${organizedCsvData.notCompleted.groups.length - organizedCsvData.completed.groups.length})`}
-							className="tab after:whitespace-nowrap"
-							defaultChecked
-							name="group_tabs"
-							role="tab"
-							type="radio"
+						<TabList
+							name="transaction-review-panels"
+							panels={[
+								{
+									jsx: (
+										<>
+											<ButtonToggles
+												buttons={[
+													{ label: 'All' },
+													{ label: 'Groups' },
+													{ label: 'Singletons' },
+												]}
+												className="mb-6 mx-auto"
+												onClick={(label) => console.log(label)}
+											/>
+
+											{organizedCsvData.notCompleted.groups?.map(
+												(groupData, index) => (
+													<Group
+														activeElement={activeElement}
+														index={index}
+														groupData={groupData}
+														key={groupData.group.uid}
+														setActiveElement={setActiveElement}
+														setCSVData={setCSVData}
+													/>
+												),
+											)}
+											{organizedCsvData.notCompleted.singletons.length > 0 && (
+												<>
+													<div className="divider" />
+
+													<h3>Ungrouped (Singletons)</h3>
+
+													<TransactionsTable
+														setCSVData={setCSVData}
+														transactions={
+															organizedCsvData.notCompleted.singletons
+														}
+													/>
+												</>
+											)}
+										</>
+									),
+									title: 'Still reviewing...',
+								},
+								{
+									jsx: (
+										<>
+											{organizedCsvData.completed.groups.map(
+												(groupData, index) => (
+													<CompletedGroup
+														groupsData={groupData}
+														index={index}
+														key={groupData.group.uid}
+													/>
+												),
+											)}
+										</>
+									),
+									title: 'Completed',
+								},
+							]}
 						/>
-						<div
-							role="tabpanel"
-							className="tab-content bg-base-100 border-base-300 rounded-box px-2 py-6"
-						>
-							{organizedCsvData.notCompleted.groups?.map(
-								(groupData, index) =>
-									typeof groupData.group.name === 'boolean' && (
+
+						{/* <div role="tablist" className="tabs tabs-lifted">
+							<input
+								aria-label={`Reviewing (${organizedCsvData.notCompleted.groups.length - organizedCsvData.completed.groups.length})`}
+								className="tab after:whitespace-nowrap"
+								defaultChecked
+								name="group_tabs"
+								role="tab"
+								type="radio"
+							/>
+							<div
+								role="tabpanel"
+								className="tab-content bg-base-100 border-base-300 rounded-box px-2 py-6"
+							>
+								{organizedCsvData.notCompleted.groups?.map(
+									(groupData, index) => (
 										<Group
 											activeElement={activeElement}
 											index={index}
@@ -173,45 +231,44 @@ export default function CsvUpload() {
 											setCSVData={setCSVData}
 										/>
 									),
-							)}
-						</div>
+								)}
 
-						<input
-							aria-label={`Completed${organizedCsvData.completed.groups.length > 0 ? ` (${organizedCsvData.completed.groups.length})` : ''}`}
-							className="tab after:whitespace-nowrap"
-							name="group_tabs"
-							role="tab"
-							type="radio"
-						/>
-						<div
-							role="tabpanel"
-							className="tab-content bg-base-100 border-base-300 rounded-xl p-4 pb-0"
-						>
-							{organizedCsvData.completed.groups.map((groupData, index) => (
-								<CompletedGroup
-									groupsData={groupData}
-									index={index}
-									key={groupData.group.uid}
-								/>
-							))}
-						</div>
-					</div>
-				</>
-			)}
+								{organizedCsvData.notCompleted.singletons.length > 0 && (
+									<>
+										<div className="divider" />
 
-			{/* Show singletons */}
-			{organizedCsvData.notCompleted.singletons.length > 0 && (
-				<>
-					<div className="divider" />
+										<h3>Ungrouped (Singletons)</h3>
 
-					<h3>Ungrouped (Singletons)</h3>
+										<TransactionsTable
+											setCSVData={setCSVData}
+											transactions={organizedCsvData.notCompleted.singletons}
+										/>
+									</>
+								)}
+							</div>
 
-					<TransactionsTable
-						setCSVData={setCSVData}
-						transactions={organizedCsvData.notCompleted.singletons}
-					/>
-				</>
-			)}
+							<input
+								aria-label={`Completed${organizedCsvData.completed.groups.length > 0 ? ` (${organizedCsvData.completed.groups.length})` : ''}`}
+								className="tab after:whitespace-nowrap"
+								name="group_tabs"
+								role="tab"
+								type="radio"
+							/>
+							<div
+								role="tabpanel"
+								className="tab-content bg-base-100 border-base-300 rounded-xl p-4 pb-0"
+							>
+								{organizedCsvData.completed.groups.map((groupData, index) => (
+									<CompletedGroup
+										groupsData={groupData}
+										index={index}
+										key={groupData.group.uid}
+									/>
+								))}
+							</div>
+						</div> */}
+					</>
+				)}
 		</section>
 	);
 }
