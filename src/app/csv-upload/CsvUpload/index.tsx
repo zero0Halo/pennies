@@ -142,70 +142,54 @@ export default function CsvUpload() {
 					<>
 						<div className="divider" />
 
-						<TabList
-							name="transaction-review-panels"
-							panels={[
-								{
-									jsx: (
-										<>
-											<ButtonToggles
-												buttons={[
-													{ label: 'All' },
-													{ label: 'Groups' },
-													{ label: 'Singletons' },
-												]}
-												className="mb-6 mx-auto"
-												onClick={(label) => console.log(label)}
-											/>
+						<TabList name="transaction-review-panels">
+							<div data-title="Reviewing">
+								<ButtonToggles
+									buttons={[
+										{ label: 'All' },
+										{ label: 'Groups' },
+										{ label: 'Singletons' },
+									]}
+									className="mb-6 mx-auto"
+									onClick={(label) => console.log(label)}
+								/>
 
-											{organizedCsvData.notCompleted.groups?.map(
-												(groupData, index) => (
-													<Group
-														activeElement={activeElement}
-														index={index}
-														groupData={groupData}
-														key={groupData.group.uid}
-														setActiveElement={setActiveElement}
-														setCSVData={setCSVData}
-													/>
-												),
-											)}
-											{organizedCsvData.notCompleted.singletons.length > 0 && (
-												<>
-													<div className="divider" />
-
-													<h3>Ungrouped (Singletons)</h3>
-
-													<TransactionsTable
-														setCSVData={setCSVData}
-														transactions={
-															organizedCsvData.notCompleted.singletons
-														}
-													/>
-												</>
-											)}
-										</>
+								{organizedCsvData.notCompleted.groups?.map(
+									(groupData, index) => (
+										<Group
+											activeElement={activeElement}
+											index={index}
+											groupData={groupData}
+											key={groupData.group.uid}
+											setActiveElement={setActiveElement}
+											setCSVData={setCSVData}
+										/>
 									),
-									title: 'Still reviewing...',
-								},
-								{
-									jsx: (
-										<>
-											{organizedCsvData.completed.groups.map(
-												(groupData, index) => (
-													<CompletedGroup
-														groupsData={groupData}
-														index={index}
-														key={groupData.group.uid}
-													/>
-												),
-											)}
-										</>
-									),
-									title: 'Completed',
-								},
-							]}
-						/>
+								)}
+								{organizedCsvData.notCompleted.singletons.length > 0 && (
+									<>
+										<div className="divider" />
+
+										<h3>Ungrouped (Singletons)</h3>
+
+										<TransactionsTable
+											setCSVData={setCSVData}
+											transactions={organizedCsvData.notCompleted.singletons}
+										/>
+									</>
+								)}
+							</div>
+
+							<div data-title="Completed">
+								{organizedCsvData.completed.groups.map((groupData, index) => (
+									<CompletedGroup
+										groupsData={groupData}
+										index={index}
+										key={groupData.group.uid}
+									/>
+								))}
+							</div>
+						</TabList>
 
 						{/* <div role="tablist" className="tabs tabs-lifted">
 							<input

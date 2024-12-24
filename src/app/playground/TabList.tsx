@@ -1,20 +1,20 @@
-import type React from 'react';
+import React from 'react';
 
 type TabPanelData = {
 	checked?: boolean;
-	jsx: React.ReactNode;
+	children: React.ReactNode;
 	name?: string;
-	title: string;
+	title?: string;
 };
 
 interface TabListProps {
+	children: React.ReactNode;
 	name: string;
-	panels: TabPanelData[];
 }
 
 function TabPanel({
-	jsx,
 	checked,
+	children,
 	name,
 	title,
 }: TabPanelData): React.ReactNode {
@@ -32,26 +32,31 @@ function TabPanel({
 				role="tabpanel"
 				className="tab-content bg-base-100 border-base-300 rounded-box px-2 py-6"
 			>
-				{jsx}
+				{children}
 			</div>
 		</>
 	);
 }
 
 export default function TabList({
+	children,
 	name,
-	panels,
 }: TabListProps): React.ReactNode {
 	return (
 		<div role="tablist" className="tabs tabs-lifted">
-			{panels.map((panelData, index) => (
-				<TabPanel
-					key={panelData.title}
-					{...panelData}
-					checked={index === 0}
-					name={name}
-				/>
-			))}{' '}
+			{React.Children.map(children, (child, index) => {
+				if (React.isValidElement(child)) {
+					return (
+						<TabPanel
+							checked={index === 0}
+							name={name}
+							title={child.props['data-title'] ?? `Tab Title ${index + 1}`}
+						>
+							{child}
+						</TabPanel>
+					);
+				}
+			})}
 		</div>
 	);
 }
