@@ -16,7 +16,9 @@ import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import { useFormMessagingContext } from '@/app/components/FormMessaging/FormMessagingProvider';
 import FormMessaging from '@/app/components/FormMessaging/FormMessaging';
 import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
-import ButtonToggles from '@/app/playground/ButtonToggles';
+import ButtonToggles, {
+	type ToggleStateData,
+} from '@/app/playground/ButtonToggles';
 import TabList from '@/app/components/TabList';
 
 export default function CsvUpload() {
@@ -26,6 +28,11 @@ export default function CsvUpload() {
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
 	>(undefined);
+	const [toggleState, setToggleState] = useState<ToggleStateData>({
+		all: true,
+		groups: false,
+		singletons: false,
+	});
 
 	// CUSTOM HOOKS
 	const { setError, setSuccess } = useFormMessagingContext();
@@ -79,7 +86,7 @@ export default function CsvUpload() {
 			setError((err as Error).message);
 		}
 	}
-
+	console.log(toggleState);
 	return (
 		<section className="px-4 relative">
 			<FormMessaging />
@@ -145,39 +152,37 @@ export default function CsvUpload() {
 						<TabList name="transaction-review-panels">
 							<div data-title="Reviewing">
 								<ButtonToggles
-									buttons={[
-										{ label: 'All' },
-										{ label: 'Groups' },
-										{ label: 'Singletons' },
-									]}
 									className="mb-6 mx-auto"
-									onClick={(label) => console.log(label)}
+									setToggleState={setToggleState}
+									toggleState={toggleState}
 								/>
 
-								{organizedCsvData.notCompleted.groups?.map(
-									(groupData, index) => (
-										<Group
-											activeElement={activeElement}
-											index={index}
-											groupData={groupData}
-											key={groupData.group.uid}
-											setActiveElement={setActiveElement}
-											setCSVData={setCSVData}
-										/>
-									),
-								)}
-								{organizedCsvData.notCompleted.singletons.length > 0 && (
-									<>
-										<div className="divider" />
+								{(toggleState.groups || toggleState.all) &&
+									organizedCsvData.notCompleted.groups?.map(
+										(groupData, index) => (
+											<Group
+												activeElement={activeElement}
+												index={index}
+												groupData={groupData}
+												key={groupData.group.uid}
+												setActiveElement={setActiveElement}
+												setCSVData={setCSVData}
+											/>
+										),
+									)}
+								{(toggleState.singletons || toggleState.all) &&
+									organizedCsvData.notCompleted.singletons.length > 0 && (
+										<>
+											<div className="divider" />
 
-										<h3>Ungrouped (Singletons)</h3>
+											<h3>Ungrouped (Singletons)</h3>
 
-										<TransactionsTable
-											setCSVData={setCSVData}
-											transactions={organizedCsvData.notCompleted.singletons}
-										/>
-									</>
-								)}
+											<TransactionsTable
+												setCSVData={setCSVData}
+												transactions={organizedCsvData.notCompleted.singletons}
+											/>
+										</>
+									)}
 							</div>
 
 							<div data-title="Completed">
