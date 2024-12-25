@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import GroupCompleted from './GroupCompleted';
 import Stats from './Stats';
 import TransactionsTable from './TransactionsTable';
 import { useAccounts, useClientCookie } from '@/app/hooks/client';
@@ -20,6 +19,7 @@ import ButtonToggles, {
 } from '@/app/components/ButtonToggles';
 import TabList from '@/app/components/TabList';
 import Groups from './Groups';
+import GroupsCompleted from './GroupsCompleted';
 
 export default function CsvUpload() {
 	// STATE
@@ -181,13 +181,33 @@ export default function CsvUpload() {
 							</section>
 
 							<section data-title="Completed">
-								{organizedCsvData.completed.groups.map((groupData, index) => (
-									<GroupCompleted
-										groupsData={groupData}
-										index={index}
-										key={groupData.group.uid}
-									/>
-								))}
+								<ButtonToggles
+									className="mb-6 mx-auto"
+									setToggleState={setToggleState}
+									toggleState={toggleState}
+								/>
+
+								<GroupsCompleted
+									className={
+										toggleState.groups || toggleState.all ? 'block' : 'hidden'
+									}
+									groupsData={organizedCsvData.completed.groups}
+									title="Groups Completed"
+								/>
+
+								<div
+									className={`divider pt-6${toggleState.all ? ' flex' : ' hidden'}`}
+								/>
+
+								<TransactionsTable
+									className={
+										toggleState.singletons || toggleState.all
+											? 'block'
+											: 'hidden'
+									}
+									title="Completed Singletons"
+									transactions={organizedCsvData.completed.singletons}
+								/>
 							</section>
 						</TabList>
 					</>
