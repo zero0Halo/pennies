@@ -4,7 +4,7 @@ import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Input from '@/app/components/Input';
 import Select from '@/app/components/Select';
-import TransactionsTable from '../../TransactionsTable';
+import TransactionsTable from '../../../TransactionsTable';
 import { useAccounts, useCategories, useLoading } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 import formatPayload from './scripts/formatPayload';

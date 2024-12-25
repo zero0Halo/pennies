@@ -2,11 +2,11 @@
 
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import Group from './Group';
+import Group from './Groups/Group';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import CompletedGroup from './Group/GroupCompleted';
+import CompletedGroup from './Groups/Group/GroupCompleted';
 import Stats from './Stats';
 import TransactionsTable from './TransactionsTable';
 import { useAccounts, useClientCookie } from '@/app/hooks/client';

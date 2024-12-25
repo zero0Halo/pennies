@@ -1,5 +1,5 @@
 import type React from 'react';
-import TransactionsTable from '../TransactionsTable';
+import TransactionsTable from '../../TransactionsTable';
 import type { FindGroupsData, GroupsData } from '@/app/types';
 import GroupCreate from './GroupCreate';
 import Button from '@/app/components/Button';

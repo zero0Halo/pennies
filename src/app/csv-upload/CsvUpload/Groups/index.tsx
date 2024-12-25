@@ -1,6 +1,6 @@
 import type React from 'react';
 import type { FindGroupsData, GroupsData } from '@/app/types';
-import Group from '../Group';
+import Group from './Group';
 import { useState } from 'react';
 
 interface GroupsProps {
