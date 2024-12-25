@@ -22,6 +22,8 @@ export default function Groups({
 	// JSX
 	return (
 		<div className={className}>
+			<h3>Groups</h3>
+
 			{groupsData.map((groupData, index) => (
 				<Group
 					activeElement={activeElement}

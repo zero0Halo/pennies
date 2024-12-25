@@ -70,7 +70,6 @@ export default function Group({
 						)
 					</div>
 					<TransactionsTable
-						setCSVData={setCSVData}
 						tableClassName="border-white border-2"
 						transactions={transactions}
 					/>

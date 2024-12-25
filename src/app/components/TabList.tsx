@@ -30,7 +30,7 @@ function TabPanel({
 			/>
 			<div
 				role="tabpanel"
-				className="tab-content bg-base-100 border-base-300 rounded-box px-2 py-6"
+				className="tab-content bg-base-100 border-base-300 rounded-box px-4 py-6"
 			>
 				{children}
 			</div>

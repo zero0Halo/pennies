@@ -17,7 +17,7 @@ import { useFormMessagingContext } from '@/app/components/FormMessaging';
 interface TransactionCreateProps {
 	creating: boolean;
 	setActiveElement: (arg: undefined) => void;
-	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	transaction: TransactionData;
 }
 
@@ -27,7 +27,7 @@ export default function TransactionCreate({
 	setCSVData,
 	transaction,
 }: TransactionCreateProps) {
-	if (!creating) return null;
+	if (!creating || !setCSVData) return null;
 
 	const { setError, setSuccess } = useFormMessagingContext();
 	const { options } = useAccounts();

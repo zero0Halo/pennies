@@ -6,26 +6,32 @@ import TransactionCreate from './TransactionCreate';
 
 interface TransactionsTableProps {
 	className?: string;
-	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	tableClassName?: string;
-	transactions: TransactionData[];
+	title?: string;
+	transactions?: TransactionData[];
 }
 
 export default function TransactionsTable({
 	className = '',
 	setCSVData,
 	tableClassName = '',
+	title,
 	transactions,
 }: TransactionsTableProps) {
+	if (!transactions) return null;
+
 	const [activeElement, setActiveElement] = useState<number | undefined>();
 	const classes = ['overflow-hidden', className].join(' ');
 	const tableClasses = [
-		'table overflow-hidden rounded-lg',
+		'table overflow-hidden rounded-lg  mt-0',
 		tableClassName,
 	].join(' ');
 
 	return (
 		<div className={classes}>
+			{title && <h3>{title}</h3>}
+
 			<table className={tableClasses}>
 				<thead>
 					<tr className="bg-neutral">

@@ -158,26 +158,28 @@ export default function CsvUpload() {
 									toggleState={toggleState}
 								/>
 
-								{(toggleState.groups || toggleState.all) && (
-									<Groups
-										groupsData={organizedCsvData.notCompleted.groups}
-										setCSVData={setCSVData}
-									/>
-								)}
+								<Groups
+									className={
+										toggleState.groups || toggleState.all ? 'block' : 'hidden'
+									}
+									groupsData={organizedCsvData.notCompleted.groups}
+									setCSVData={setCSVData}
+								/>
 
-								{(toggleState.singletons || toggleState.all) &&
-									organizedCsvData.notCompleted.singletons.length > 0 && (
-										<>
-											<div className="divider" />
+								<div
+									className={`divider pt-6${toggleState.all ? ' flex' : ' hidden'}`}
+								/>
 
-											<h3>Ungrouped (Singletons)</h3>
-
-											<TransactionsTable
-												setCSVData={setCSVData}
-												transactions={organizedCsvData.notCompleted.singletons}
-											/>
-										</>
-									)}
+								<TransactionsTable
+									className={
+										toggleState.singletons || toggleState.all
+											? 'block'
+											: 'hidden'
+									}
+									setCSVData={setCSVData}
+									title="Singletons"
+									transactions={organizedCsvData.notCompleted.singletons}
+								/>
 							</div>
 
 							<div data-title="Completed">
