@@ -18,7 +18,7 @@ import FormMessaging from '@/app/components/FormMessaging/FormMessaging';
 import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
 import ButtonToggles, {
 	type ToggleStateData,
-} from '@/app/playground/ButtonToggles';
+} from '@/app/components/ButtonToggles';
 import TabList from '@/app/components/TabList';
 
 export default function CsvUpload() {
