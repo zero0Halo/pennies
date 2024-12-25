@@ -6,7 +6,7 @@ import Group from './Groups/Group';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import CompletedGroup from './Groups/Group/GroupCompleted';
+import CompletedGroup from './GroupCompleted';
 import Stats from './Stats';
 import TransactionsTable from './TransactionsTable';
 import { useAccounts, useClientCookie } from '@/app/hooks/client';
@@ -151,7 +151,7 @@ export default function CsvUpload() {
 						<div className="divider" />
 
 						<TabList name="transaction-review-panels">
-							<div data-title="Reviewing">
+							<section data-title="Reviewing">
 								<ButtonToggles
 									className="mb-6 mx-auto"
 									setToggleState={setToggleState}
@@ -180,9 +180,9 @@ export default function CsvUpload() {
 									title="Singletons"
 									transactions={organizedCsvData.notCompleted.singletons}
 								/>
-							</div>
+							</section>
 
-							<div data-title="Completed">
+							<section data-title="Completed">
 								{organizedCsvData.completed.groups.map((groupData, index) => (
 									<CompletedGroup
 										groupsData={groupData}
@@ -190,7 +190,7 @@ export default function CsvUpload() {
 										key={groupData.group.uid}
 									/>
 								))}
-							</div>
+							</section>
 						</TabList>
 					</>
 				)}
