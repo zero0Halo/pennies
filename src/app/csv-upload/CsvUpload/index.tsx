@@ -20,6 +20,7 @@ import ButtonToggles, {
 	type ToggleStateData,
 } from '@/app/components/ButtonToggles';
 import TabList from '@/app/components/TabList';
+import Groups from './Groups';
 
 export default function CsvUpload() {
 	// STATE
@@ -86,7 +87,7 @@ export default function CsvUpload() {
 			setError((err as Error).message);
 		}
 	}
-	console.log(toggleState);
+
 	return (
 		<section className="px-4 relative">
 			<FormMessaging />
@@ -157,19 +158,13 @@ export default function CsvUpload() {
 									toggleState={toggleState}
 								/>
 
-								{(toggleState.groups || toggleState.all) &&
-									organizedCsvData.notCompleted.groups?.map(
-										(groupData, index) => (
-											<Group
-												activeElement={activeElement}
-												index={index}
-												groupData={groupData}
-												key={groupData.group.uid}
-												setActiveElement={setActiveElement}
-												setCSVData={setCSVData}
-											/>
-										),
-									)}
+								{(toggleState.groups || toggleState.all) && (
+									<Groups
+										groupsData={organizedCsvData.notCompleted.groups}
+										setCSVData={setCSVData}
+									/>
+								)}
+
 								{(toggleState.singletons || toggleState.all) &&
 									organizedCsvData.notCompleted.singletons.length > 0 && (
 										<>
