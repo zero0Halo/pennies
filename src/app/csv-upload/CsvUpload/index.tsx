@@ -2,11 +2,10 @@
 
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import Group from './Groups/Group';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import CompletedGroup from './GroupCompleted';
+import GroupCompleted from './GroupCompleted';
 import Stats from './Stats';
 import TransactionsTable from './TransactionsTable';
 import { useAccounts, useClientCookie } from '@/app/hooks/client';
@@ -24,7 +23,6 @@ import Groups from './Groups';
 
 export default function CsvUpload() {
 	// STATE
-	const [activeElement, setActiveElement] = useState<number | undefined>();
 	const [CSVData, setCSVData] = useState<FindGroupsData | undefined>(undefined);
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
@@ -184,7 +182,7 @@ export default function CsvUpload() {
 
 							<section data-title="Completed">
 								{organizedCsvData.completed.groups.map((groupData, index) => (
-									<CompletedGroup
+									<GroupCompleted
 										groupsData={groupData}
 										index={index}
 										key={groupData.group.uid}
