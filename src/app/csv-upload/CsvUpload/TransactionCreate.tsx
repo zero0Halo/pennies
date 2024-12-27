@@ -16,7 +16,7 @@ import { useFormMessagingContext } from '@/app/components/FormMessaging';
 
 interface TransactionCreateProps {
 	creating: boolean;
-	setActiveElement: (arg: undefined) => void;
+	setActiveElement: (arg?: undefined) => void;
 	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	transaction: TransactionData;
 }
@@ -29,14 +29,19 @@ export default function TransactionCreate({
 }: TransactionCreateProps) {
 	if (!creating || !setCSVData) return null;
 
-	const { setError, setSuccess } = useFormMessagingContext();
+	// CUSTOM HOOKS
+	const { categories } = useCategories();
 	const { options } = useAccounts();
+	const { setError, setSuccess } = useFormMessagingContext();
 	const { Loading, props, setLoading } = useLoading();
+
+	// MEMO
 	const selectOptions = useMemo(
 		() => options.filter((g) => g.value !== transaction.account_uid),
 		[options, transaction],
 	);
-	const { categories } = useCategories();
+
+	// REACT FORM
 	const {
 		formState: { errors },
 		handleSubmit,
@@ -55,9 +60,10 @@ export default function TransactionCreate({
 	});
 	const watchCategory: string = watch('category');
 
-	// The options are pulled from a cookie, and react-hook-form has problems setting a default value
-	// because of it
+	// EFFECTS
 	useEffect(() => {
+		// The options are pulled from a cookie, and react-hook-form has problems setting a default value
+		// because of it
 		if (transaction.account_uid && options.length) {
 			setValue('account_uid', transaction.account_uid);
 		}
@@ -75,11 +81,20 @@ export default function TransactionCreate({
 		watchCategory,
 	]);
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const handleTransactionCreate = async (x: any) => {
+	// HANDLERS
+	const handleTransactionCreate = async (
+		formData: TransactionData,
+	): Promise<void> => {
 		setLoading(true);
 
-		const payload = { ...transaction, ...x, terms: x.terms.split(', ') };
+		const payload = {
+			...transaction,
+			...formData,
+			terms:
+				typeof formData.terms === 'string'
+					? formData.terms.split(', ')
+					: formData.terms,
+		};
 		const result = await apiCall('/api/transactions/create', { payload });
 
 		if (result?.error) {
@@ -89,7 +104,8 @@ export default function TransactionCreate({
 		}
 
 		setLoading(false);
-		setSuccess(`Transaction "${x.name}" created successfully!`);
+		setSuccess(`Transaction "${formData.name}" created successfully!`);
+		setActiveElement();
 
 		setCSVData((state) => {
 			const transactionIndex = state?.singletons.findIndex(
@@ -192,7 +208,7 @@ export default function TransactionCreate({
 						<div className="join join-horizontal w-full">
 							<Button
 								className="join-item btn-warning mr-1 w-1/2"
-								onClick={() => setActiveElement(undefined)}
+								onClick={() => setActiveElement()}
 							>
 								Cancel
 							</Button>
