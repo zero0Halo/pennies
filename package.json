@@ -12,6 +12,7 @@
     "@supabase/supabase-js": "^2.45.4",
     "@types/uuid": "^10.0.0",
     "biome": "^0.3.3",
+    "classnames": "^2.5.1",
     "daisyui": "^4.12.13",
     "dayjs": "^1.11.13",
     "immer": "^10.1.1",
