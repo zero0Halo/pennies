@@ -15,6 +15,8 @@ export async function POST(req: Request) {
 	const endDate = dayjs(date).endOf('month').toISOString();
 	const superiorBase = await superiorBaseFactory();
 
+	console.log({ account_uid, date });
+
 	// Get transactions for the specified month
 	const { data: _transactionsData, error: transactionsDataError } =
 		await superiorBase

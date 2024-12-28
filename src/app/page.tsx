@@ -5,58 +5,68 @@ import { ACCOUNTS, USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall, dateFormat } from '@/utils/app';
 import TransactionsMonth from './components/home/TransactionsMonth';
+import useAccounts from './hooks/server/useAccounts';
 
 interface GetTransactionsArguments {
-	accountsData: AccountData[];
-	date: string;
-	userData: UserData;
+	defaultAccount: AccountData | undefined;
+	defaultDate: string;
+	userData: UserData | undefined | boolean;
 }
 
 type GetTransactionsData = {
 	data: TransactionWithDateData[];
+	error: string | null;
 	message: string;
 };
 
 async function getTransactions({
-	accountsData,
-	date,
+	defaultAccount,
+	defaultDate,
 	userData,
 }: GetTransactionsArguments): Promise<GetTransactionsData | boolean> {
-	const default_account_uid: string =
-		accountsData.find(({ is_default }) => is_default)?.uid ?? '';
-	const account_uid: string | false = userData.accounts?.includes(
-		default_account_uid,
-	)
-		? default_account_uid
-		: false;
-	if (!account_uid) return false;
+	if (typeof defaultAccount !== 'object' || typeof userData !== 'object')
+		return false;
 
-	const response = await apiCall('/api/transactions/select/by-day', {
-		payload: {
-			account_uid,
-			date,
+	const accountCheck: boolean = userData?.accounts
+		? userData.accounts.includes(defaultAccount.uid)
+		: false;
+	if (!accountCheck) return false;
+
+	const response: GetTransactionsData = await apiCall(
+		'/api/transactions/select/by-day',
+		{
+			payload: {
+				account_uid: defaultAccount.uid,
+				date: defaultDate,
+			},
 		},
-	});
+	);
 
 	return response?.error ? false : response;
 }
 
+// COMPONENT
 export default async function Home() {
+	// CUSTOM HOOKS
 	const isLoggedIn = useIsLoggedIn();
-	const [accountsData] = useServerCookie<AccountData[]>(ACCOUNTS);
+	const { defaultAccount, noAccounts } = useAccounts();
 	const [userData] = useServerCookie<UserData>(USER);
-	const noAccounts = Array.isArray(accountsData) && accountsData.length === 0;
+
+	// SHUGAH
 	const noCategories = typeof userData === 'object' && !userData?.categories;
 	const defaultDate = new Date().toDateString();
-	const transactionsResponse: GetTransactionsData | boolean =
-		Array.isArray(accountsData) && typeof userData === 'object'
-			? await getTransactions({ accountsData, date: defaultDate, userData })
-			: false;
 
+	// DATA CALL
+	const transactionsResponse: GetTransactionsData | boolean =
+		await getTransactions({ defaultAccount, defaultDate, userData });
+
+	// JSX
 	return (
 		<div>
+			{/* Logged in, show transactions */}
 			{typeof transactionsResponse !== 'boolean' && isLoggedIn && (
 				<TransactionsMonth
+					defaultAccount={defaultAccount}
 					defaultDate={defaultDate}
 					defaultTransactionsData={transactionsResponse.data}
 				/>
@@ -90,14 +100,17 @@ export default async function Home() {
 				/>
 			)}
 
-			{/* Logged in, has accounts, has categories */}
-			{isLoggedIn && !noAccounts && !noCategories && (
-				<HeroStep
-					link="csv-upload"
-					linkText="Go To CSV Upload"
-					title="Import Your Bank Data!"
-				/>
-			)}
+			{/* Logged in, has accounts, has categories, but no valid call to get transactions */}
+			{isLoggedIn &&
+				!noAccounts &&
+				!noCategories &&
+				typeof transactionsResponse === 'boolean' && (
+					<HeroStep
+						link="csv-upload"
+						linkText="Go To CSV Upload"
+						title="Import Your Bank Data!"
+					/>
+				)}
 
 			{false && <NextCruft />}
 		</div>
