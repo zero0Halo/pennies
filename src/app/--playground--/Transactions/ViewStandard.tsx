@@ -40,8 +40,8 @@ export default function ViewStandard({
 			<tbody>
 				{transactions.map((transaction, index) => (
 					<tr className={zebra(index, transaction)} key={transaction.uid}>
-						{showCount && <td className="w-1/12">{index + 1}</td>}
-						<td className="w-3/12">
+						{showCount && <td>{index + 1}</td>}
+						<td>
 							<div className="flex">
 								<span>{transaction.group_name ?? transaction.name}</span>
 								{transaction.prime && (
@@ -62,9 +62,9 @@ export default function ViewStandard({
 						>
 							{transaction.description}
 						</td>
-						<td className="w-1/12">{formatAmount(transaction.amount)}</td>
-						<td className="w-1/12">{transaction.category}</td>
-						<td className="w-1/12">{formatRecurring(transaction)}</td>
+						<td>{formatAmount(transaction.amount)}</td>
+						<td>{transaction.category}</td>
+						<td>{formatRecurring(transaction)}</td>
 					</tr>
 				))}
 			</tbody>

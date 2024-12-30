@@ -7,6 +7,7 @@ import Button from '@/app/components/Button';
 type ViewSingletonProps = {
 	activeElement: number | boolean;
 	setActiveElement: (arg: number | boolean) => void;
+	showCount?: boolean;
 	tableClassName: string;
 	transactions: TransactionData[];
 };
@@ -14,6 +15,7 @@ type ViewSingletonProps = {
 export default function ViewSingleton({
 	activeElement,
 	setActiveElement,
+	showCount = true,
 	tableClassName,
 	transactions,
 }: ViewSingletonProps): React.ReactNode {
@@ -28,8 +30,10 @@ export default function ViewSingleton({
 		<table className={tableClasses}>
 			<thead>
 				<tr className="bg-neutral">
-					<th className="w-1/12" />
-					<th className="text-white text-sm py-1 w-7/12">Description</th>
+					{showCount && <th className="w-1/12" />}
+					<th className={`text-white text-sm py-1 w-${showCount ? 8 : 9}/12`}>
+						Description
+					</th>
 					<th className="text-white text-sm py-1 w-1/12">Amount</th>
 					<th className="text-white text-sm py-1 w-2/12">Date</th>
 					<th className="w-1/12" />
@@ -45,8 +49,10 @@ export default function ViewSingleton({
 								isCreating(index) ? 'hidden' : 'revert',
 							)}
 						>
-							<td>{index + 1}</td>
-							<td className="overflow-x-hidden w-6/12 whitespace-nowrap text-ellipsis">
+							{showCount && <td>{index + 1}</td>}
+							<td
+								className={`overflow-x-hidden w-${showCount ? 8 : 9}/12 whitespace-nowrap text-ellipsis`}
+							>
 								{transaction.description}
 							</td>
 							<td className="w-1/12">{formatAmount(transaction.amount)}</td>

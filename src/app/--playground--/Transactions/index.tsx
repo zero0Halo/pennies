@@ -65,6 +65,7 @@ export default function Transactions({
 							<ViewSingleton
 								activeElement={internalActiveElement}
 								setActiveElement={setActiveElement ?? setInternalActiveElement}
+								showCount={showCount}
 								tableClassName={tableClassName}
 								transactions={transactions as TransactionData[]}
 							/>
