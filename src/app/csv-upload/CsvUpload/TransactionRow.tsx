@@ -1,6 +1,6 @@
 import Button from '@/app/components/Button';
 import type { TransactionData } from '@/app/types';
-import { dateFormat, displayAmount, zebra } from '@/utils/app';
+import { formatDate, formatAmount, zebra } from '@/utils/app';
 
 interface TransactionRowProps {
 	activeElement: undefined | number;
@@ -23,9 +23,9 @@ export default function TransactionRow({
 		<tr className={zebra(index, transaction)} key={transaction.uid}>
 			<th>{index + 1}</th>
 			<td>{transaction.description}</td>
-			<td>{displayAmount(transaction.amount)}</td>
+			<td>{formatAmount(transaction.amount)}</td>
 			<td className="flex">
-				<div className="self-center">{dateFormat(transaction.timestamp)}</div>
+				<div className="self-center">{formatDate(transaction.timestamp)}</div>
 				{!transaction.group_uid && (
 					<div className="ml-auto">
 						<Button

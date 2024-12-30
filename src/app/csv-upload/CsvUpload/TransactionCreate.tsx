@@ -8,10 +8,10 @@ import Button from '@/app/components/Button';
 import Input from '@/app/components/Input';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import { TRANSFER } from '@/app/constants';
+import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 import { useAccounts, useCategories, useLoading } from '@/app/hooks/client';
 import type { FindGroupsData, TransactionData } from '@/app/types';
-import { apiCall, dateFormat, displayAmount } from '@/utils/app';
+import { apiCall, formatDate, formatAmount } from '@/utils/app';
 import { useFormMessagingContext } from '@/app/components/FormMessaging';
 
 interface TransactionCreateProps {
@@ -116,6 +116,8 @@ export default function TransactionCreate({
 					draft.singletons[transactionIndex] = payload;
 			});
 
+			localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
+
 			return updatedState;
 		});
 	};
@@ -142,7 +144,7 @@ export default function TransactionCreate({
 							<Input
 								disabled
 								type="text"
-								value={dateFormat(transaction.timestamp)}
+								value={formatDate(transaction.timestamp)}
 							/>
 						</Label>
 
@@ -151,7 +153,7 @@ export default function TransactionCreate({
 							<Input
 								disabled
 								type="text"
-								value={displayAmount(transaction.amount)}
+								value={formatAmount(transaction.amount)}
 							/>
 						</Label>
 

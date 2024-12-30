@@ -1,12 +1,10 @@
-import NextCruft from './components/NextCruft';
 import { useIsLoggedIn, useServerCookie } from '@/app/hooks/server';
 import type { AccountData, TransactionWithDateData, UserData } from './types';
-import { ACCOUNTS, USER } from '@/app/constants';
+import { USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
-import { apiCall, dateFormat } from '@/utils/app';
+import { apiCall } from '@/utils/app';
 import TransactionsMonth from './components/home/TransactionsMonth';
 import useAccounts from './hooks/server/useAccounts';
-import Transactions from './#--playground--#/Transactions';
 
 interface GetTransactionsArguments {
 	defaultAccount: AccountData | undefined;
@@ -64,8 +62,6 @@ export default async function Home() {
 	// JSX
 	return (
 		<div>
-			<Transactions transactions={[]} view="singleton" />
-
 			{/* Logged in, show transactions */}
 			{typeof transactionsResponse !== 'boolean' && isLoggedIn && (
 				<TransactionsMonth
@@ -114,8 +110,6 @@ export default async function Home() {
 						title="Import Your Bank Data!"
 					/>
 				)}
-
-			{false && <NextCruft />}
 		</div>
 	);
 }

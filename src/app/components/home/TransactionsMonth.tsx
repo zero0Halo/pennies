@@ -1,7 +1,7 @@
 'use client';
 
 import dayjs from 'dayjs';
-import { apiCall, displayAmount, zebra } from '@/utils/app';
+import { apiCall, formatAmount, zebra } from '@/utils/app';
 import type {
 	AccountData,
 	TransactionWithDateData,
@@ -12,6 +12,7 @@ import Select from '../Select';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Button';
+import Transactions from '@/app/--playground--/Transactions';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | undefined;
@@ -59,9 +60,9 @@ export default function TransactionsMonth({
 		const account = getValues('account');
 
 		if (account === '' && accountOptions.length > 1) {
-			console.log('fired');
 			const date = dayjs(defaultDate).format('MMMM, YYYY');
 			const [month, year] = date.split(', ');
+
 			setValue('month', month);
 			setValue('year', year);
 			setValue('account', defaultAccount.uid);
@@ -119,7 +120,12 @@ export default function TransactionsMonth({
 						</div>
 					</div>
 
-					<table className="align-top pl-4 table overflow-hidden rounded-lg rounded-tl-none mt-0">
+					<Transactions
+						tableClassName="rounded-tl-none"
+						transactions={transactions}
+					/>
+
+					{/* <table className="align-top pl-4 table overflow-hidden rounded-lg rounded-tl-none mt-0">
 						<thead>
 							<tr className="bg-neutral">
 								<th className="text-white text-sm py-1 w-6/12">Name</th>
@@ -133,13 +139,13 @@ export default function TransactionsMonth({
 							{transactions.map((m, index) => (
 								<tr key={m.uid} className={zebra(index, m)}>
 									<td>{m.group_name || m.description}</td>
-									<td>{displayAmount(m.amount)}</td>
+									<td>{formatAmount(m.amount)}</td>
 									<td>{m.category}</td>
 									<td>{recurringText(m)}</td>
 								</tr>
 							))}
 						</tbody>
-					</table>
+					</table> */}
 				</div>
 			))}
 		</section>

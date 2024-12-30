@@ -1,0 +1,16 @@
+{
+	"New Component": {
+		"scope": "typescriptreact",
+		"prefix": "nc",
+		"body": [
+			"import type React from 'react';",
+			"",
+			"interface $1Props {}",
+			"",
+			"export default function $1({}: $1Props): React.ReactNode {",
+			"  return null;",
+			"}"
+		],
+		"description": "Creates a barebones TS React Component"
+	}
+}
