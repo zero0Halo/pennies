@@ -20,6 +20,7 @@ import ButtonToggles, {
 import TabList from '@/app/components/TabList';
 import Groups from './Groups';
 import GroupsCompleted from './GroupsCompleted';
+import Transactions from '@/app/--playground--/Transactions';
 
 export default function CsvUpload() {
 	// STATE
@@ -168,7 +169,18 @@ export default function CsvUpload() {
 									className={`divider pt-6${toggleState.all ? ' flex' : ' hidden'}`}
 								/>
 
-								<TransactionsTable
+								<Transactions
+									className={
+										toggleState.singletons || toggleState.all
+											? 'block'
+											: 'hidden'
+									}
+									title="Singletons"
+									transactions={organizedCsvData.notCompleted.singletons}
+									view="singleton"
+								/>
+
+								{/* <TransactionsTable
 									className={
 										toggleState.singletons || toggleState.all
 											? 'block'
@@ -177,7 +189,7 @@ export default function CsvUpload() {
 									setCSVData={setCSVData}
 									title="Singletons"
 									transactions={organizedCsvData.notCompleted.singletons}
-								/>
+								/> */}
 							</section>
 
 							<section data-title="Completed">
@@ -199,12 +211,13 @@ export default function CsvUpload() {
 									className={`divider pt-6${toggleState.all ? ' flex' : ' hidden'}`}
 								/>
 
-								<TransactionsTable
+								<Transactions
 									className={
 										toggleState.singletons || toggleState.all
 											? 'block'
 											: 'hidden'
 									}
+									showCount={true}
 									title="Completed Singletons"
 									transactions={organizedCsvData.completed.singletons}
 								/>

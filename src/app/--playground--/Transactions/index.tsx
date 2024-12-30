@@ -3,7 +3,7 @@
 import type React from 'react';
 import classNames from 'classnames';
 import type { TransactionData, TransactionWithGroupData } from '@/app/types';
-import type { CREATE, DELETE, UPDATE } from '@/app/constants';
+import ViewSingleton from './ViewSingleton';
 import ViewStandard from './ViewStandard';
 import { useEffect, useState } from 'react';
 
@@ -17,6 +17,7 @@ interface TransactionsProps {
 	activeElement?: number | boolean;
 	className?: string;
 	setActiveElement?: (arg: number | boolean) => void;
+	showCount?: boolean;
 	showHeader?: boolean;
 	tableClassName?: string;
 	title?: string;
@@ -29,6 +30,7 @@ export default function Transactions({
 	activeElement,
 	className,
 	setActiveElement,
+	showCount,
 	tableClassName = '',
 	title,
 	transactions,
@@ -58,11 +60,21 @@ export default function Transactions({
 
 			{(() => {
 				switch (view) {
+					case SINGLETON:
+						return (
+							<ViewSingleton
+								activeElement={internalActiveElement}
+								setActiveElement={setActiveElement ?? setInternalActiveElement}
+								tableClassName={tableClassName}
+								transactions={transactions as TransactionData[]}
+							/>
+						);
 					case STANDARD:
 						return (
 							<ViewStandard
 								activeElement={internalActiveElement}
 								setActiveElement={setActiveElement ?? setInternalActiveElement}
+								showCount={showCount}
 								tableClassName={tableClassName}
 								transactions={transactions as TransactionWithGroupData[]}
 							/>
