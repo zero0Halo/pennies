@@ -3,6 +3,7 @@ import TransactionsTable from '../../TransactionsTable';
 import type { FindGroupsData, GroupsData } from '@/app/types';
 import GroupCreate from './GroupCreate';
 import Button from '@/app/components/Button';
+import Transactions from '@/app/--playground--/Transactions';
 
 interface GroupProps {
 	activeElement: number | undefined;
@@ -69,10 +70,11 @@ export default function Group({
 						({Array.isArray(group.terms) ? group.terms.join(', ') : group.terms}
 						)
 					</div>
-					{/* <TransactionsTable
+					<Transactions
 						tableClassName="border-white border-2"
 						transactions={transactions}
-					/> */}
+						view="grouped"
+					/>
 				</>
 			)}
 		</div>

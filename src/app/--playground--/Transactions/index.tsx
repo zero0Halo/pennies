@@ -11,6 +11,7 @@ import ViewSingleton from './ViewSingleton';
 import ViewSingletonComplete from './ViewSingletonComplete';
 import ViewStandard from './ViewStandard';
 import { useEffect, useState } from 'react';
+import ViewGrouped from './ViewGrouped';
 
 const GROUPED = 'grouped';
 const SINGLETON = 'singleton';
@@ -75,6 +76,13 @@ export default function Transactions({
 
 			{(() => {
 				switch (view) {
+					case GROUPED:
+						return (
+							<ViewGrouped
+								transactions={transactions as TransactionData[]}
+								{...props}
+							/>
+						);
 					case SINGLETON:
 						return (
 							<ViewSingleton

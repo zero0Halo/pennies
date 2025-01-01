@@ -5,6 +5,7 @@ import TransactionsTable from '../../TransactionsTable';
 import { useAccounts } from '@/app/hooks/client';
 import type { GroupsData } from '@/app/types';
 import { TRANSFER } from '@/app/constants';
+import Transactions from '@/app/--playground--/Transactions';
 
 interface GroupCompletedProps {
 	groupsData: GroupsData;
@@ -78,7 +79,7 @@ export default function GroupCompleted({
 					</div>
 				</div>
 				<div className="collapse-content">
-					<TransactionsTable transactions={transactions} />
+					<Transactions transactions={transactions} view="grouped" />
 				</div>
 			</div>
 		</div>
