@@ -4,12 +4,12 @@ import classNames from 'classnames';
 import { formatAmount, formatDate, zebra } from '@/utils/app';
 import Button from '@/app/components/Button';
 import TransactionCreate from '@/app/csv-upload/CsvUpload/TransactionCreate';
+import { tableClasses, tdOverflow, thClasses } from './helpers';
 
 type ViewSingletonProps = {
 	activeElement: number | boolean;
 	setActiveElement: (arg: number | boolean) => void;
 	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
-	showCount?: boolean;
 	tableClassName: string;
 	transactions: TransactionData[];
 };
@@ -18,25 +18,20 @@ export default function ViewSingleton({
 	activeElement,
 	setActiveElement,
 	setCSVData,
-	showCount = true,
 	tableClassName,
 	transactions,
 }: ViewSingletonProps): React.ReactNode {
 	// SHUGAH
-	const tableClasses = classNames(
-		'table table-fixed overflow-hidden rounded-lg  mt-0',
-		tableClassName,
-	);
 	const isCreating = (index: number) => index === activeElement;
 
 	return (
-		<table className={tableClasses}>
+		<table className={tableClasses(tableClassName)}>
 			<thead>
 				<tr className="bg-neutral">
-					{showCount && <th className="w-[20px]" />}
-					<th className={'text-white text-sm py-1 w-9/12'}>Description</th>
-					<th className="text-white text-sm py-1 w-1/12">Amount</th>
-					<th className="text-white text-sm py-1 w-2/12">Date</th>
+					<th className="w-[20px]" />
+					<th className={thClasses(9)}>Description</th>
+					<th className={thClasses(1)}>Amount</th>
+					<th className={thClasses(2)}>Date</th>
 					<th className="w-1/12" />
 				</tr>
 			</thead>
@@ -50,15 +45,11 @@ export default function ViewSingleton({
 								isCreating(index) ? 'hidden' : 'revert',
 							)}
 						>
-							{showCount && <td>{index + 1}</td>}
-							<td
-								className={'overflow-x-hidden whitespace-nowrap text-ellipsis'}
-							>
-								{transaction.description}
-							</td>
-							<td className="w-1/12">{formatAmount(transaction.amount)}</td>
-							<td className="w-1/12">{formatDate(transaction.timestamp)}</td>
-							<td className="w-1/12">
+							<td>{index + 1}</td>
+							<td className={tdOverflow()}>{transaction.description}</td>
+							<td>{formatAmount(transaction.amount)}</td>
+							<td>{formatDate(transaction.timestamp)}</td>
+							<td>
 								<Button
 									className="btn-success"
 									disabled={typeof activeElement === 'number'}
@@ -71,7 +62,7 @@ export default function ViewSingleton({
 
 						{isCreating(index) && setCSVData !== undefined && (
 							<tr className="bg-slate-200">
-								<td colSpan={showCount ? 5 : 4}>
+								<td colSpan={5}>
 									<TransactionCreate
 										setActiveElement={setActiveElement}
 										setCSVData={setCSVData}

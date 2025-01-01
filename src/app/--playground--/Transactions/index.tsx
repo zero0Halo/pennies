@@ -28,7 +28,6 @@ interface TransactionsProps {
 	className?: string;
 	setActiveElement?: (arg: number | boolean) => void;
 	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
-	showCount?: boolean;
 	showHeader?: boolean;
 	tableClassName?: string;
 	title?: string;
@@ -42,7 +41,6 @@ export default function Transactions({
 	className,
 	setActiveElement,
 	setCSVData,
-	showCount,
 	tableClassName = '',
 	title,
 	transactions,
@@ -67,7 +65,6 @@ export default function Transactions({
 	const props = {
 		activeElement: internalActiveElement,
 		setActiveElement: setActiveElement ?? setInternalActiveElement,
-		showCount,
 		tableClassName,
 	};
 
