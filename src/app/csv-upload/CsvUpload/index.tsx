@@ -179,17 +179,6 @@ export default function CsvUpload() {
 									transactions={organizedCsvData.notCompleted.singletons}
 									view="singleton"
 								/>
-
-								{/* <TransactionsTable
-									className={
-										toggleState.singletons || toggleState.all
-											? 'block'
-											: 'hidden'
-									}
-									setCSVData={setCSVData}
-									title="Singletons"
-									transactions={organizedCsvData.notCompleted.singletons}
-								/> */}
 							</section>
 
 							<section data-title="Completed">

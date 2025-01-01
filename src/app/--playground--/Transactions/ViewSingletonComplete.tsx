@@ -1,6 +1,6 @@
 import type React from 'react';
 import type { TransactionWithGroupData } from '@/app/types';
-import { formatAmount, formatDate, formatRecurring, zebra } from '@/utils/app';
+import { formatAmount, formatDate, zebra } from '@/utils/app';
 import { tableClasses, tdOverflow, thClasses } from './helpers';
 
 type ViewSingletonCompleteProps = {
@@ -18,11 +18,10 @@ export default function ViewSingletonComplete({
 				<tr className="bg-neutral">
 					<th className="w-[20px]" />
 					<th className={thClasses(2)}>Name</th>
-					<th className={thClasses(5)}>Description</th>
+					<th className={thClasses(6)}>Description</th>
 					<th className={thClasses(1)}>Amount</th>
 					<th className={thClasses(2)}>Date</th>
 					<th className={thClasses(1)}>Category</th>
-					<th className={thClasses(1)}>Recurring</th>
 				</tr>
 			</thead>
 
@@ -35,7 +34,6 @@ export default function ViewSingletonComplete({
 						<td>{formatAmount(transaction.amount)}</td>
 						<td>{formatDate(transaction.timestamp)}</td>
 						<td>{transaction.category}</td>
-						<td>{formatRecurring(transaction)}</td>
 					</tr>
 				))}
 			</tbody>

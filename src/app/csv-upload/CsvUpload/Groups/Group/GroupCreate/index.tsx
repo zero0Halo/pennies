@@ -4,7 +4,6 @@ import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Input from '@/app/components/Input';
 import Select from '@/app/components/Select';
-import TransactionsTable from '../../../TransactionsTable';
 import { useAccounts, useCategories, useLoading } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 import formatPayload from './scripts/formatPayload';
@@ -17,6 +16,7 @@ import type {
 } from '@/app/types';
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 import { useFormMessagingContext } from '@/app/components/FormMessaging';
+import Transactions from '@/app/--playground--/Transactions';
 
 interface GroupCreateProps {
 	group: GroupData;
@@ -198,10 +198,7 @@ export default function GroupCreate({
 				>
 					<div className="collapse-title text-md font-bold">Transactions</div>
 					<div className="collapse-content">
-						<TransactionsTable
-							setCSVData={setCSVData}
-							transactions={transactions}
-						/>
+						<Transactions transactions={transactions} view="grouped" />
 					</div>
 				</div>
 
