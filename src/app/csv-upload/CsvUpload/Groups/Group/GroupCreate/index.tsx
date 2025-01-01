@@ -16,7 +16,7 @@ import type {
 } from '@/app/types';
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 import { useFormMessagingContext } from '@/app/components/FormMessaging';
-import Transactions from '@/app/--playground--/Transactions';
+import Transactions from '@/app/components/Transactions';
 
 interface GroupCreateProps {
 	group: GroupData;

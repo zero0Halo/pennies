@@ -19,7 +19,7 @@ import ButtonToggles, {
 import TabList from '@/app/components/TabList';
 import Groups from './Groups';
 import GroupsCompleted from './GroupsCompleted';
-import Transactions from '@/app/--playground--/Transactions';
+import Transactions from '@/app/components/Transactions';
 
 export default function CsvUpload() {
 	// STATE

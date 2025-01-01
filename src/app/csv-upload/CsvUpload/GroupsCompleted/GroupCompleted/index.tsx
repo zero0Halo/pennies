@@ -4,7 +4,7 @@ import Field from './Field';
 import { useAccounts } from '@/app/hooks/client';
 import type { GroupsData } from '@/app/types';
 import { TRANSFER } from '@/app/constants';
-import Transactions from '@/app/--playground--/Transactions';
+import Transactions from '@/app/components/Transactions';
 
 interface GroupCompletedProps {
 	groupsData: GroupsData;

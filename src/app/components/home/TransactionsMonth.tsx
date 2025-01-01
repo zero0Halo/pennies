@@ -1,7 +1,7 @@
 'use client';
 
 import dayjs from 'dayjs';
-import { apiCall, formatAmount, zebra } from '@/utils/app';
+import { apiCall } from '@/utils/app';
 import type {
 	AccountData,
 	TransactionWithDateData,
@@ -12,7 +12,7 @@ import Select from '../Select';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Button';
-import Transactions from '@/app/--playground--/Transactions';
+import Transactions from '@/app/components/Transactions';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | undefined;
@@ -24,17 +24,6 @@ const months = [...new Array(12)].map((_, i) =>
 	dayjs(`${i + 1}-01-2019`).format('MMMM'),
 );
 const years = [...new Array(20)].map((_, i) => `${i + 2020}`);
-
-function recurringText(transaction: TransactionWithGroupData): string {
-	const { group_recurring, group_still_recurring } = transaction;
-
-	if (typeof group_recurring === 'string' && group_recurring !== 'false') {
-		if (group_still_recurring) return group_recurring;
-		return 'Ended';
-	}
-
-	return '';
-}
 
 // COMPONENTS
 export default function TransactionsMonth({
@@ -124,28 +113,6 @@ export default function TransactionsMonth({
 						tableClassName="rounded-tl-none"
 						transactions={transactions}
 					/>
-
-					{/* <table className="align-top pl-4 table overflow-hidden rounded-lg rounded-tl-none mt-0">
-						<thead>
-							<tr className="bg-neutral">
-								<th className="text-white text-sm py-1 w-6/12">Name</th>
-								<th className="text-white text-sm py-1 w-2/12">Amount</th>
-								<th className="text-white text-sm py-1 w-2/12">Category</th>
-								<th className="text-white text-sm py-1 w-2/12">Recurring</th>
-							</tr>
-						</thead>
-
-						<tbody>
-							{transactions.map((m, index) => (
-								<tr key={m.uid} className={zebra(index, m)}>
-									<td>{m.group_name || m.description}</td>
-									<td>{formatAmount(m.amount)}</td>
-									<td>{m.category}</td>
-									<td>{recurringText(m)}</td>
-								</tr>
-							))}
-						</tbody>
-					</table> */}
 				</div>
 			))}
 		</section>

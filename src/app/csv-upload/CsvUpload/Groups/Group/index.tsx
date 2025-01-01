@@ -2,7 +2,7 @@ import type React from 'react';
 import type { FindGroupsData, GroupsData } from '@/app/types';
 import GroupCreate from './GroupCreate';
 import Button from '@/app/components/Button';
-import Transactions from '@/app/--playground--/Transactions';
+import Transactions from '@/app/components/Transactions';
 
 interface GroupProps {
 	activeElement: number | undefined;
