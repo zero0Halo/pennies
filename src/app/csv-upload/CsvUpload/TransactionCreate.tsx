@@ -15,20 +15,16 @@ import { apiCall, formatDate, formatAmount } from '@/utils/app';
 import { useFormMessagingContext } from '@/app/components/FormMessaging';
 
 interface TransactionCreateProps {
-	creating: boolean;
-	setActiveElement: (arg?: undefined) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setActiveElement: (arg: boolean) => void;
+	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	transaction: TransactionData;
 }
 
 export default function TransactionCreate({
-	creating,
 	setActiveElement,
 	setCSVData,
 	transaction,
 }: TransactionCreateProps) {
-	if (!creating || !setCSVData) return null;
-
 	// CUSTOM HOOKS
 	const { categories } = useCategories();
 	const { options } = useAccounts();
@@ -105,122 +101,123 @@ export default function TransactionCreate({
 
 		setLoading(false);
 		setSuccess(`Transaction "${formData.name}" created successfully!`);
-		setActiveElement();
+		setActiveElement(false);
 
 		setCSVData((state) => {
-			const transactionIndex = state?.singletons.findIndex(
-				(f) => f.uid === transaction.uid,
-			);
-			const updatedState = produce(state, (draft) => {
-				if (draft !== undefined && transactionIndex !== undefined)
-					draft.singletons[transactionIndex] = payload;
-			});
+			if (state !== undefined) {
+				const transactionIndex = state?.singletons.findIndex(
+					(f) => f.uid === transaction.uid,
+				);
 
-			localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
+				const updatedState = produce(state, (draft) => {
+					if (draft !== undefined && transactionIndex !== undefined)
+						draft.singletons[transactionIndex] = payload;
+				});
 
-			return updatedState;
+				localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
+
+				return updatedState;
+			}
+
+			return state;
 		});
 	};
 
 	return (
-		<tr>
-			<td colSpan={4} className="bg-slate-100">
-				<div className={'bg-primary pt-1 p-8 rounded-lg relative'}>
-					<Loading {...props} />
+		<div className={'bg-primary pt-1 p-8 rounded-lg relative shadow-md'}>
+			<Loading {...props} />
 
-					<h3>Create Transaction</h3>
+			<h3>Create Transaction</h3>
 
-					<form
-						className="form-control"
-						onSubmit={handleSubmit(handleTransactionCreate)}
-					>
-						<Label htmlFor="description">
-							Description
-							<Input disabled type="text" value={transaction.description} />
-						</Label>
+			<form
+				className="form-control"
+				onSubmit={handleSubmit(handleTransactionCreate)}
+			>
+				<Label htmlFor="description">
+					Description
+					<Input disabled type="text" value={transaction.description} />
+				</Label>
 
-						<Label htmlFor="description">
-							Date
-							<Input
-								disabled
-								type="text"
-								value={formatDate(transaction.timestamp)}
-							/>
-						</Label>
+				<Label htmlFor="description">
+					Date
+					<Input
+						disabled
+						type="text"
+						value={formatDate(transaction.timestamp)}
+					/>
+				</Label>
 
-						<Label className="mb-6" htmlFor="description">
-							Amount
-							<Input
-								disabled
-								type="text"
-								value={formatAmount(transaction.amount)}
-							/>
-						</Label>
+				<Label className="mb-6" htmlFor="description">
+					Amount
+					<Input
+						disabled
+						type="text"
+						value={formatAmount(transaction.amount)}
+					/>
+				</Label>
 
-						<Label htmlFor="name">
-							Name
-							<Input
-								className={errors?.name ? 'input-error' : ''}
-								type="text"
-								{...register('name', { required: true })}
-							/>
-						</Label>
+				<Label htmlFor="name">
+					Name
+					<Input
+						className={errors?.name ? 'input-error' : ''}
+						type="text"
+						{...register('name', { required: true })}
+					/>
+				</Label>
 
-						<Label htmlFor="account">
-							Account
+				<Label htmlFor="account">
+					Account
+					<Select
+						options={options}
+						{...register('account_uid', { required: true })}
+					/>
+				</Label>
+
+				<Label htmlFor="terms">
+					Terms
+					<Input type="text" {...register('terms', { required: true })} />
+				</Label>
+
+				<div className="join join-horizontal">
+					<Label className="join-item w-1/2" htmlFor="category">
+						Category
+						<Select options={categories} {...register('category')} />
+					</Label>
+
+					{selectOptions.length > 0 && (
+						<Label className="join-item w-1/2" htmlFor="to_account_uid">
+							Transfer To
 							<Select
-								options={options}
-								{...register('account_uid', { required: true })}
+								disabled={watchCategory !== TRANSFER}
+								options={selectOptions}
+								{...register('to_account_uid')}
 							/>
 						</Label>
-
-						<Label htmlFor="terms">
-							Terms
-							<Input type="text" {...register('terms', { required: true })} />
-						</Label>
-
-						<div className="join join-horizontal">
-							<Label className="join-item w-1/2" htmlFor="category">
-								Category
-								<Select options={categories} {...register('category')} />
-							</Label>
-
-							{selectOptions.length > 0 && (
-								<Label className="join-item w-1/2" htmlFor="to_account_uid">
-									Transfer To
-									<Select
-										disabled={watchCategory !== TRANSFER}
-										options={selectOptions}
-										{...register('to_account_uid')}
-									/>
-								</Label>
-							)}
-						</div>
-
-						<Label htmlFor="siteurl">
-							Site Url
-							<Input type="text" {...register('siteurl')} />
-						</Label>
-
-						<Label className="mb-4" htmlFor="notes">
-							Notes
-							<Input type="text" {...register('notes')} />
-						</Label>
-
-						<div className="join join-horizontal w-full">
-							<Button
-								className="join-item btn-warning mr-1 w-1/2"
-								onClick={() => setActiveElement()}
-							>
-								Cancel
-							</Button>
-							<Button className="join-item btn-success w-1/2" type="submit">
-								Create Transaction
-							</Button>
-						</div>
-					</form>
+					)}
 				</div>
-			</td>
-		</tr>
+
+				<Label htmlFor="siteurl">
+					Site Url
+					<Input type="text" {...register('siteurl')} />
+				</Label>
+
+				<Label className="mb-4" htmlFor="notes">
+					Notes
+					<Input type="text" {...register('notes')} />
+				</Label>
+
+				<div className="join join-horizontal w-full">
+					<Button
+						className="join-item btn-warning mr-1 w-1/2"
+						onClick={() => setActiveElement(false)}
+					>
+						Cancel
+					</Button>
+					<Button className="join-item btn-success w-1/2" type="submit">
+						Create Transaction
+					</Button>
+				</div>
+			</form>
+		</div>
 	);
 }

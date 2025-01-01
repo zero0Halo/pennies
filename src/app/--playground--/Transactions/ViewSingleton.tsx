@@ -1,12 +1,14 @@
 import React from 'react';
-import type { TransactionData } from '@/app/types';
+import type { FindGroupsData, TransactionData } from '@/app/types';
 import classNames from 'classnames';
 import { formatAmount, formatDate, zebra } from '@/utils/app';
 import Button from '@/app/components/Button';
+import TransactionCreate from '@/app/csv-upload/CsvUpload/TransactionCreate';
 
 type ViewSingletonProps = {
 	activeElement: number | boolean;
 	setActiveElement: (arg: number | boolean) => void;
+	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	showCount?: boolean;
 	tableClassName: string;
 	transactions: TransactionData[];
@@ -15,6 +17,7 @@ type ViewSingletonProps = {
 export default function ViewSingleton({
 	activeElement,
 	setActiveElement,
+	setCSVData,
 	showCount = true,
 	tableClassName,
 	transactions,
@@ -31,7 +34,7 @@ export default function ViewSingleton({
 			<thead>
 				<tr className="bg-neutral">
 					{showCount && <th className="w-1/12" />}
-					<th className={`text-white text-sm py-1 w-${showCount ? 8 : 9}/12`}>
+					<th className={`text-white text-sm py-1 w-${showCount ? 9 : 8}/12`}>
 						Description
 					</th>
 					<th className="text-white text-sm py-1 w-1/12">Amount</th>
@@ -51,7 +54,7 @@ export default function ViewSingleton({
 						>
 							{showCount && <td>{index + 1}</td>}
 							<td
-								className={`overflow-x-hidden w-${showCount ? 8 : 9}/12 whitespace-nowrap text-ellipsis`}
+								className={`overflow-x-hidden w-${showCount ? 9 : 8}/12 whitespace-nowrap text-ellipsis`}
 							>
 								{transaction.description}
 							</td>
@@ -68,15 +71,14 @@ export default function ViewSingleton({
 							</td>
 						</tr>
 
-						{isCreating(index) && (
-							<tr>
-								<td colSpan={5}>
-									<Button
-										className="btn-warning"
-										onClick={() => setActiveElement(false)}
-									>
-										Cancel
-									</Button>
+						{isCreating(index) && setCSVData !== undefined && (
+							<tr className="bg-slate-200">
+								<td colSpan={showCount ? 5 : 4}>
+									<TransactionCreate
+										setActiveElement={setActiveElement}
+										setCSVData={setCSVData}
+										transaction={transaction}
+									/>
 								</td>
 							</tr>
 						)}

@@ -6,7 +6,6 @@ import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import Stats from './Stats';
-import TransactionsTable from './TransactionsTable';
 import { useAccounts, useClientCookie } from '@/app/hooks/client';
 import parseCsv from './scripts/parseCsv';
 import { USER } from '@/app/constants';
@@ -175,6 +174,7 @@ export default function CsvUpload() {
 											? 'block'
 											: 'hidden'
 									}
+									setCSVData={setCSVData}
 									title="Singletons"
 									transactions={organizedCsvData.notCompleted.singletons}
 									view="singleton"

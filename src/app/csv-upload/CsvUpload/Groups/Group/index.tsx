@@ -69,10 +69,10 @@ export default function Group({
 						({Array.isArray(group.terms) ? group.terms.join(', ') : group.terms}
 						)
 					</div>
-					<TransactionsTable
+					{/* <TransactionsTable
 						tableClassName="border-white border-2"
 						transactions={transactions}
-					/>
+					/> */}
 				</>
 			)}
 		</div>

@@ -2,7 +2,11 @@
 
 import type React from 'react';
 import classNames from 'classnames';
-import type { TransactionData, TransactionWithGroupData } from '@/app/types';
+import type {
+	FindGroupsData,
+	TransactionData,
+	TransactionWithGroupData,
+} from '@/app/types';
 import ViewSingleton from './ViewSingleton';
 import ViewStandard from './ViewStandard';
 import { useEffect, useState } from 'react';
@@ -17,6 +21,7 @@ interface TransactionsProps {
 	activeElement?: number | boolean;
 	className?: string;
 	setActiveElement?: (arg: number | boolean) => void;
+	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	showCount?: boolean;
 	showHeader?: boolean;
 	tableClassName?: string;
@@ -30,6 +35,7 @@ export default function Transactions({
 	activeElement,
 	className,
 	setActiveElement,
+	setCSVData,
 	showCount,
 	tableClassName = '',
 	title,
@@ -52,6 +58,12 @@ export default function Transactions({
 
 	// SHUGAH
 	const componentClasses = classNames('overflow-hidden', className);
+	const props = {
+		activeElement: internalActiveElement,
+		setActiveElement: setActiveElement ?? setInternalActiveElement,
+		showCount,
+		tableClassName,
+	};
 
 	// JSX
 	return (
@@ -63,21 +75,16 @@ export default function Transactions({
 					case SINGLETON:
 						return (
 							<ViewSingleton
-								activeElement={internalActiveElement}
-								setActiveElement={setActiveElement ?? setInternalActiveElement}
-								showCount={showCount}
-								tableClassName={tableClassName}
+								setCSVData={setCSVData}
 								transactions={transactions as TransactionData[]}
+								{...props}
 							/>
 						);
 					case STANDARD:
 						return (
 							<ViewStandard
-								activeElement={internalActiveElement}
-								setActiveElement={setActiveElement ?? setInternalActiveElement}
-								showCount={showCount}
-								tableClassName={tableClassName}
 								transactions={transactions as TransactionWithGroupData[]}
+								{...props}
 							/>
 						);
 					default:
