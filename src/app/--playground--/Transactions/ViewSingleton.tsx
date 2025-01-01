@@ -33,10 +33,8 @@ export default function ViewSingleton({
 		<table className={tableClasses}>
 			<thead>
 				<tr className="bg-neutral">
-					{showCount && <th className="w-1/12" />}
-					<th className={`text-white text-sm py-1 w-${showCount ? 9 : 8}/12`}>
-						Description
-					</th>
+					{showCount && <th className="w-[20px]" />}
+					<th className={'text-white text-sm py-1 w-9/12'}>Description</th>
 					<th className="text-white text-sm py-1 w-1/12">Amount</th>
 					<th className="text-white text-sm py-1 w-2/12">Date</th>
 					<th className="w-1/12" />
@@ -54,7 +52,7 @@ export default function ViewSingleton({
 						>
 							{showCount && <td>{index + 1}</td>}
 							<td
-								className={`overflow-x-hidden w-${showCount ? 9 : 8}/12 whitespace-nowrap text-ellipsis`}
+								className={'overflow-x-hidden whitespace-nowrap text-ellipsis'}
 							>
 								{transaction.description}
 							</td>

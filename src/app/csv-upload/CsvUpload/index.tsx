@@ -217,9 +217,9 @@ export default function CsvUpload() {
 											? 'block'
 											: 'hidden'
 									}
-									showCount={true}
 									title="Completed Singletons"
 									transactions={organizedCsvData.completed.singletons}
+									view="singletonComplete"
 								/>
 							</section>
 						</TabList>

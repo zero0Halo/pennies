@@ -8,14 +8,20 @@ import type {
 	TransactionWithGroupData,
 } from '@/app/types';
 import ViewSingleton from './ViewSingleton';
+import ViewSingletonComplete from './ViewSingletonComplete';
 import ViewStandard from './ViewStandard';
 import { useEffect, useState } from 'react';
 
 const GROUPED = 'grouped';
 const SINGLETON = 'singleton';
+const SINGLETON_COMPLETE = 'singletonComplete';
 const STANDARD = 'standard';
 
-type Views = typeof GROUPED | typeof SINGLETON | typeof STANDARD;
+type Views =
+	| typeof GROUPED
+	| typeof SINGLETON
+	| typeof SINGLETON_COMPLETE
+	| typeof STANDARD;
 
 interface TransactionsProps {
 	activeElement?: number | boolean;
@@ -77,6 +83,13 @@ export default function Transactions({
 							<ViewSingleton
 								setCSVData={setCSVData}
 								transactions={transactions as TransactionData[]}
+								{...props}
+							/>
+						);
+					case SINGLETON_COMPLETE:
+						return (
+							<ViewSingletonComplete
+								transactions={transactions as TransactionWithGroupData[]}
 								{...props}
 							/>
 						);
