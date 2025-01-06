@@ -3,10 +3,11 @@ import type { TransactionWithGroupData } from '@/app/types';
 export default function formatRecurring(
 	transaction: TransactionWithGroupData,
 ): string {
-	const { group_recurring, group_still_recurring } = transaction;
+	const { group_recurring, group_recurring_type, group_still_recurring } =
+		transaction;
 
-	if (typeof group_recurring === 'string' && group_recurring !== 'false') {
-		if (group_still_recurring) return group_recurring;
+	if (group_recurring && group_recurring_type !== undefined) {
+		if (group_still_recurring) return group_recurring_type;
 		return 'Ended';
 	}
 

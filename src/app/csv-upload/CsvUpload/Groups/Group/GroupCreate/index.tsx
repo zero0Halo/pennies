@@ -54,7 +54,7 @@ export default function GroupCreate({
 			recurring: group.recurring,
 			siteurl: group.siteurl,
 			still_recurring: group.still_recurring,
-			terms: Array.isArray(group.terms) ? group.terms.join(', ') : group.terms,
+			terms: group.terms,
 		},
 	});
 	const watchRecurring = watch('recurring');
@@ -149,7 +149,7 @@ export default function GroupCreate({
 
 				<div className="join join-horizontal mb-4">
 					<Label className="join-item w-1/2" htmlFor="recurring">
-						Recurring {group.recurring}
+						Recurring {group.recurring_type}
 						<Input type="checkbox" {...register('recurring')} />
 					</Label>
 

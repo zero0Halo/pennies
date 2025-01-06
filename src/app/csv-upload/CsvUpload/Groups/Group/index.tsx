@@ -55,7 +55,7 @@ export default function Group({
 									Recurring
 								</div>
 								<div className="badge badge-accent badge-sm ml-2 h-6">
-									{group.recurring}
+									{group.recurring_type}
 								</div>
 								{group.still_recurring && (
 									<div className="badge badge-accent badge-sm ml-2 h-6">

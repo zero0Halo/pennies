@@ -34,22 +34,12 @@ export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 			const groupUid = uuidv4();
 			const group: GroupData = createGroupData({
 				account_uid: transaction.account_uid,
-				category: '',
 				count: matches.length + 1,
-				created: '',
 				description: transaction.description,
 				hash: stringToHash(`group${transaction.hash}`),
-				name: false,
-				notes: '',
 				prime: transaction.uid,
-				recurring: false,
-				siteurl: '',
-				still_recurring: false,
 				terms: transaction.terms,
-				to_account_uid: undefined,
-				transfer_uid: undefined,
 				uid: groupUid,
-				updated: '',
 				user_uid: transaction.user_uid,
 			});
 

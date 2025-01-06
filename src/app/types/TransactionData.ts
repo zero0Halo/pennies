@@ -15,7 +15,7 @@ export const TransactionDataSchema = z
 		notes: z.string().optional(),
 		prime: z.boolean(),
 		siteurl: z.string().optional(),
-		terms: z.union([z.array(z.string()), z.string()]),
+		terms: z.array(z.string()),
 		timestamp: z.string(),
 		to_account_uid: z.string().optional(),
 		transfer_uid: z.string().optional(),

@@ -27,10 +27,10 @@ export default function useOrganizedCsvData({
 		if (CSVData !== undefined) {
 			const { groups, singletons } = CSVData;
 			const completedGroups = groups.filter(
-				({ group }) => typeof group.name === 'string' && group.name.length > 0,
+				({ group }) => group.name.length > 0,
 			);
 			const notCompletedGroups = groups.filter(
-				({ group }) => typeof group.name === 'boolean',
+				({ group }) => !group.name.length,
 			);
 			const completedSingletons = singletons.filter(
 				(singleton) => singleton.name.length,

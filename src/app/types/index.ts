@@ -1,6 +1,6 @@
 import type { NextResponse } from 'next/server';
 import type { TransactionData } from './TransactionData';
-import type { GroupData } from './GroupData';
+import type { GroupData, RecurringType } from './GroupData';
 
 // Account
 export {
@@ -36,6 +36,7 @@ export {
 	type GroupData,
 	GroupDataSchema,
 	createGroupData,
+	type RecurringType,
 	validateGroupData,
 } from './GroupData';
 
@@ -93,7 +94,8 @@ export {
 export type TransactionWithGroupData = TransactionData & {
 	account_name: string;
 	group_name?: string;
-	group_recurring?: string | boolean;
+	group_recurring: boolean;
+	group_recurring_type?: RecurringType;
 	group_still_recurring?: boolean;
 	group_site_url?: string;
 };

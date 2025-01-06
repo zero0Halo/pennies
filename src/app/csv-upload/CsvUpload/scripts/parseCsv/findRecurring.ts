@@ -39,13 +39,15 @@ export default function findRecurring(transactions: TransactionData[]) {
 			? maxInterval.name
 			: false;
 
-	const recurring = checkRecurring(51);
+	const recurring_type = checkRecurring(51);
+	const recurring = !!recurring_type;
 	const today = dayjs(new Date().getTime());
 	const still_recurring =
 		recurring && today.diff(transactions[0].timestamp, 'M') <= 1;
 
 	return {
 		recurring,
+		recurring_type,
 		still_recurring,
 	};
 }

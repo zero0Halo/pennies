@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import { BIWEEKLY, MONTHLY, WEEKLY } from '../constants';
+import { getIsoDate } from '@/utils/general';
+import { v4 } from 'uuid';
+
+const RecurringTypeEnum = z.enum([BIWEEKLY, MONTHLY, WEEKLY]).optional();
+export type RecurringType = z.infer<typeof RecurringTypeEnum>;
 
 export const GroupDataSchema = z
 	.object({
@@ -8,13 +14,14 @@ export const GroupDataSchema = z
 		created: z.string(),
 		description: z.string(),
 		hash: z.number(),
-		name: z.union([z.boolean(), z.string()]),
-		notes: z.string(),
+		name: z.string(),
+		notes: z.string().optional(),
 		prime: z.string(),
-		recurring: z.union([z.boolean(), z.string()]),
-		siteurl: z.string(),
-		still_recurring: z.union([z.boolean(), z.string()]),
-		terms: z.union([z.array(z.string()), z.string()]),
+		recurring: z.boolean(),
+		recurring_type: RecurringTypeEnum,
+		siteurl: z.string().optional(),
+		still_recurring: z.boolean().optional(),
+		terms: z.array(z.string()),
 		to_account_uid: z.string().optional(),
 		transfer_uid: z.string().optional(),
 		uid: z.string(),
@@ -28,7 +35,30 @@ export type GroupData = z.infer<typeof GroupDataSchema>;
 export const createGroupData = (
 	overrides: Partial<GroupData> = {},
 ): GroupData => {
-	return GroupDataSchema.parse(overrides);
+	const isoDate = getIsoDate();
+	const defaultValues = {
+		account_uid: '',
+		category: '',
+		count: 0,
+		created: isoDate,
+		description: '',
+		hash: 0,
+		name: '',
+		notes: undefined,
+		prime: '',
+		recurring: false,
+		recurring_type: undefined,
+		siteurl: undefined,
+		still_recurring: undefined,
+		terms: [],
+		to_account_uid: undefined,
+		transfer_uid: undefined,
+		uid: v4(),
+		updated: isoDate,
+		user_uid: '',
+	};
+
+	return GroupDataSchema.parse({ ...defaultValues, ...overrides });
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
