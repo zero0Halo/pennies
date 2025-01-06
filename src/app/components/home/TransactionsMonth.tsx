@@ -73,6 +73,36 @@ export default function TransactionsMonth({
 		}
 	};
 
+	const handleMonthStep = async (step: number) => {
+		const account = getValues('account');
+		const month = getValues('month');
+		const year = getValues('year');
+		let updatedMonth = months.indexOf(month) + step;
+		let updatedYear = +year;
+
+		if (updatedMonth > 11) {
+			updatedMonth = 0;
+			updatedYear += 1;
+		} else if (updatedMonth < 0) {
+			updatedMonth = 11;
+			updatedYear -= 1;
+		}
+
+		setValue('month', months[updatedMonth]);
+		setValue('year', updatedYear);
+
+		const response = await apiCall('/api/transactions/select/by-day', {
+			payload: {
+				account_uid: account,
+				date: `${months[updatedMonth]} ${updatedYear}`,
+			},
+		});
+
+		if (response.data) {
+			setTransactionsData(response.data);
+		}
+	};
+
 	return (
 		<section>
 			<h2>
@@ -86,16 +116,33 @@ export default function TransactionsMonth({
 				</span>
 			</h2>
 
-			<div className="pb-1">
-				<Select options={accountOptions} {...register('account')} />
-				<Select options={months} {...register('month')} />
-				<Select options={years} {...register('year')} />
-				<Button
-					className="btn-primary btn-xs text-black"
-					onClick={handleGetTransactions}
-				>
-					Go
-				</Button>
+			<div className="pb-1 flex">
+				<div>
+					<Select options={accountOptions} {...register('account')} />
+					<Select options={months} {...register('month')} />
+					<Select options={years} {...register('year')} />
+					<Button
+						className="btn-primary btn-xs text-black"
+						onClick={handleGetTransactions}
+					>
+						Go
+					</Button>
+				</div>
+
+				<div className="ml-auto join">
+					<Button
+						className="join-item bg-primary btn-xs self-end text-black"
+						onClick={() => handleMonthStep(-1)}
+					>
+						Prev
+					</Button>
+					<Button
+						className="join-item bg-primary btn-xs self-end text-black"
+						onClick={() => handleMonthStep(1)}
+					>
+						Next
+					</Button>
+				</div>
 			</div>
 
 			{transactionsData.map(([dayMeta, transactions]) => (
