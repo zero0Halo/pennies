@@ -61,7 +61,7 @@ export default async function Home() {
 
 	// JSX
 	return (
-		<div>
+		<div className="px-4">
 			{/* Logged in, show transactions */}
 			{typeof transactionsResponse !== 'boolean' && isLoggedIn && (
 				<TransactionsMonth

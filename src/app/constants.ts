@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const ACCOUNTS = 'accounts';
 export const BIWEEKLY = 'BiWeekly';
 export const CAR = 'Car';
@@ -59,3 +61,7 @@ export const defaultCategories = [
 	TRANSFER,
 	UTILITY,
 ];
+export const MONTHS = [...new Array(12)].map((_, i) =>
+	dayjs(`${i + 1}-01-2019`).format('MMMM'),
+);
+export const YEARS = [...new Array(20)].map((_, i) => `${i + 2020}`);

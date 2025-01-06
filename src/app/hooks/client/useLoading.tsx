@@ -30,7 +30,17 @@ function Loading({ hideSpinner = false, loading }: LoadingProps) {
 }
 
 export default function useLoading() {
-	const [loading, setLoading] = useState(false);
+	const [loading, _setLoading] = useState(false);
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const setLoading = (arg: boolean, callback?: (arg?: any) => void) => {
+		if (arg) _setLoading(true);
+		if (!arg)
+			setTimeout(() => {
+				_setLoading(false);
+				if (callback) callback();
+			}, 1500);
+	};
 
 	return { Loading, props: { loading }, setLoading };
 }

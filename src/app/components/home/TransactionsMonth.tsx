@@ -2,28 +2,20 @@
 
 import dayjs from 'dayjs';
 import { apiCall } from '@/utils/app';
-import type {
-	AccountData,
-	TransactionWithDateData,
-	TransactionWithGroupData,
-} from '@/app/types';
-import { useAccounts } from '@/app/hooks/client';
+import type { AccountData, TransactionWithDateData } from '@/app/types';
+import { useAccounts, useLoading } from '@/app/hooks/client';
 import Select from '../Select';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Button';
 import Transactions from '@/app/components/Transactions';
+import { MONTHS, YEARS } from '@/app/constants';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | undefined;
 	defaultDate: string;
 	defaultTransactionsData: TransactionWithDateData[];
 }
-
-const months = [...new Array(12)].map((_, i) =>
-	dayjs(`${i + 1}-01-2019`).format('MMMM'),
-);
-const years = [...new Array(20)].map((_, i) => `${i + 2020}`);
 
 // COMPONENTS
 export default function TransactionsMonth({
@@ -40,6 +32,7 @@ export default function TransactionsMonth({
 
 	// CUSTOM MHOOKS
 	const { getAccountByUid, options: accountOptions } = useAccounts();
+	const { Loading, props, setLoading } = useLoading();
 
 	// REACT FORM
 	const { getValues, register, setValue, watch } = useForm();
@@ -74,10 +67,12 @@ export default function TransactionsMonth({
 	};
 
 	const handleMonthStep = async (step: number) => {
+		setLoading(true);
+
 		const account = getValues('account');
 		const month = getValues('month');
 		const year = getValues('year');
-		let updatedMonth = months.indexOf(month) + step;
+		let updatedMonth = MONTHS.indexOf(month) + step;
 		let updatedYear = +year;
 
 		if (updatedMonth > 11) {
@@ -88,23 +83,27 @@ export default function TransactionsMonth({
 			updatedYear -= 1;
 		}
 
-		setValue('month', months[updatedMonth]);
-		setValue('year', updatedYear);
-
 		const response = await apiCall('/api/transactions/select/by-day', {
 			payload: {
 				account_uid: account,
-				date: `${months[updatedMonth]} ${updatedYear}`,
+				date: `${MONTHS[updatedMonth]} ${updatedYear}`,
 			},
 		});
 
 		if (response.data) {
-			setTransactionsData(response.data);
+			setLoading(false, () => {
+				setTransactionsData(response.data);
+				setValue('month', MONTHS[updatedMonth]);
+				setValue('year', updatedYear);
+			});
 		}
 	};
 
+	// JSX
 	return (
-		<section>
+		<section className="relative">
+			<Loading {...props} />
+
 			<h2>
 				Transactions:{' '}
 				<span className="text-neutral">
@@ -116,11 +115,11 @@ export default function TransactionsMonth({
 				</span>
 			</h2>
 
-			<div className="pb-1 flex">
+			<div className="pb-2 flex">
 				<div>
 					<Select options={accountOptions} {...register('account')} />
-					<Select options={months} {...register('month')} />
-					<Select options={years} {...register('year')} />
+					<Select options={MONTHS} {...register('month')} />
+					<Select options={YEARS} {...register('year')} />
 					<Button
 						className="btn-primary btn-xs text-black"
 						onClick={handleGetTransactions}
