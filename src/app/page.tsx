@@ -5,6 +5,7 @@ import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
 import TransactionsMonth from './components/home/TransactionsMonth';
 import useAccounts from './hooks/server/useAccounts';
+import { FormMessagingWrapper } from './components/FormMessaging';
 
 interface GetTransactionsArguments {
 	defaultAccount: AccountData | undefined;
@@ -64,11 +65,13 @@ export default async function Home() {
 		<div className="px-4">
 			{/* Logged in, show transactions */}
 			{typeof transactionsResponse !== 'boolean' && isLoggedIn && (
-				<TransactionsMonth
-					defaultAccount={defaultAccount}
-					defaultDate={defaultDate}
-					defaultTransactionsData={transactionsResponse.data}
-				/>
+				<FormMessagingWrapper>
+					<TransactionsMonth
+						defaultAccount={defaultAccount}
+						defaultDate={defaultDate}
+						defaultTransactionsData={transactionsResponse.data}
+					/>
+				</FormMessagingWrapper>
 			)}
 
 			{/* If not logged in */}

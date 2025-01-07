@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import Button from '../Button';
 import Transactions from '@/app/components/Transactions';
 import { MONTHS, YEARS } from '@/app/constants';
+import { FormMessaging, useFormMessagingContext } from '../FormMessaging';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | undefined;
@@ -24,6 +25,9 @@ export default function TransactionsMonth({
 	defaultTransactionsData,
 }: TransactionsMonthProps) {
 	if (defaultAccount === undefined) return null;
+
+	// CONTEXT
+	const { setError, setSuccess } = useFormMessagingContext();
 
 	// STATE
 	const [transactionsData, setTransactionsData] = useState(
@@ -53,6 +57,8 @@ export default function TransactionsMonth({
 
 	// HANDLERS
 	const handleGetTransactions = async () => {
+		setLoading(true);
+
 		const account = getValues('account');
 		const month = getValues('month');
 		const year = getValues('year');
@@ -62,7 +68,14 @@ export default function TransactionsMonth({
 		});
 
 		if (response.data) {
-			setTransactionsData(response.data);
+			setLoading(false, () => {
+				setTransactionsData(response.data);
+				setSuccess('Successfully Retrieved Transactions');
+			});
+		} else if (response.error) {
+			setLoading(false, () => {
+				setError('Error Retreieving Transactions');
+			});
 		}
 	};
 
@@ -92,9 +105,14 @@ export default function TransactionsMonth({
 
 		if (response.data) {
 			setLoading(false, () => {
+				setSuccess('Successfully Retrieved Transactions');
 				setTransactionsData(response.data);
 				setValue('month', MONTHS[updatedMonth]);
 				setValue('year', updatedYear);
+			});
+		} else if (response.error) {
+			setLoading(false, () => {
+				setError('Error Retreieving Transactions');
 			});
 		}
 	};
@@ -103,6 +121,8 @@ export default function TransactionsMonth({
 	return (
 		<section className="relative">
 			<Loading {...props} />
+
+			<FormMessaging />
 
 			<h2>
 				Transactions:{' '}
