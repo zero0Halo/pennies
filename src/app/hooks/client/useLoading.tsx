@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface LoadingProps {
 	hideSpinner?: boolean;
@@ -31,15 +31,20 @@ function Loading({ hideSpinner = false, loading }: LoadingProps) {
 
 export default function useLoading() {
 	const [loading, _setLoading] = useState(false);
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const setLoading = (arg: boolean, callback?: (arg?: any) => void) => {
 		if (arg) _setLoading(true);
-		if (!arg)
-			setTimeout(() => {
+		if (!arg) {
+			if (timerRef.current) clearTimeout(timerRef.current);
+
+			timerRef.current = setTimeout(() => {
 				_setLoading(false);
 				if (callback) callback();
-			}, 1500);
+				timerRef.current = null; // Reset ref
+			}, 1000);
+		}
 	};
 
 	return { Loading, props: { loading }, setLoading };

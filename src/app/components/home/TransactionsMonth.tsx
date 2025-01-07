@@ -106,7 +106,9 @@ export default function TransactionsMonth({
 				setTransactionsData(response.data);
 				setValue('month', MONTHS[updatedMonth]);
 				setValue('year', updatedYear);
-				setSuccess('Successfully Retrieved Transactions');
+				setSuccess(
+					`Successfully Retrieved Transactions for ${MONTHS[updatedMonth]} ${updatedYear}`,
+				);
 			} else if (response.error) {
 				setError('Error Retreieving Transactions');
 			}

@@ -6,17 +6,22 @@ import {
 	type FormMessagingContextData,
 } from './FormMessagingProvider';
 
+// COMPONENT
 export default function FormMessaging() {
-	const { close, error, setClose, success }: FormMessagingContextData =
+	// CUSTOM HOOKS
+	const { close, error, reset, setClose, success }: FormMessagingContextData =
 		useFormMessagingContext();
+
+	// REFS
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+	// EFFECTS
 	useEffect(() => {
-		if (success) {
+		if (success.length) {
 			if (timerRef.current) clearTimeout(timerRef.current);
 
 			timerRef.current = setTimeout(() => {
-				setClose(true);
+				reset();
 				timerRef.current = null; // Reset ref
 			}, 3000);
 
@@ -24,7 +29,7 @@ export default function FormMessaging() {
 				if (timerRef.current) clearTimeout(timerRef.current);
 			};
 		}
-	}, [setClose, success]);
+	}, [reset, success]);
 
 	const jsx = true && (
 		<div className="fixed top-0  left-1/2 transform -translate-x-1/2 z-50">

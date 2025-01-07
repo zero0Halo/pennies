@@ -13,6 +13,7 @@ import {
 export interface FormMessagingContextData {
 	close: boolean;
 	error: string;
+	reset: () => void;
 	setClose: (arg: boolean) => void;
 	setError: (arg: string) => void;
 	setSuccess: (arg: string) => void;
@@ -36,13 +37,16 @@ const FormMessagingProvider: React.FC<FormMessagingProviderProps> = ({
 	const [success, _setSuccess] = useState('');
 	const [close, setClose] = useState(false);
 	const setError = useCallback((msg: string) => {
-		console.log('setError');
 		_setSuccess('');
 		setClose(false);
 		_setError(msg);
 	}, []);
+	const reset = () => {
+		setClose(true);
+		_setError('');
+		_setSuccess('');
+	};
 	const setSuccess = useCallback((msg: string) => {
-		console.log('setSuccess');
 		_setError('');
 		setClose(false);
 		_setSuccess(msg);
@@ -50,7 +54,7 @@ const FormMessagingProvider: React.FC<FormMessagingProviderProps> = ({
 
 	return (
 		<FormMessagingContext.Provider
-			value={{ close, error, setClose, setError, setSuccess, success }}
+			value={{ close, error, reset, setClose, setError, setSuccess, success }}
 		>
 			{children}
 		</FormMessagingContext.Provider>
