@@ -67,16 +67,14 @@ export default function TransactionsMonth({
 			payload: { account_uid: account, date: `${month} ${year}` },
 		});
 
-		if (response.data) {
-			setLoading(false, () => {
+		setLoading(false, () => {
+			if (response.data) {
 				setTransactionsData(response.data);
 				setSuccess('Successfully Retrieved Transactions');
-			});
-		} else if (response.error) {
-			setLoading(false, () => {
+			} else if (response.error) {
 				setError('Error Retreieving Transactions');
-			});
-		}
+			}
+		});
 	};
 
 	const handleMonthStep = async (step: number) => {
@@ -103,18 +101,16 @@ export default function TransactionsMonth({
 			},
 		});
 
-		if (response.data) {
-			setLoading(false, () => {
-				setSuccess('Successfully Retrieved Transactions');
+		setLoading(false, () => {
+			if (response.data) {
 				setTransactionsData(response.data);
 				setValue('month', MONTHS[updatedMonth]);
 				setValue('year', updatedYear);
-			});
-		} else if (response.error) {
-			setLoading(false, () => {
+				setSuccess('Successfully Retrieved Transactions');
+			} else if (response.error) {
 				setError('Error Retreieving Transactions');
-			});
-		}
+			}
+		});
 	};
 
 	// JSX
