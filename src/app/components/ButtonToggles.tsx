@@ -36,7 +36,7 @@ export default function ButtonToggles({
 	// JSX
 	return (
 		<div
-			className={`join join-horizontal border-primary border-2 shadow my-2 ${className ?? className}`}
+			className={`join join-horizontal border-primary border-2 shadow ${className ?? className}`}
 		>
 			{Object.keys(toggleState).map((label) => (
 				<button

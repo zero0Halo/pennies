@@ -1,15 +1,14 @@
 import Cookie from 'js-cookie';
 import { useEffect, useState } from 'react';
 
-interface UseClientCookieResult<T> {
+export default function useClientCookie<T>(name: string): {
 	data: T | null;
 	error: string | null;
-}
-
-export default function useClientCookie<T>(
-	name: string,
-): UseClientCookieResult<T> {
-	const [result, setResult] = useState<UseClientCookieResult<T>>({
+} {
+	const [result, setResult] = useState<{
+		data: T | null;
+		error: string | null;
+	}>({
 		data: null,
 		error: null,
 	});

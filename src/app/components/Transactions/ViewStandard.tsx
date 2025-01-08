@@ -2,35 +2,40 @@ import type React from 'react';
 import Image from 'next/image';
 import type { TransactionWithGroupData } from '@/app/types';
 import { formatAmount, formatRecurring, zebra } from '@/utils/app';
-import { tableClasses, tdOverflow, thClasses } from './helpers';
+import { tableClasses, tdClasses, tdOverflow, thClasses } from './helpers';
+import classNames from 'classnames';
 
 type ViewStandardProps = {
 	activeElement: number | boolean;
 	setActiveElement: (arg: number | boolean) => void;
+	showHeader?: boolean;
 	tableClassName: string;
 	transactions: TransactionWithGroupData[];
 };
 
 export default function ViewStandard({
+	showHeader = true,
 	tableClassName = '',
 	transactions,
 }: ViewStandardProps): React.ReactNode {
 	return (
 		<table className={tableClasses(tableClassName)}>
-			<thead>
-				<tr className="bg-neutral">
-					<th className={thClasses(3)}>Name</th>
-					<th className={thClasses(6)}>Description</th>
-					<th className={thClasses(1)}>Amount</th>
-					<th className={thClasses(1)}>Category</th>
-					<th className={thClasses(1)}>Recurring</th>
-				</tr>
-			</thead>
+			{showHeader && (
+				<thead>
+					<tr className="bg-neutral">
+						<th className={thClasses(3)}>Name</th>
+						<th className={thClasses(6)}>Description</th>
+						<th className={thClasses(1)}>Amount</th>
+						<th className={thClasses(1)}>Category</th>
+						<th className={thClasses(1)}>Recurring</th>
+					</tr>
+				</thead>
+			)}
 
 			<tbody>
 				{transactions.map((transaction, index) => (
 					<tr className={zebra(index, transaction)} key={transaction.uid}>
-						<td>
+						<td className={tdClasses(3)}>
 							<div className="flex">
 								<span>{transaction.group_name ?? transaction.name}</span>
 								{transaction.prime && (
@@ -46,10 +51,12 @@ export default function ViewStandard({
 								)}
 							</div>
 						</td>
-						<td className={tdOverflow()}>{transaction.description}</td>
-						<td>{formatAmount(transaction.amount)}</td>
-						<td>{transaction.category}</td>
-						<td>{formatRecurring(transaction)}</td>
+						<td className={classNames([tdOverflow(), tdClasses(6)])}>
+							{transaction.description}
+						</td>
+						<td className={tdClasses(1)}>{formatAmount(transaction.amount)}</td>
+						<td className={tdClasses(1)}>{transaction.category}</td>
+						<td className={tdClasses(1)}>{formatRecurring(transaction)}</td>
 					</tr>
 				))}
 			</tbody>

@@ -13,3 +13,5 @@ export const tdOverflow = (tdClassName?: string) =>
 	);
 
 export const thClasses = (i: number) => `text-white text-sm py-1 w-${i}/12`;
+
+export const tdClasses = (i: number) => `w-${i}/12`;

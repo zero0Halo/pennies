@@ -1,4 +1,7 @@
+import classNames from 'classnames';
 import React from 'react';
+
+const sizes = ['select-xs', 'select-sm', 'select-md', 'select-lg', 'select-xl'];
 
 type Option = string | { name: string; value: string };
 
@@ -9,10 +12,10 @@ type SelectProps = {
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 	({ className = '', options = [], ...rest }, ref) => {
-		const classes = [
-			'select select-sm grow font-normal text-sm',
-			className,
-		].join();
+		const sizeCheck = className.split(' ').find((f) => sizes.includes(f));
+		const baseStyles = `select grow font-normal text-sm${!sizeCheck ? ' select-sm' : ''}`;
+
+		const classes = classNames([baseStyles, className]);
 
 		return (
 			<select className={classes} ref={ref} {...rest}>

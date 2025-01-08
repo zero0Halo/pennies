@@ -11,6 +11,8 @@ import Button from '../Button';
 import Transactions from '@/app/components/Transactions';
 import { MONTHS, YEARS } from '@/app/constants';
 import { FormMessaging, useFormMessagingContext } from '../FormMessaging';
+import Hub from './Hub';
+import ButtonToggles, { type ToggleStateData } from '../ButtonToggles';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | undefined;
@@ -18,7 +20,7 @@ interface TransactionsMonthProps {
 	defaultTransactionsData: TransactionWithDateData[];
 }
 
-// COMPONENTS
+// COMPONENT
 export default function TransactionsMonth({
 	defaultAccount,
 	defaultDate,
@@ -33,6 +35,10 @@ export default function TransactionsMonth({
 	const [transactionsData, setTransactionsData] = useState(
 		defaultTransactionsData,
 	);
+	const [toggleState, setToggleState] = useState<ToggleStateData>({
+		today: true,
+		month: false,
+	});
 
 	// CUSTOM MHOOKS
 	const { getAccountByUid, options: accountOptions } = useAccounts();
@@ -134,19 +140,37 @@ export default function TransactionsMonth({
 			</h2>
 
 			<div className="pb-2 flex">
-				<div>
-					<Select options={accountOptions} {...register('account')} />
-					<Select options={MONTHS} {...register('month')} />
-					<Select options={YEARS} {...register('year')} />
+				<div className="self-end join join-horizontal">
+					<Select
+						className="select-primary join-item select-xs"
+						options={accountOptions}
+						{...register('account')}
+					/>
+					<Select
+						className="select-primary join-item select-xs"
+						options={MONTHS}
+						{...register('month')}
+					/>
+					<Select
+						className="select-primary join-item select-xs"
+						options={YEARS}
+						{...register('year')}
+					/>
 					<Button
-						className="btn-primary btn-xs text-black"
+						className="btn-primary btn-xs text-black  join-item"
 						onClick={handleGetTransactions}
 					>
 						Go
 					</Button>
 				</div>
 
-				<div className="ml-auto join">
+				<ButtonToggles
+					className="mx-auto my-0 self-end"
+					setToggleState={setToggleState}
+					toggleState={toggleState}
+				/>
+
+				<div className="join">
 					<Button
 						className="join-item bg-primary btn-xs self-end text-black"
 						onClick={() => handleMonthStep(-1)}
@@ -162,23 +186,34 @@ export default function TransactionsMonth({
 				</div>
 			</div>
 
-			{transactionsData.map(([dayMeta, transactions]) => (
-				<div key={dayMeta.date} className="flex mb-8">
-					<div className="relative">
-						<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
-							{dayMeta.date}
-						</div>
-						<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
-							{dayMeta.day}
-						</div>
-					</div>
+			{/* Today View */}
+			<section className={toggleState.today ? 'block' : 'hidden'}>
+				<Hub
+					month={MONTHS.indexOf(getValues('month'))}
+					transactionsData={transactionsData}
+					year={+getValues('year')}
+				/>
+			</section>
 
-					<Transactions
-						tableClassName="rounded-tl-none"
-						transactions={transactions}
-					/>
-				</div>
-			))}
+			{/* Month View */}
+			<section className={toggleState.month ? 'block' : 'hidden'}>
+				{transactionsData.map(([dayMeta, transactions]) => (
+					<div key={dayMeta.date} className="flex mb-8">
+						<div className="relative">
+							<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
+								{dayMeta.date}
+							</div>
+							<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
+								{dayMeta.day}
+							</div>
+						</div>
+						<Transactions
+							tableClassName="rounded-tl-none"
+							transactions={transactions}
+						/>
+					</div>
+				))}
+			</section>
 		</section>
 	);
 }

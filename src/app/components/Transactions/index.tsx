@@ -42,6 +42,7 @@ export default function Transactions({
 	className,
 	setActiveElement,
 	setCSVData,
+	showHeader,
 	tableClassName = '',
 	title,
 	transactions,
@@ -66,6 +67,7 @@ export default function Transactions({
 	const props = {
 		activeElement: internalActiveElement,
 		setActiveElement: setActiveElement ?? setInternalActiveElement,
+		showHeader,
 		tableClassName,
 	};
 
