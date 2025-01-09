@@ -9,10 +9,11 @@ export const MonthlySumDataSchema = z
 		account_uid: z.string(),
 		created: z.string(),
 		month_uid_key: z.string(),
+		sum: z.number(),
+		timestamp: z.string(),
 		uid: z.string(),
 		updated: z.string(),
 		user_uid: z.string(),
-		sum: z.number(),
 	})
 	.strict();
 
@@ -30,6 +31,7 @@ export const createMonthlySumData = (
 		updated: isoDate,
 		user_uid: '',
 		sum: 0,
+		timestamp: '',
 	};
 
 	return MonthlySumDataSchema.parse({ ...defaultValues, ...overrides });
@@ -69,6 +71,7 @@ export function createMonthlySumPayload({
 				account_uid,
 				month_uid_key,
 				sum: amount,
+				timestamp,
 				user_uid,
 			});
 		},
@@ -87,6 +90,7 @@ export function createMonthlySumPayload({
 					account_uid,
 					month_uid_key,
 					sum: amount,
+					timestamp,
 					user_uid,
 				});
 			},
