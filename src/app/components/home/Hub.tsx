@@ -1,3 +1,5 @@
+'use client';
+
 import { MONTHLY_SUMS } from '@/app/constants';
 import { useClientCookie } from '@/app/hooks/client';
 import type {
@@ -9,6 +11,8 @@ import { formatAmount } from '@/utils/app';
 import type React from 'react';
 import { useMemo } from 'react';
 import Transactions from '../Transactions';
+import { getIsoDate } from '@/utils/general';
+import useMonthlySumData from '@/app/hooks/client/useMonthlySumData';
 
 interface HubProps {
 	month: number;
@@ -21,16 +25,10 @@ export default function Hub({
 	transactionsData,
 	year,
 }: HubProps): React.ReactNode {
-	const { data, error } = useClientCookie<MonthlySumData[]>(MONTHLY_SUMS);
-	const monthlySumData = data
-		? data.find(({ month_uid_key }) => {
-				const [m, y] = month_uid_key.split('-').map((m) => +m);
+	const today = +new Date().getDate();
 
-				console.log({ month, m, year, y });
-
-				return m === +month && y === year;
-			})
-		: false;
+	// CUSTOM HOOKS
+	const { monthlySumData } = useMonthlySumData({ month, year });
 
 	const recurringTransactionsData: TransactionWithDateData[] | undefined =
 		transactionsData
@@ -45,28 +43,31 @@ export default function Hub({
 				transactions.filter(({ group_recurring }) => group_recurring),
 			]);
 
-	// JSX
-	return (
-		<div>
-			<h3>{monthlySumData && formatAmount(monthlySumData.sum)}</h3>
+	console.log({ today, monthlySumData, recurringTransactionsData });
 
-			{recurringTransactionsData?.map(([dayMeta, transactions], index) => (
-				<div key={dayMeta.date} className="flex mb-8">
-					<div className="relative pt-8">
-						<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
-							{dayMeta.date}
-						</div>
-						<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
-							{dayMeta.day}
-						</div>
-					</div>
-					<Transactions
-						showHeader={index === 0}
-						transactions={transactions}
-						view="standard"
-					/>
-				</div>
-			))}
-		</div>
-	);
+	return <div>Yay</div>;
+
+	// JSX
+	// return (
+	// 	<div>
+	// 		<h3>{monthlySumData && formatAmount(monthlySumData.sum)}</h3>
+
+	// 		{recurringTransactionsData?.map(([dayMeta, transactions]) => (
+	// 			<div key={dayMeta.date} className="flex mb-8">
+	// 				<div className="relative">
+	// 					<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
+	// 						{dayMeta.date}
+	// 					</div>
+	// 					<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
+	// 						{dayMeta.day}
+	// 					</div>
+	// 				</div>
+	// 				<Transactions
+	// 					tableClassName="rounded-tl-none"
+	// 					transactions={transactions}
+	// 				/>
+	// 			</div>
+	// 		))}
+	// 	</div>
+	// );
 }

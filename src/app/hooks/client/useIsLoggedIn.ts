@@ -7,7 +7,7 @@ export default function useIsLoggedIn() {
 
 	useEffect(() => {
 		const _isLoggedIn = useClientCookie<boolean | undefined>(IS_LOGGED_IN);
-		console.log(_isLoggedIn);
+
 		setIsLoggedIn(!(_isLoggedIn !== undefined && _isLoggedIn));
 	}, []);
 
