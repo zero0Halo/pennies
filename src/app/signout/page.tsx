@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import { CSV_UPLOAD } from '../constants';
 import Link from 'next/link';
+import storage from '@/utils/app/storage';
 
 export default function Home() {
 	useEffect(() => {
-		localStorage.removeItem(CSV_UPLOAD);
+		storage.removeAll();
 	}, []);
 
 	return (
