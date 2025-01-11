@@ -1,51 +1,58 @@
 'use client';
 
-import { MONTHLY_SUMS } from '@/app/constants';
-import { useClientCookie } from '@/app/hooks/client';
+import { MONTHLY_SUMS, MONTHS } from '@/app/constants';
+import { useClientCookie, useHub } from '@/app/hooks/client';
 import type {
 	MonthlySumData,
+	TransactionDateMetaData,
 	TransactionWithDateData,
 	TransactionWithGroupData,
 } from '@/app/types';
 import { formatAmount } from '@/utils/app';
 import type React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Transactions from '../Transactions';
 import { getIsoDate } from '@/utils/general';
-import useMonthlySumData from '@/app/hooks/client/useMonthlySumData';
+import useMonthlySumData from '@/app/hooks/client/useMonthlySumDataCookie';
 
 interface HubProps {
-	month: number;
+	monthName: string;
 	transactionsData: TransactionWithDateData[] | undefined;
 	year: number;
 }
 
 export default function Hub({
-	month,
+	monthName,
 	transactionsData,
 	year,
 }: HubProps): React.ReactNode {
-	const today = +new Date().getDate();
+	// SHUGAH
+	const month = MONTHS.indexOf(monthName);
 
 	// CUSTOM HOOKS
 	const { monthlySumData } = useMonthlySumData({ month, year });
+	const { recurring, sumForDate, todayDate, transactions } = useHub({
+		transactionsData,
+	});
 
-	const recurringTransactionsData: TransactionWithDateData[] | undefined =
-		transactionsData
-			?.filter(([_, transactions]) => {
-				const onlyRecurring = transactions.filter(
-					({ group_recurring }) => group_recurring,
-				);
-				return onlyRecurring.length;
-			})
-			.map(([dates, transactions]) => [
-				dates,
-				transactions.filter(({ group_recurring }) => group_recurring),
-			]);
+	console.log({ monthlySumData });
+	return (
+		<section>
+			<h3>
+				{todayDate} {monthName}, {year}
+			</h3>
 
-	console.log({ today, monthlySumData, recurringTransactionsData });
+			<div>Day Total: {formatAmount(sumForDate ?? 0)}</div>
+			<div>Month Total: {formatAmount(monthlySumData?.sum ?? 0)}</div>
 
-	return <div>Yay</div>;
+			<h4>Recurring</h4>
+			<Transactions transactions={recurring ?? []} view="standard" />
+
+			<div className="divider" />
+
+			<Transactions transactions={transactions ?? []} view="standard" />
+		</section>
+	);
 
 	// JSX
 	// return (

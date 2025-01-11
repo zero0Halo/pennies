@@ -1,0 +1,10 @@
+{
+	"Use Memo": {
+		"scope": "typescriptreact",
+		"prefix": "um",
+		"body": [
+			"useMemo(() => {$1}, []);"
+		],
+		"description": "Creates an empty useMemo function"
+	}
+}

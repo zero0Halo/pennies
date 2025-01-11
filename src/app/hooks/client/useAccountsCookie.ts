@@ -5,7 +5,7 @@ import { ACCOUNTS } from '@/app/constants';
 import type { AccountData } from '@/app/types';
 import { useEffect, useState } from 'react';
 
-interface UseAccountsReturn {
+interface UseAccountsCookieReturn {
 	accounts: AccountData[];
 	defaultAccount: AccountData | undefined;
 	getAccountByName: (arg: string) => AccountData | undefined;
@@ -13,7 +13,7 @@ interface UseAccountsReturn {
 	options: { name: string; value: string }[];
 }
 
-export default function useAccounts(): UseAccountsReturn {
+export default function useAccountsCookie(): UseAccountsCookieReturn {
 	const { data: accountsData, error: accountsDataError } =
 		useClientCookie<AccountData[]>(ACCOUNTS);
 	const [accounts, setAccounts] = useState<AccountData[]>([]);

@@ -1,19 +1,19 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useClientCookie from './useClientCookie';
 import type { MonthlySumData } from '@/app/types';
 import { MONTHLY_SUMS } from '@/app/constants';
 
-interface UseMonthlySumDataProps {
+interface UseMonthlySumDataCookieProps {
 	month: number;
 	year: number;
 }
 
-export default function useMonthlySumData({
+export default function useMonthlySumDataCookie({
 	month,
 	year,
-}: UseMonthlySumDataProps): {
+}: UseMonthlySumDataCookieProps): {
 	monthlySumData: MonthlySumData | undefined;
 	monthlySumsData: MonthlySumData[] | undefined;
 } {
@@ -30,20 +30,22 @@ export default function useMonthlySumData({
 
 	// EFFECTS
 	useEffect(() => {
-		if (data !== null && !monthlySumsData) {
+		if (data !== null) {
 			setMonthlySumsData(data);
 
-			if (month && year) {
-				setMonthlySumData(
-					data.find(({ month_uid_key }) => {
-						const [m, y] = month_uid_key.split('-').map((m) => +m);
+			setMonthlySumData(
+				data.find(({ timestamp }) => {
+					console.log({ timestamp });
+					const date = new Date(timestamp);
+					const m = date.getMonth();
+					const y = date.getFullYear();
 
-						return m === +month && y === year;
-					}),
-				);
-			}
+					console.log({ m, month, y, year });
+					return m === +month && y === year;
+				}),
+			);
 		}
-	}, [data, month, monthlySumsData, year]);
+	}, [data, month, year]);
 
 	return { monthlySumData, monthlySumsData };
 }

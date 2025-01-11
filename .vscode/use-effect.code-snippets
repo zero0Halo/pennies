@@ -1,0 +1,10 @@
+{
+	"Use Effect": {
+		"scope": "typescriptreact",
+		"prefix": "ue",
+		"body": [
+			"useEffect(() => {$1}, []);"
+		],
+		"description": "Creates an empty useEffect function"
+	}
+}

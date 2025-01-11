@@ -3,7 +3,7 @@
 import dayjs from 'dayjs';
 import { apiCall } from '@/utils/app';
 import type { AccountData, TransactionWithDateData } from '@/app/types';
-import { useAccounts, useLoading } from '@/app/hooks/client';
+import { useAccountsCookie, useLoading } from '@/app/hooks/client';
 import Select from '../Select';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -41,7 +41,7 @@ export default function TransactionsMonth({
 	});
 
 	// CUSTOM MHOOKS
-	const { getAccountByUid, options: accountOptions } = useAccounts();
+	const { getAccountByUid, options: accountOptions } = useAccountsCookie();
 	const { Loading, props, setLoading } = useLoading();
 
 	// REACT FORM
@@ -189,7 +189,7 @@ export default function TransactionsMonth({
 			{/* Today View */}
 			<section className={toggleState.today ? 'block' : 'hidden'}>
 				<Hub
-					month={MONTHS.indexOf(getValues('month'))}
+					monthName={getValues('month')}
 					transactionsData={transactionsData}
 					year={+getValues('year')}
 				/>
