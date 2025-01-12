@@ -11,7 +11,7 @@ type UseAccountsReturnData = {
 	options: { name: string; value: string }[] | undefined;
 };
 
-export default function useAccounts(): UseAccountsReturnData {
+export default function useAccountsCookie(): UseAccountsReturnData {
 	const [accounts] = useServerCookie<AccountData[]>(ACCOUNTS);
 	const payload: UseAccountsReturnData = {
 		accounts,

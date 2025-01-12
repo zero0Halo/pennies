@@ -9,7 +9,11 @@ import Input from '@/app/components/Input';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
-import { useAccounts, useCategories, useLoading } from '@/app/hooks/client';
+import {
+	useAccountsCookie,
+	useCategories,
+	useLoading,
+} from '@/app/hooks/client';
 import type { FindGroupsData, TransactionData } from '@/app/types';
 import { apiCall, formatDate, formatAmount } from '@/utils/app';
 import { useFormMessagingContext } from '@/app/components/FormMessaging';
@@ -27,7 +31,7 @@ export default function TransactionCreate({
 }: TransactionCreateProps) {
 	// CUSTOM HOOKS
 	const { categories } = useCategories();
-	const { options } = useAccounts();
+	const { options } = useAccountsCookie();
 	const { setError, setSuccess } = useFormMessagingContext();
 	const { Loading, props, setLoading } = useLoading();
 

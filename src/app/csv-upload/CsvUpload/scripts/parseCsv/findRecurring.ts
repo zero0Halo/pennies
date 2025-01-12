@@ -42,12 +42,12 @@ export default function findRecurring(transactions: TransactionData[]) {
 	const recurring_type = checkRecurring(51);
 	const recurring = !!recurring_type;
 	const today = dayjs(new Date().getTime());
-	const still_recurring =
+	const recurring_still =
 		recurring && today.diff(transactions[0].timestamp, 'M') <= 1;
 	console.log({ recurring_type });
 	return {
 		recurring,
 		recurring_type,
-		still_recurring,
+		recurring_still,
 	};
 }

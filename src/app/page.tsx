@@ -9,7 +9,7 @@ import { MONTHLY_SUMS, USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
 import TransactionsMonth from './components/home/TransactionsMonth';
-import useAccounts from './hooks/server/useAccounts';
+import useAccountsCookie from './hooks/server/useAccounts';
 import { FormMessagingWrapper } from './components/FormMessaging';
 import ToLocalStorage from './components/ToLocalStorage';
 
@@ -80,7 +80,7 @@ async function getInitialData({
 export default async function Home() {
 	// CUSTOM HOOKS
 	const isLoggedIn = useIsLoggedIn();
-	const { defaultAccount, noAccounts } = useAccounts();
+	const { defaultAccount, noAccounts } = useAccountsCookie();
 	const [userData] = useServerCookie<UserData>(USER);
 
 	// SHUGAH

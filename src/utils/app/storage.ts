@@ -1,3 +1,5 @@
+'use client';
+
 /*
   Used to access localStorage
 */
@@ -11,6 +13,8 @@ interface SetArgs {
 }
 
 function get<T>({ keyName }: { keyName: string }): T | string | boolean {
+	if (typeof localStorage === 'undefined') return false;
+
 	const item = localStorage.getItem(keyName);
 
 	if (item) {
@@ -29,6 +33,8 @@ function removeAll() {
 }
 
 function set({ keyName, data }: SetArgs): boolean {
+	if (typeof localStorage === 'undefined') return false;
+
 	try {
 		localStorage.setItem(
 			keyName,

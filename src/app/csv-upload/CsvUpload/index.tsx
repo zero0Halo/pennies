@@ -6,7 +6,7 @@ import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import Stats from './Stats';
-import { useAccounts, useClientCookie } from '@/app/hooks/client';
+import { useAccountsCookie, useClientCookie } from '@/app/hooks/client';
 import parseCsv from './scripts/parseCsv';
 import { USER } from '@/app/constants';
 import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
@@ -37,7 +37,7 @@ export default function CsvUpload() {
 	const { setError, setSuccess } = useFormMessagingContext();
 	const { data: userData, error: userDataError } =
 		useClientCookie<UserData>(USER);
-	const { options } = useAccounts();
+	const { options } = useAccountsCookie();
 	const organizedCsvData = useOrganizedCsvData({ CSVData });
 
 	// REACT FORM

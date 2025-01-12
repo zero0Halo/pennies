@@ -4,7 +4,11 @@ import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Input from '@/app/components/Input';
 import Select from '@/app/components/Select';
-import { useAccounts, useCategories, useLoading } from '@/app/hooks/client';
+import {
+	useAccountsCookie,
+	useCategories,
+	useLoading,
+} from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 import formatPayload from './scripts/formatPayload';
 import updateState from './scripts/updateState';
@@ -32,7 +36,7 @@ export default function GroupCreate({
 	transactions,
 }: GroupCreateProps) {
 	const { setError, setSuccess } = useFormMessagingContext();
-	const { options } = useAccounts();
+	const { options } = useAccountsCookie();
 	const selectOptions = useMemo(
 		() => options.filter((g) => g.value !== group.account_uid),
 		[options, group],
@@ -53,7 +57,7 @@ export default function GroupCreate({
 			notes: group.notes,
 			recurring: group.recurring,
 			siteurl: group.siteurl,
-			still_recurring: group.still_recurring,
+			recurring_still: group.recurring_still,
 			terms: group.terms,
 		},
 	});
@@ -153,12 +157,12 @@ export default function GroupCreate({
 						<Input type="checkbox" {...register('recurring')} />
 					</Label>
 
-					<Label className="join-item w-1/2" htmlFor="still_recurring">
+					<Label className="join-item w-1/2" htmlFor="recurring_still">
 						Still Recurring
 						<Input
 							disabled={!watchRecurring}
 							type="checkbox"
-							{...register('still_recurring')}
+							{...register('recurring_still')}
 						/>
 					</Label>
 				</div>

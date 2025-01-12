@@ -96,7 +96,7 @@ export type TransactionWithGroupData = TransactionData & {
 	group_name?: string;
 	group_recurring: boolean;
 	group_recurring_type?: RecurringType;
-	group_still_recurring?: boolean;
+	group_recurring_still?: boolean;
 	group_site_url?: string;
 };
 export type TransactionGroupByDayData = {

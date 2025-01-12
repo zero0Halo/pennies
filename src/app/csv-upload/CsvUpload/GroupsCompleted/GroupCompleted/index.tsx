@@ -1,7 +1,7 @@
 import type React from 'react';
 import Badge from './Badge';
 import Field from './Field';
-import { useAccounts } from '@/app/hooks/client';
+import { useAccountsCookie } from '@/app/hooks/client';
 import type { GroupsData } from '@/app/types';
 import { TRANSFER } from '@/app/constants';
 import Transactions from '@/app/components/Transactions';
@@ -23,7 +23,7 @@ export default function GroupCompleted({
 	groupsData: { group, transactions },
 	index,
 }: GroupCompletedProps) {
-	const { getAccountByUid } = useAccounts();
+	const { getAccountByUid } = useAccountsCookie();
 	const alt: boolean = index % 2 !== 0;
 	const categoryText =
 		group.category !== TRANSFER
@@ -39,7 +39,7 @@ export default function GroupCompleted({
 					<div className="ml-auto">
 						<Badge alt={alt} label="Recurring" />
 						<Badge alt={alt} label={group.recurring} />
-						{group.still_recurring && (
+						{group.recurring_still && (
 							<Badge alt={alt} label="Still Recurring" />
 						)}
 					</div>
