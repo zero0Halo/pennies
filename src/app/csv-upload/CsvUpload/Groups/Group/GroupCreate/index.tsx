@@ -62,6 +62,7 @@ export default function GroupCreate({
 		},
 	});
 	const watchRecurring = watch('recurring');
+	const watchRecurringStill = watch('recurring_still');
 	const watchCategory: string = watch('category');
 
 	// The options are pulled from a cookie, and react-hook-form has problems setting a default value
@@ -158,11 +159,20 @@ export default function GroupCreate({
 					</Label>
 
 					<Label className="join-item w-1/2" htmlFor="recurring_still">
-						Still Recurring
+						Recurring Still?
 						<Input
 							disabled={!watchRecurring}
 							type="checkbox"
 							{...register('recurring_still')}
+						/>
+					</Label>
+
+					<Label className="join-item w-1/2" htmlFor="recurring_autopay">
+						Set to Autopay?
+						<Input
+							disabled={!watchRecurringStill}
+							type="checkbox"
+							{...register('recurring_autopay')}
 						/>
 					</Label>
 				</div>

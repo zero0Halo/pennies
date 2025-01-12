@@ -3,9 +3,13 @@
 import dayjs from 'dayjs';
 import { apiCall } from '@/utils/app';
 import type { AccountData, TransactionWithDateData } from '@/app/types';
-import { useAccountsCookie, useLoading } from '@/app/hooks/client';
+import {
+	useAccountsCookie,
+	useLoading,
+	useMonthlySumLS,
+} from '@/app/hooks/client';
 import Select from '../Select';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Button';
 import Transactions from '@/app/components/Transactions';
@@ -40,12 +44,30 @@ export default function TransactionsMonth({
 		month: false,
 	});
 
-	// CUSTOM MHOOKS
-	const { getAccountByUid, options: accountOptions } = useAccountsCookie();
-	const { Loading, props, setLoading } = useLoading();
+	// Memo
+	const sum = useMemo(() => {
+		if (!transactionsData || transactionsData.length === 0) return 0;
+
+		return transactionsData
+			.map(([_, transactions]) => transactions)
+			.reduce(
+				// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+				(acc, arrayOfTransactions) => [...acc, ...arrayOfTransactions],
+				[],
+			)
+			.reduce((acc, { amount }) => acc + amount, 0);
+	}, [transactionsData]);
 
 	// REACT FORM
 	const { getValues, register, setValue, watch } = useForm();
+
+	// CUSTOM MHOOKS
+	const { getAccountByUid, options: accountOptions } = useAccountsCookie();
+	const { Loading, props, setLoading } = useLoading();
+	const { monthlySumData } = useMonthlySumLS({
+		month: getValues('month'),
+		year: getValues('year'),
+	});
 
 	// EFFECTS
 	useEffect(() => {
@@ -190,6 +212,7 @@ export default function TransactionsMonth({
 			<section className={toggleState.today ? 'block' : 'hidden'}>
 				<Hub
 					monthName={getValues('month')}
+					monthlySumData={monthlySumData}
 					transactionsData={transactionsData}
 					year={+getValues('year')}
 				/>

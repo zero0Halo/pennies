@@ -3,19 +3,20 @@
 import type React from 'react';
 import { useHub } from '@/app/hooks/client';
 import Transactions from '../Transactions';
-import useMonthlySumLS from '@/app/hooks/client/useMonthlySumLS';
 import { formatAmount } from '@/utils/app';
-import type { TransactionWithDateData } from '@/app/types';
+import type { MonthlySumData, TransactionWithDateData } from '@/app/types';
 import { MONTHS } from '@/app/constants';
 
 interface HubProps {
 	monthName: string;
+	monthlySumData: MonthlySumData | undefined;
 	transactionsData: TransactionWithDateData[] | undefined;
 	year: number;
 }
 
 export default function Hub({
 	monthName,
+	monthlySumData,
 	transactionsData,
 	year,
 }: HubProps): React.ReactNode {
@@ -23,7 +24,6 @@ export default function Hub({
 	const month = MONTHS.indexOf(monthName);
 
 	// CUSTOM HOOKS
-	const { monthlySumData } = useMonthlySumLS({ month, year });
 	const { recurring, sumForDate, todayDate, transactions } = useHub({
 		transactionsData,
 	});
