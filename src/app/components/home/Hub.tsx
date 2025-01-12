@@ -13,7 +13,7 @@ import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import Transactions from '../Transactions';
 import { getIsoDate } from '@/utils/general';
-import useMonthlySumData from '@/app/hooks/client/useMonthlySumDataCookie';
+import useMonthlySumData from '@/app/hooks/client/useMonthlySumLS';
 
 interface HubProps {
 	monthName: string;
@@ -35,22 +35,35 @@ export default function Hub({
 		transactionsData,
 	});
 
-	console.log({ monthlySumData });
+	const statsArray = [
+		{ label: 'Day', value: `${todayDate} ${monthName}, ${year}` },
+		{ label: 'Day Total', value: formatAmount(sumForDate ?? 0) },
+		{
+			label: 'Month Total',
+			value: formatAmount(monthlySumData?.sum ?? 0),
+		},
+	];
+
 	return (
 		<section>
-			<h3>
-				{todayDate} {monthName}, {year}
-			</h3>
-
-			<div>Day Total: {formatAmount(sumForDate ?? 0)}</div>
-			<div>Month Total: {formatAmount(monthlySumData?.sum ?? 0)}</div>
+			<div className="stats w-full bg-black text-white my-4">
+				{statsArray.map((stat) => (
+					<div className="stat" key={stat.label}>
+						<span className="stat-title text-white">{stat.label}</span>
+						<span className="stat-value text-white">{stat.value}</span>
+					</div>
+				))}
+			</div>
 
 			<h4>Recurring</h4>
 			<Transactions transactions={recurring ?? []} view="standard" />
+			{!recurring && <h5>None</h5>}
 
 			<div className="divider" />
 
+			<h4>Singletons</h4>
 			<Transactions transactions={transactions ?? []} view="standard" />
+			{!transactions && <h5>None</h5>}
 		</section>
 	);
 

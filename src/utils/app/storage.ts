@@ -10,6 +10,19 @@ interface SetArgs {
 	keyName: string;
 }
 
+function get<T>({ keyName }: { keyName: string }): T | string | boolean {
+	const item = localStorage.getItem(keyName);
+
+	if (item) {
+		try {
+			return JSON.parse(item);
+		} catch {
+			return item;
+		}
+	}
+	return false;
+}
+
 function removeAll() {
 	localStorage.removeItem(CSV_UPLOAD);
 	localStorage.removeItem(MONTHLY_SUMS);
@@ -30,6 +43,7 @@ function set({ keyName, data }: SetArgs): boolean {
 }
 
 const storage = {
+	get,
 	removeAll,
 	set,
 };

@@ -63,7 +63,7 @@ export default function TransactionsMonth({
 
 	// HANDLERS
 	const handleGetTransactions = async () => {
-		setLoading(true);
+		// setLoading(true);
 
 		const account = getValues('account');
 		const month = getValues('month');
@@ -213,6 +213,14 @@ export default function TransactionsMonth({
 						/>
 					</div>
 				))}
+
+				{!transactionsData ||
+					(transactionsData.length === 0 && (
+						<>
+							<h4>Transactions</h4>
+							<h5>None</h5>
+						</>
+					))}
 			</section>
 		</section>
 	);
