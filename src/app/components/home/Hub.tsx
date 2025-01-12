@@ -1,19 +1,12 @@
 'use client';
 
-import { MONTHLY_SUMS, MONTHS } from '@/app/constants';
-import { useClientCookie, useHub } from '@/app/hooks/client';
-import type {
-	MonthlySumData,
-	TransactionDateMetaData,
-	TransactionWithDateData,
-	TransactionWithGroupData,
-} from '@/app/types';
-import { formatAmount } from '@/utils/app';
 import type React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useHub } from '@/app/hooks/client';
 import Transactions from '../Transactions';
-import { getIsoDate } from '@/utils/general';
-import useMonthlySumData from '@/app/hooks/client/useMonthlySumLS';
+import useMonthlySumLS from '@/app/hooks/client/useMonthlySumLS';
+import { formatAmount } from '@/utils/app';
+import type { TransactionWithDateData } from '@/app/types';
+import { MONTHS } from '@/app/constants';
 
 interface HubProps {
 	monthName: string;
@@ -30,7 +23,7 @@ export default function Hub({
 	const month = MONTHS.indexOf(monthName);
 
 	// CUSTOM HOOKS
-	const { monthlySumData } = useMonthlySumData({ month, year });
+	const { monthlySumData } = useMonthlySumLS({ month, year });
 	const { recurring, sumForDate, todayDate, transactions } = useHub({
 		transactionsData,
 	});
@@ -66,28 +59,4 @@ export default function Hub({
 			{!transactions && <h5>None</h5>}
 		</section>
 	);
-
-	// JSX
-	// return (
-	// 	<div>
-	// 		<h3>{monthlySumData && formatAmount(monthlySumData.sum)}</h3>
-
-	// 		{recurringTransactionsData?.map(([dayMeta, transactions]) => (
-	// 			<div key={dayMeta.date} className="flex mb-8">
-	// 				<div className="relative">
-	// 					<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
-	// 						{dayMeta.date}
-	// 					</div>
-	// 					<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
-	// 						{dayMeta.day}
-	// 					</div>
-	// 				</div>
-	// 				<Transactions
-	// 					tableClassName="rounded-tl-none"
-	// 					transactions={transactions}
-	// 				/>
-	// 			</div>
-	// 		))}
-	// 	</div>
-	// );
 }
