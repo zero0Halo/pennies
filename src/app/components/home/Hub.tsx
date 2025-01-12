@@ -6,6 +6,7 @@ import Transactions from '../Transactions';
 import { formatAmount } from '@/utils/app';
 import type { MonthlySumData, TransactionWithDateData } from '@/app/types';
 import { MONTHS } from '@/app/constants';
+import StatRow from '../StatRow';
 
 interface HubProps {
 	monthName: string;
@@ -21,7 +22,7 @@ export default function Hub({
 	year,
 }: HubProps): React.ReactNode {
 	// SHUGAH
-	const month = MONTHS.indexOf(monthName);
+	// const month = MONTHS.indexOf(monthName);
 
 	// CUSTOM HOOKS
 	const { recurring, sumForDate, todayDate, transactions } = useHub({
@@ -39,14 +40,7 @@ export default function Hub({
 
 	return (
 		<section>
-			<div className="stats w-full bg-black text-white my-4">
-				{statsArray.map((stat) => (
-					<div className="stat" key={stat.label}>
-						<span className="stat-title text-white">{stat.label}</span>
-						<span className="stat-value text-white">{stat.value}</span>
-					</div>
-				))}
-			</div>
+			<StatRow stats={statsArray} />
 
 			<h4>Recurring</h4>
 			<Transactions transactions={recurring ?? []} view="standard" />

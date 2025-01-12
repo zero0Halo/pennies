@@ -1,7 +1,7 @@
 'use client';
 
 import dayjs from 'dayjs';
-import { apiCall } from '@/utils/app';
+import { apiCall, formatAmount } from '@/utils/app';
 import type { AccountData, TransactionWithDateData } from '@/app/types';
 import {
 	useAccountsCookie,
@@ -17,6 +17,7 @@ import { MONTHS, YEARS } from '@/app/constants';
 import { FormMessaging, useFormMessagingContext } from '../FormMessaging';
 import Hub from './Hub';
 import ButtonToggles, { type ToggleStateData } from '../ButtonToggles';
+import StatRow from '../StatRow';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | undefined;
@@ -44,11 +45,22 @@ export default function TransactionsMonth({
 		month: false,
 	});
 
-	// Memo
+	// REACT FORM
+	const { getValues, register, setValue, watch } = useForm();
+
+	// CUSTOM HOOKS
+	const { getAccountByUid, options: accountOptions } = useAccountsCookie();
+	const { Loading, props, setLoading } = useLoading();
+	const { monthlySumData } = useMonthlySumLS({
+		month: MONTHS.indexOf(getValues('month')),
+		year: +getValues('year'),
+	});
+
+	// MEMO
 	const sum = useMemo(() => {
 		if (!transactionsData || transactionsData.length === 0) return 0;
 
-		return transactionsData
+		const _sum = transactionsData
 			.map(([_, transactions]) => transactions)
 			.reduce(
 				// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
@@ -56,18 +68,14 @@ export default function TransactionsMonth({
 				[],
 			)
 			.reduce((acc, { amount }) => acc + amount, 0);
-	}, [transactionsData]);
 
-	// REACT FORM
-	const { getValues, register, setValue, watch } = useForm();
+		if (monthlySumData?.sum !== _sum) {
+			console.error(`Values do not match: ${_sum} and ${monthlySumData?.sum}`);
+			return 0;
+		}
 
-	// CUSTOM MHOOKS
-	const { getAccountByUid, options: accountOptions } = useAccountsCookie();
-	const { Loading, props, setLoading } = useLoading();
-	const { monthlySumData } = useMonthlySumLS({
-		month: getValues('month'),
-		year: getValues('year'),
-	});
+		return _sum;
+	}, [monthlySumData?.sum, transactionsData]);
 
 	// EFFECTS
 	useEffect(() => {
@@ -142,6 +150,15 @@ export default function TransactionsMonth({
 			}
 		});
 	};
+
+	// SHUGAH
+	const statsArray = [
+		{ label: 'Month', value: `${getValues('month')}, ${getValues('year')}` },
+		{
+			label: 'Month Total',
+			value: formatAmount(sum),
+		},
+	];
 
 	// JSX
 	return (
@@ -220,6 +237,8 @@ export default function TransactionsMonth({
 
 			{/* Month View */}
 			<section className={toggleState.month ? 'block' : 'hidden'}>
+				<StatRow stats={statsArray} />
+
 				{transactionsData.map(([dayMeta, transactions]) => (
 					<div key={dayMeta.date} className="flex mb-8">
 						<div className="relative">
