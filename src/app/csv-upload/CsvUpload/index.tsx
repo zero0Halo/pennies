@@ -49,8 +49,9 @@ export default function CsvUpload() {
 		return null;
 	}
 
-	// Check for CSV data in local storage
+	// EFFECTS
 	useEffect(() => {
+		// Check for CSV data in local storage
 		if (!CSVData && previousData === undefined) {
 			const localStorageData =
 				typeof window !== 'undefined'
@@ -61,6 +62,7 @@ export default function CsvUpload() {
 		}
 	}, [CSVData, previousData]);
 
+	// HANDLERS
 	async function handleCsvUpload(formData: CsvUploadData) {
 		try {
 			const fileData: File = formData.csvfile[0];
@@ -86,6 +88,7 @@ export default function CsvUpload() {
 		}
 	}
 
+	// JSX
 	return (
 		<section className="px-4 relative">
 			<FormMessaging />

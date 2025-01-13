@@ -44,7 +44,7 @@ export default function findRecurring(transactions: TransactionData[]) {
 	const today = dayjs(new Date().getTime());
 	const recurring_still =
 		recurring && today.diff(transactions[0].timestamp, 'M') <= 1;
-	console.log({ recurring_type });
+
 	return {
 		recurring,
 		recurring_type,

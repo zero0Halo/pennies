@@ -95,6 +95,7 @@ export type TransactionWithGroupData = TransactionData & {
 	account_name: string;
 	group_name?: string;
 	group_recurring: boolean;
+	group_recurring_autopay: boolean;
 	group_recurring_type?: RecurringType;
 	group_recurring_still?: boolean;
 	group_site_url?: string;

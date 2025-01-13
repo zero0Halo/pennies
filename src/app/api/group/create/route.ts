@@ -1,9 +1,10 @@
 // src/app/api/group/create/route.ts
 import { NextResponse } from 'next/server';
 import partials from '@/app/api/partials';
-import { cookieJar, responseFactory, upsertIsGood } from '@/utils/api';
+import { upsertIsGood } from '@/utils/api';
 import { MONTHLY_SUMS } from '@/app/constants';
 import type { MonthlySumData } from '@/app/types';
+import superiorBaseFactory from '@/utils/superiorBaseFactory';
 
 export async function POST(req: Request) {
 	try {
@@ -115,17 +116,16 @@ export async function POST(req: Request) {
 		}
 
 		// Create the response to return
-		const response = responseFactory(`Group "${group.name}" Created!`, {}, 200);
+		// const response = responseFactory(`Group "${group.name}" Created!`, {}, 200);
+		const superiorBase = await superiorBaseFactory();
+		const { error: monthlySumsError, success: response } = await superiorBase
+			.from(MONTHLY_SUMS)
+			.select('*')
+			.eq('account_uid', account_uid)
+			.eq('user_uid', user_uid)
+			.go<MonthlySumData>();
 
-		// Get monthly_sum data for the cookie
-		const { data: monthlySumsCookie, error: groupsCookieError } =
-			await monthlySumsSelect();
-		if (groupsCookieError) return groupsCookieError;
-
-		// Add the data to the cookie
-		response.cookies.set(
-			...cookieJar({ name: MONTHLY_SUMS, data: monthlySumsCookie }),
-		);
+		if (monthlySumsError || response === null) return monthlySumsError;
 
 		return response;
 	} catch (error: unknown) {
