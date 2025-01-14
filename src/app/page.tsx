@@ -20,8 +20,8 @@ interface GetTransactionsArguments {
 }
 
 type GetInitialData = {
-	monthlySums: GetMonthlySumsData | undefined;
-	transactions: GetTransactionsData | undefined;
+	monthlySums: GetMonthlySumsData | null;
+	transactions: GetTransactionsData | null;
 };
 
 type GetTransactionsData = {
@@ -40,8 +40,11 @@ async function getInitialData({
 	defaultAccount,
 	defaultDate,
 	userData,
-}: GetTransactionsArguments): Promise<GetInitialData> {
-	const response = { monthlySums: undefined, transactions: undefined };
+}: GetTransactionsArguments): Promise<{
+	monthlySums: MonthlySumData[] | null;
+	transactions: TransactionWithDateData[] | null;
+}> {
+	const response = { monthlySums: null, transactions: null };
 
 	if (typeof defaultAccount !== 'object' || typeof userData !== 'object')
 		return response;
@@ -51,7 +54,7 @@ async function getInitialData({
 		: false;
 	if (!accountCheck) return response;
 
-	const transactionResponse: GetTransactionsData = await apiCall(
+	const transactionResponse = await apiCall<TransactionWithDateData[]>(
 		'/api/transactions/select/by-day',
 		{
 			payload: {
@@ -61,7 +64,7 @@ async function getInitialData({
 		},
 	);
 
-	const monthlySumResponse: GetMonthlySumsData = await apiCall(
+	const monthlySumResponse = await apiCall<MonthlySumData[]>(
 		'/api/monthly_sums/select',
 		{
 			payload: {
@@ -73,7 +76,10 @@ async function getInitialData({
 
 	if (transactionResponse.error || monthlySumResponse.error) return response;
 
-	return { monthlySums: monthlySumResponse, transactions: transactionResponse };
+	return {
+		monthlySums: monthlySumResponse.data,
+		transactions: transactionResponse.data,
+	};
 }
 
 // COMPONENT
@@ -88,7 +94,13 @@ export default async function Home() {
 	const defaultDate = new Date().toDateString();
 
 	// DATA CALL
-	const { monthlySums, transactions }: GetInitialData = await getInitialData({
+	const {
+		monthlySums,
+		transactions,
+	}: {
+		monthlySums: MonthlySumData[] | null;
+		transactions: TransactionWithDateData[] | null;
+	} = await getInitialData({
 		defaultAccount,
 		defaultDate,
 		userData,
@@ -98,7 +110,7 @@ export default async function Home() {
 	return (
 		<div className="px-4">
 			{monthlySums && (
-				<ToLocalStorage data={monthlySums.data} keyName={MONTHLY_SUMS} />
+				<ToLocalStorage data={monthlySums} keyName={MONTHLY_SUMS} />
 			)}
 
 			{/* Logged in, show transactions */}
@@ -107,7 +119,7 @@ export default async function Home() {
 					<TransactionsMonth
 						defaultAccount={defaultAccount}
 						defaultDate={defaultDate}
-						defaultTransactionsData={transactions.data}
+						defaultTransactionsData={transactions}
 					/>
 				</FormMessagingWrapper>
 			)}

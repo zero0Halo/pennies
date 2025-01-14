@@ -253,19 +253,18 @@ class SuperiorBase {
 		// TODO: NEED TO ACTUALLY ROLLBACK THE UPSERT AND NOT JUST THROW AN ERROR
 		// const upsertCheck = this.upsertCheck(data);
 		// if (upsertCheck) console.error('Shit. Upsert size is wrong.');
-		console.log({ data });
-		console.log({ error });
+
 		if (data) {
 			response.data = data;
-			response.success = responseSuccess(
-				this.successMsg ?? this.buildMessage({ success: true }),
+			response.success = responseSuccess({
+				message: this.successMsg ?? this.buildMessage({ success: true }),
 				data,
-			);
+			});
 		} else if (error) {
-			response.error = responseError(
-				this.errorMsg ?? this.buildMessage({ success: false }),
-				error,
-			);
+			response.error = responseError({
+				data: null,
+				message: this.errorMsg ?? this.buildMessage({ success: false }),
+			});
 		}
 
 		this.reset();

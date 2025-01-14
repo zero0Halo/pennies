@@ -20,9 +20,9 @@ import ButtonToggles, { type ToggleStateData } from '../ButtonToggles';
 import StatRow from '../StatRow';
 
 interface TransactionsMonthProps {
-	defaultAccount: AccountData | undefined;
+	defaultAccount: AccountData | null;
 	defaultDate: string;
-	defaultTransactionsData: TransactionWithDateData[];
+	defaultTransactionsData: TransactionWithDateData[] | null;
 }
 
 // COMPONENT
@@ -31,7 +31,7 @@ export default function TransactionsMonth({
 	defaultDate,
 	defaultTransactionsData,
 }: TransactionsMonthProps) {
-	if (defaultAccount === undefined) return null;
+	if (defaultAccount === null) return null;
 
 	// CONTEXT
 	const { setError, setSuccess } = useFormMessagingContext();
@@ -239,7 +239,7 @@ export default function TransactionsMonth({
 			<section className={toggleState.month ? 'block' : 'hidden'}>
 				<StatRow stats={statsArray} />
 
-				{transactionsData.map(([dayMeta, transactions]) => (
+				{transactionsData?.map(([dayMeta, transactions]) => (
 					<div key={dayMeta.date} className="flex mb-8">
 						<div className="relative">
 							<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
