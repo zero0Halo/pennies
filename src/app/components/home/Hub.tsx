@@ -23,7 +23,7 @@ export default function Hub({
 	// SHUGAH
 
 	// CUSTOM HOOKS
-	const { recurring, sumForDate, todayDate, transactions } = useHub({
+	const { noAutopay, recurring, sumForDate, todayDate, transactions } = useHub({
 		transactionsData,
 	});
 
@@ -40,14 +40,20 @@ export default function Hub({
 		<section>
 			<StatRow stats={statsArray} />
 
+			<h4>Manual Pay</h4>
+			<Transactions transactions={noAutopay || []} view="standard" />
+			{!noAutopay && <h5>None</h5>}
+
+			<div className="divider" />
+
 			<h4>Recurring</h4>
-			<Transactions transactions={recurring ?? []} view="standard" />
+			<Transactions transactions={recurring || []} view="standard" />
 			{!recurring && <h5>None</h5>}
 
 			<div className="divider" />
 
 			<h4>Singletons</h4>
-			<Transactions transactions={transactions ?? []} view="standard" />
+			<Transactions transactions={transactions || []} view="standard" />
 			{!transactions && <h5>None</h5>}
 		</section>
 	);

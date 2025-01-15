@@ -9,6 +9,7 @@ interface UseHubProps {
 }
 
 type UseHubData = {
+	noAutopay: TransactionWithGroupData[] | null;
 	recurring: TransactionWithGroupData[] | null;
 	sumForDate: number | null;
 	todayDate: number;
@@ -30,6 +31,9 @@ export default function useHub({ transactionsData }: UseHubProps): UseHubData {
 	const [recurring, setRecurring] = useState<
 		TransactionWithGroupData[] | null
 	>();
+	const [noAutopay, setNoAutopay] = useState<
+		TransactionWithGroupData[] | null
+	>();
 
 	useEffect(() => {
 		if (Array.isArray(transactionsData)) {
@@ -44,9 +48,16 @@ export default function useHub({ transactionsData }: UseHubProps): UseHubData {
 				) ?? null;
 			const _recurring =
 				_transactionsForDate?.filter(
-					({ group_recurring }) => group_recurring,
+					({ group_recurring, group_recurring_autopay }) =>
+						group_recurring && group_recurring_autopay,
+				) ?? null;
+			const _noAutopay =
+				_transactionsForDate?.filter(
+					({ group_recurring, group_recurring_autopay }) =>
+						group_recurring && !group_recurring_autopay,
 				) ?? null;
 
+			setNoAutopay(_noAutopay);
 			setRecurring(_recurring);
 			setSumForDate(_sumForDate);
 			setTransactions(_transactions);
@@ -55,6 +66,7 @@ export default function useHub({ transactionsData }: UseHubProps): UseHubData {
 	}, [todayDate, transactionsData]);
 
 	return {
+		noAutopay: Array.isArray(noAutopay) ? noAutopay : null,
 		recurring: Array.isArray(recurring) ? recurring : null,
 		sumForDate,
 		todayDate,

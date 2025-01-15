@@ -138,7 +138,6 @@ export default function TransactionsMonth({
 				},
 			},
 		);
-		console.log(response);
 
 		setLoading(false, () => {
 			if (response.data) {
