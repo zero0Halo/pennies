@@ -22,7 +22,7 @@ type UpsertOptions = UpsertOptionsBase & {
 	revertOnFail?: boolean;
 };
 type SuperiorBaseResponse<T> = {
-	data: T | T[] | null;
+	data: T | null;
 	error: null | NextResponse;
 	success: null | NextResponse;
 };

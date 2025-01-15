@@ -129,13 +129,16 @@ export default function TransactionsMonth({
 			updatedMonth = 11;
 			updatedYear -= 1;
 		}
-
-		const response = await apiCall('/api/transactions/select/by-day', {
-			payload: {
-				account_uid: account,
-				date: `${MONTHS[updatedMonth]} ${updatedYear}`,
+		const response = await apiCall<TransactionWithDateData[]>(
+			'/api/transactions/select/by-day',
+			{
+				payload: {
+					account_uid: account,
+					date: `${MONTHS[updatedMonth]} ${updatedYear}`,
+				},
 			},
-		});
+		);
+		console.log(response);
 
 		setLoading(false, () => {
 			if (response.data) {

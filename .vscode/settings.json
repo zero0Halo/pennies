@@ -3,7 +3,8 @@
 	"editor.codeActionsOnSave": {
 		"quickfix.biome": "explicit",
 		"source.fixAll": "explicit",
-		"source.fix": "explicit"
+		"source.fix": "explicit",
+		"source.organizeImports.biome": "never"
 	},
 	"editor.defaultFormatter": "biomejs.biome",
 	"[javascript]": {
@@ -11,11 +12,6 @@
 	},
 	"files.associations": {
 		"*.css": "tailwindcss"
-	},
-	"workbench.editor.labelFormat": "short",
-	"tabsColor.activeTab": {
-		"backgroundColor": "black",
-		"fontColor": "white"
 	},
 	"workbench.colorCustomizations": {
 		"editorUnnecessaryCode.border": "#f6ff00",
