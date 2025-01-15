@@ -9,47 +9,29 @@ import { MONTHLY_SUMS, USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
 import TransactionsMonth from './components/home/TransactionsMonth';
-import useAccountsCookie from './hooks/server/useAccounts';
+import useAccountsCookie from './hooks/server/useAccountsCookie';
 import { FormMessagingWrapper } from './components/FormMessaging';
 import ToLocalStorage from './components/ToLocalStorage';
 
-interface GetTransactionsArguments {
-	defaultAccount: AccountData | undefined;
+interface GetInitialDataArguments {
+	defaultAccount: AccountData | null;
 	defaultDate: string;
-	userData: UserData | undefined | boolean;
+	userData: UserData | boolean | null;
 }
-
-type GetInitialData = {
-	monthlySums: GetMonthlySumsData | null;
-	transactions: GetTransactionsData | null;
-};
-
-type GetTransactionsData = {
-	data: TransactionWithDateData[];
-	error: string | null;
-	message: string;
-};
-
-type GetMonthlySumsData = {
-	data: MonthlySumData[];
-	error: string | null;
-	message: string;
-};
 
 async function getInitialData({
 	defaultAccount,
 	defaultDate,
 	userData,
-}: GetTransactionsArguments): Promise<{
+}: GetInitialDataArguments): Promise<{
 	monthlySums: MonthlySumData[] | null;
 	transactions: TransactionWithDateData[] | null;
 }> {
 	const response = { monthlySums: null, transactions: null };
 
-	if (typeof defaultAccount !== 'object' || typeof userData !== 'object')
-		return response;
+	if (defaultAccount === null || userData === null) return response;
 
-	const accountCheck: boolean = userData?.accounts
+	const accountCheck: boolean = userData.accounts
 		? userData.accounts.includes(defaultAccount.uid)
 		: false;
 	if (!accountCheck) return response;
