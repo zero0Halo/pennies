@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 	console.log({ account_uid, date });
 
 	// Get transactions for the specified month
-	const { data: _transactionsData, error: transactionsDataError } =
+	const { data: transactionsData, error: transactionsDataError } =
 		await superiorBase
 			.from('transactions_with_group')
 			.select('*')
@@ -28,13 +28,14 @@ export async function POST(req: Request) {
 			.order('timestamp')
 			.go<TransactionWithGroupData[]>();
 	if (
-		_transactionsData === null ||
+		transactionsData === null ||
 		transactionsDataError ||
-		!Array.isArray(_transactionsData)
+		!Array.isArray(transactionsData)
 	)
 		return transactionsDataError;
 
-	const transactionsData = _transactionsData as TransactionWithGroupData[];
+	// const transactionsData = _transactionsData as TransactionWithGroupData[];
+	// const transactionsData = _transactionsData;
 
 	// Group the transactions by day
 	const byDay: TransactionGroupByDayData = transactionsData.reduce(
@@ -69,5 +70,8 @@ export async function POST(req: Request) {
 			return a[0].date - b[0].date;
 		});
 
-	return responseSuccess('Successfully retrieved transactions!', byDayArray);
+	return responseSuccess({
+		message: 'Successfully retrieved transactions!',
+		data: byDayArray,
+	});
 }

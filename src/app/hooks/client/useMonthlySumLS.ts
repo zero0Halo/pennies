@@ -14,8 +14,8 @@ export default function useMonthlySumLS({
 	month,
 	year,
 }: UseMonthlySumLSProps): {
-	monthlySumData: MonthlySumData | undefined;
-	monthlySumsData: MonthlySumData[] | undefined;
+	monthlySumData: MonthlySumData | null;
+	monthlySumsData: MonthlySumData[] | null;
 } {
 	// UTIL
 	const data = storage.get<MonthlySumData[] | string | boolean>({
@@ -24,20 +24,23 @@ export default function useMonthlySumLS({
 
 	// MEMO
 	const monthlySumsData = useMemo(
-		() => (Array.isArray(data) ? data : undefined),
+		() => (Array.isArray(data) ? data : null),
 		[data],
 	);
 	const monthlySumData = useMemo(() => {
 		if (monthlySumsData) {
-			return monthlySumsData.find(({ timestamp }) => {
-				const date = new Date(timestamp);
-				const m = date.getMonth();
-				const y = date.getFullYear();
+			return (
+				monthlySumsData.find(({ timestamp }) => {
+					const date = new Date(timestamp);
+					const m = date.getMonth();
+					const y = date.getFullYear();
 
-				return m === +month && y === year;
-			});
+					return m === +month && y === year;
+				}) || null
+			);
 		}
-		return undefined;
+
+		return null;
 	}, [month, monthlySumsData, year]);
 
 	return { monthlySumData, monthlySumsData };

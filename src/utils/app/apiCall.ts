@@ -1,9 +1,9 @@
 import type { SettingsData } from '@/app/types';
 
-export default async function apiCall(
+export default async function apiCall<T = null>(
 	endpoint: string,
 	settings: SettingsData,
-) {
+): Promise<{ data: T | null; error: boolean; message: string }> {
 	try {
 		const isServer = typeof window === 'undefined';
 		let path = endpoint;
@@ -46,7 +46,7 @@ export default async function apiCall(
 			}
 		} else {
 			settings?.onError?.(msg);
-			return { error: true, message: msg };
+			return { data: null, error: true, message: msg };
 		}
 
 		return body;

@@ -5,13 +5,12 @@ import { useHub } from '@/app/hooks/client';
 import Transactions from '../Transactions';
 import { formatAmount } from '@/utils/app';
 import type { MonthlySumData, TransactionWithDateData } from '@/app/types';
-import { MONTHS } from '@/app/constants';
 import StatRow from '../StatRow';
 
 interface HubProps {
 	monthName: string;
-	monthlySumData: MonthlySumData | undefined;
-	transactionsData: TransactionWithDateData[] | undefined;
+	monthlySumData: MonthlySumData | null;
+	transactionsData: TransactionWithDateData[] | null;
 	year: number;
 }
 
@@ -22,7 +21,6 @@ export default function Hub({
 	year,
 }: HubProps): React.ReactNode {
 	// SHUGAH
-	// const month = MONTHS.indexOf(monthName);
 
 	// CUSTOM HOOKS
 	const { recurring, sumForDate, todayDate, transactions } = useHub({

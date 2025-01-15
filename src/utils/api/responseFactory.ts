@@ -1,21 +1,37 @@
 import { NextResponse } from 'next/server';
 
-export type Data = object | null | undefined;
-type Status = number | undefined;
-
-export default function responseFactory(
-	message: string,
-	data?: Data,
-	status?: Status,
-): NextResponse {
-	return NextResponse.json({ message, data }, { status: status ?? 400 });
+interface ResponseFactoryArgs {
+	data: object | null;
+	error: boolean;
+	message: string;
+	status: number;
 }
 
-export function responseError(message: string, data?: Data): NextResponse {
+interface ResponseArgs {
+	data?: object | null;
+	message: string;
+}
+
+export default function responseFactory({
+	data = null,
+	error,
+	message,
+	status,
+}: ResponseFactoryArgs): NextResponse {
+	return NextResponse.json({ data, error, message }, { status: status ?? 400 });
+}
+
+export function responseError({
+	data = null,
+	message,
+}: ResponseArgs): NextResponse {
 	console.error({ message, data });
-	return responseFactory(message, data, 400);
+	return responseFactory({ data, error: true, message, status: 400 });
 }
 
-export function responseSuccess(message: string, data?: Data): NextResponse {
-	return responseFactory(message, data, 200);
+export function responseSuccess({
+	data = null,
+	message,
+}: ResponseArgs): NextResponse {
+	return responseFactory({ data, error: false, message, status: 200 });
 }

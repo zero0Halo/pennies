@@ -9,49 +9,34 @@ import { MONTHLY_SUMS, USER } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
 import TransactionsMonth from './components/home/TransactionsMonth';
-import useAccountsCookie from './hooks/server/useAccounts';
+import useAccountsCookie from './hooks/server/useAccountsCookie';
 import { FormMessagingWrapper } from './components/FormMessaging';
 import ToLocalStorage from './components/ToLocalStorage';
 
-interface GetTransactionsArguments {
-	defaultAccount: AccountData | undefined;
+interface GetInitialDataArguments {
+	defaultAccount: AccountData | null;
 	defaultDate: string;
-	userData: UserData | undefined | boolean;
+	userData: UserData | boolean | null;
 }
-
-type GetInitialData = {
-	monthlySums: GetMonthlySumsData | undefined;
-	transactions: GetTransactionsData | undefined;
-};
-
-type GetTransactionsData = {
-	data: TransactionWithDateData[];
-	error: string | null;
-	message: string;
-};
-
-type GetMonthlySumsData = {
-	data: MonthlySumData[];
-	error: string | null;
-	message: string;
-};
 
 async function getInitialData({
 	defaultAccount,
 	defaultDate,
 	userData,
-}: GetTransactionsArguments): Promise<GetInitialData> {
-	const response = { monthlySums: undefined, transactions: undefined };
+}: GetInitialDataArguments): Promise<{
+	monthlySums: MonthlySumData[] | null;
+	transactions: TransactionWithDateData[] | null;
+}> {
+	const response = { monthlySums: null, transactions: null };
 
-	if (typeof defaultAccount !== 'object' || typeof userData !== 'object')
-		return response;
+	if (defaultAccount === null || userData === null) return response;
 
-	const accountCheck: boolean = userData?.accounts
+	const accountCheck: boolean = userData.accounts
 		? userData.accounts.includes(defaultAccount.uid)
 		: false;
 	if (!accountCheck) return response;
 
-	const transactionResponse: GetTransactionsData = await apiCall(
+	const transactionResponse = await apiCall<TransactionWithDateData[]>(
 		'/api/transactions/select/by-day',
 		{
 			payload: {
@@ -61,7 +46,7 @@ async function getInitialData({
 		},
 	);
 
-	const monthlySumResponse: GetMonthlySumsData = await apiCall(
+	const monthlySumResponse = await apiCall<MonthlySumData[]>(
 		'/api/monthly_sums/select',
 		{
 			payload: {
@@ -73,7 +58,10 @@ async function getInitialData({
 
 	if (transactionResponse.error || monthlySumResponse.error) return response;
 
-	return { monthlySums: monthlySumResponse, transactions: transactionResponse };
+	return {
+		monthlySums: monthlySumResponse.data,
+		transactions: transactionResponse.data,
+	};
 }
 
 // COMPONENT
@@ -88,7 +76,13 @@ export default async function Home() {
 	const defaultDate = new Date().toDateString();
 
 	// DATA CALL
-	const { monthlySums, transactions }: GetInitialData = await getInitialData({
+	const {
+		monthlySums,
+		transactions,
+	}: {
+		monthlySums: MonthlySumData[] | null;
+		transactions: TransactionWithDateData[] | null;
+	} = await getInitialData({
 		defaultAccount,
 		defaultDate,
 		userData,
@@ -98,7 +92,7 @@ export default async function Home() {
 	return (
 		<div className="px-4">
 			{monthlySums && (
-				<ToLocalStorage data={monthlySums.data} keyName={MONTHLY_SUMS} />
+				<ToLocalStorage data={monthlySums} keyName={MONTHLY_SUMS} />
 			)}
 
 			{/* Logged in, show transactions */}
@@ -107,7 +101,7 @@ export default async function Home() {
 					<TransactionsMonth
 						defaultAccount={defaultAccount}
 						defaultDate={defaultDate}
-						defaultTransactionsData={transactions.data}
+						defaultTransactionsData={transactions}
 					/>
 				</FormMessagingWrapper>
 			)}

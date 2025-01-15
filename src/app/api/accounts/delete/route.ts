@@ -22,7 +22,9 @@ export async function POST(req: Request) {
 		? accountsData.find((account) => account.is_default)
 		: false;
 	if (defaultAccount === false)
-		return responseError('No Default Account, which shouldnt be possible');
+		return responseError({
+			message: 'No Default Account, which shouldnt be possible',
+		});
 
 	// If the account being deleted is the default and there will be an account left when it's gone,
 	// assign the first account as the new default

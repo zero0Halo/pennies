@@ -1,5 +1,14 @@
 {
 	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+	"files": {
+		"ignoreUnknown": true,
+		"ignore": [
+			"node_modules"
+		],
+		"include": [
+			"src/**/*"
+		]
+	},
 	"organizeImports": {
 		"enabled": true
 	},

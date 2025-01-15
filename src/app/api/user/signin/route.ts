@@ -2,8 +2,8 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase';
-import { responseFactory } from '@/utils/api';
 import { ACCOUNTS, IS_LOGGED_IN, USER, USERS } from '@/app/constants';
+import { responseError, responseSuccess } from '@/utils/api/responseFactory';
 
 export async function POST(req: Request) {
 	try {
@@ -18,7 +18,10 @@ export async function POST(req: Request) {
 			});
 
 		if (authError)
-			return responseFactory('Error Authorizing User Account', authError);
+			return responseError({
+				message: 'Error Authorizing User Account',
+				data: authError,
+			});
 
 		const { data: userData, error: userError } = await supabase
 			.from(USERS)
@@ -27,7 +30,10 @@ export async function POST(req: Request) {
 			.single();
 
 		if (userError)
-			return responseFactory('Error Retrieving User Data', userError);
+			return responseError({
+				message: 'Error Retrieving User Data',
+				data: userError,
+			});
 
 		const { data: accountsData, error: accountsError } = await supabase
 			.from(ACCOUNTS)
@@ -35,17 +41,17 @@ export async function POST(req: Request) {
 			.eq('user_uid', authData.user.id);
 
 		if (accountsError)
-			return responseFactory('Error Retrieving Accounts Data', accountsData);
+			return responseError({
+				message: 'Error Retrieving Accounts Data',
+				data: accountsData,
+			});
 
-		const response = NextResponse.json(
-			{
-				message: 'Sign In Successful! Redirecting...',
-				data: { authData, userData },
-			},
-			{ status: 200 },
-		);
+		const response = responseSuccess({
+			message: 'Sign In Successful! Redirecting...',
+			data: { authData, userData },
+		});
 
-		response.cookies.set(IS_LOGGED_IN, 'true', {
+		response.cookies.set(IS_LOGGED_IN, JSON.stringify({ isLoggedIn: true }), {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
 			maxAge: 60 * 60 * 24 * 7, // 1 week
