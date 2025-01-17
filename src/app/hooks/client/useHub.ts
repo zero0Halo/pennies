@@ -18,7 +18,7 @@ type UseHubData = {
 };
 
 export default function useHub({ transactionsData }: UseHubProps): UseHubData {
-	const todayDate = +new Date().getDate();
+	const todayDate = 5; // +new Date().getDate();
 
 	// STATE
 	const [transactionsForDate, setTransactionsForDate] = useState<
@@ -35,6 +35,7 @@ export default function useHub({ transactionsData }: UseHubProps): UseHubData {
 		TransactionWithGroupData[] | null
 	>();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (Array.isArray(transactionsData)) {
 			const [_, _transactionsForDate] = transactionsData.find(

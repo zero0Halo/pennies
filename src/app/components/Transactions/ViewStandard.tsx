@@ -4,6 +4,7 @@ import type { TransactionWithGroupData } from '@/app/types';
 import { formatAmount, formatRecurring, zebra } from '@/utils/app';
 import { tableClasses, tdClasses, tdOverflow, thClasses } from './helpers';
 import classNames from 'classnames';
+import TransactionName from './TransactionName';
 
 type ViewStandardProps = {
 	activeElement: number | boolean;
@@ -38,7 +39,8 @@ export default function ViewStandard({
 					<tr className={zebra(index, transaction)} key={transaction.uid}>
 						<td className={tdClasses(3)}>
 							<div className="flex">
-								<span>{transaction.group_name ?? transaction.name}</span>
+								<TransactionName transaction={transaction} />
+
 								{transaction.prime && (
 									<span className="tooltip cursor-help" data-tip="Prime">
 										<Image
@@ -58,7 +60,9 @@ export default function ViewStandard({
 						<td className={tdClasses(1)}>{formatAmount(transaction.amount)}</td>
 						<td className={tdClasses(1)}>{transaction.category}</td>
 						<td className={tdClasses(1)}>{formatRecurring(transaction)}</td>
-						<td className={tdClasses(1)}>{transaction.group_recurring_autopay && 'Yes'}</td>
+						<td className={tdClasses(1)}>
+							{transaction.group_recurring_autopay && 'Yes'}
+						</td>
 					</tr>
 				))}
 			</tbody>

@@ -20,8 +20,6 @@ export default function Hub({
 	transactionsData,
 	year,
 }: HubProps): React.ReactNode {
-	// SHUGAH
-
 	// CUSTOM HOOKS
 	const { noAutopay, recurring, sumForDate, todayDate, transactions } = useHub({
 		transactionsData,

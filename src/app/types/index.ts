@@ -98,7 +98,7 @@ export type TransactionWithGroupData = TransactionData & {
 	group_recurring_autopay: boolean;
 	group_recurring_type?: RecurringType;
 	group_recurring_still?: boolean;
-	group_site_url?: string;
+	group_siteurl?: string;
 };
 export type TransactionGroupByDayData = {
 	[key: number]: TransactionWithGroupData[];
