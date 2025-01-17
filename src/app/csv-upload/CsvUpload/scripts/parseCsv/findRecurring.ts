@@ -2,9 +2,9 @@ import type { TransactionData } from '@/app/types';
 import { BIWEEKLY, MONTHLY, WEEKLY } from '@/app/constants';
 import dayjs from 'dayjs';
 
-const isBiWeekly = (diff: number) => (8 >= diff && diff >= 6 ? 1 : 0);
-const isMonthly = (diff: number) => (16 >= diff && diff >= 12 ? 1 : 0);
-const isWeekly = (diff: number) => (34 >= diff && diff >= 25 ? 1 : 0);
+const isWeekly = (diff: number): 1 | 0 => (8 >= diff && diff >= 6 ? 1 : 0);
+const isBiWeekly = (diff: number): 1 | 0 => (16 >= diff && diff >= 12 ? 1 : 0);
+const isMonthly = (diff: number): 1 | 0 => (34 >= diff && diff >= 25 ? 1 : 0);
 
 export default function findRecurring(transactions: TransactionData[]) {
 	if (transactions.length === 0) return false;
@@ -22,6 +22,7 @@ export default function findRecurring(transactions: TransactionData[]) {
 
 		if (next) {
 			const diff = dayjs(current.timestamp).diff(dayjs(next.timestamp), 'd');
+
 			matches[WEEKLY] += isWeekly(diff);
 			matches[BIWEEKLY] += isBiWeekly(diff);
 			matches[MONTHLY] += isMonthly(diff);
@@ -37,7 +38,7 @@ export default function findRecurring(transactions: TransactionData[]) {
 	const checkRecurring = (threshold: number) =>
 		Math.ceil((maxInterval.count / transactions.length) * 100) >= threshold
 			? maxInterval.name
-			: undefined;
+			: null;
 
 	const recurring_type = checkRecurring(51);
 	const recurring = !!recurring_type;
