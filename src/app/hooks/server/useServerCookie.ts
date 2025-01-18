@@ -1,11 +1,9 @@
 import { cookies } from 'next/headers';
 
-export default function useServerCookie<T>(
-	name: string,
-): [T | boolean | null, boolean] {
+export default function useServerCookie<T>(name: string): [T | null, boolean] {
 	const cookieStore = cookies();
 	const cookieData = cookieStore.get(name)?.value;
-	let cookieValue: T | boolean | null;
+	let cookieValue: T | null;
 
 	if (cookieData) {
 		try {
