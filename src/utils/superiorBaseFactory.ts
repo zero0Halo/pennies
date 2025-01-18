@@ -7,6 +7,7 @@ import {
 	DELETE,
 	EQ,
 	FROM,
+	IN,
 	INSERT,
 	SELECT,
 	UPDATE,
@@ -21,7 +22,7 @@ type QueryResponse<T> = { data: T | null; error: PostgrestError | null };
 type UpsertOptions = UpsertOptionsBase & {
 	revertOnFail?: boolean;
 };
-type SuperiorBaseResponse<T> = {
+export type SuperiorBaseResponse<T> = {
 	data: T | null;
 	error: null | NextResponse;
 	success: null | NextResponse;
@@ -128,6 +129,14 @@ class SuperiorBase {
 		this.fromCheck();
 		this.querySteps.push('gte');
 		this.query = this.query.gte(field, value);
+		return this;
+	}
+
+	in(field: string, values: string[]) {
+		this.fromCheck();
+		this.querySteps.push(IN);
+		this.messagePieces.payloadSize = values.length;
+		this.query = this.query.in(field, values);
 		return this;
 	}
 

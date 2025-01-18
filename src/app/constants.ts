@@ -18,6 +18,7 @@ export const GIFT = 'Gift';
 export const GROCERIES = 'Groceries';
 export const GROUPS = 'groups';
 export const HEALTH = 'Health';
+export const IN = 'In';
 export const INCOME = 'Income';
 export const INSERT = 'insert';
 export const INVESTMENT = 'Investment';
