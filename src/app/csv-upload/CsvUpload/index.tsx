@@ -33,8 +33,10 @@ export default function CsvUpload() {
 		singletons: false,
 	});
 
-	// CUSTOM HOOKS
+	// CONTEXT
 	const { setError, setSuccess } = useFormMessagingContext();
+
+	// CUSTOM HOOKS
 	const { data: userData, error: userDataError } =
 		useClientCookie<UserData>(USER);
 	const { defaultAccount, options } = useAccountsCookie();
@@ -48,8 +50,6 @@ export default function CsvUpload() {
 		console.error(userDataError);
 		return null;
 	}
-
-	console.log({ options });
 
 	// EFFECTS
 	useEffect(() => {
@@ -65,6 +65,7 @@ export default function CsvUpload() {
 	}, [CSVData, previousData]);
 
 	useEffect(() => {
+		// Set the default account as the selected account on load
 		if (defaultAccount !== null) {
 			setValue('account', defaultAccount.uid);
 		}
