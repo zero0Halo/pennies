@@ -37,17 +37,19 @@ export default function CsvUpload() {
 	const { setError, setSuccess } = useFormMessagingContext();
 	const { data: userData, error: userDataError } =
 		useClientCookie<UserData>(USER);
-	const { options } = useAccountsCookie();
+	const { defaultAccount, options } = useAccountsCookie();
 	const organizedCsvData = useOrganizedCsvData({ CSVData });
 
 	// REACT FORM
-	const { watch, handleSubmit, register } = useForm<CsvUploadData>();
+	const { watch, handleSubmit, register, setValue } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
 
 	if (userDataError) {
 		console.error(userDataError);
 		return null;
 	}
+
+	console.log({ options });
 
 	// EFFECTS
 	useEffect(() => {
@@ -61,6 +63,12 @@ export default function CsvUpload() {
 			setPreviousData(localStorageData ? JSON.parse(localStorageData) : false);
 		}
 	}, [CSVData, previousData]);
+
+	useEffect(() => {
+		if (defaultAccount !== null) {
+			setValue('account', defaultAccount.uid);
+		}
+	}, [defaultAccount, setValue]);
 
 	// HANDLERS
 	async function handleCsvUpload(formData: CsvUploadData) {
