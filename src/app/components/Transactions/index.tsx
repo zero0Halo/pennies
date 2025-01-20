@@ -66,7 +66,7 @@ export default function Transactions({
 
 	// SHUGAH
 	const componentClasses = classNames(
-		'overflow-auto max-h-[500px] relative z-0',
+		'overflow-y-auto max-h-[500px] relative z-0',
 		className,
 	);
 	const props = {

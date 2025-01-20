@@ -53,8 +53,8 @@ export default function Hub({
 			<StatRow stats={statsArray} />
 
 			<Transactions
-				showNone
-				title="Manual Pay"
+				className="!overflow-visible p-3 border-double border-accent border-8 rounded-xl shadow-lg bg-neutral-100 mt-4 mb-7"
+				title="Pay Today!"
 				transactions={noAutopay || []}
 				view="standard"
 			/>
