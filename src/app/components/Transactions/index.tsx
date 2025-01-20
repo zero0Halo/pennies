@@ -63,7 +63,10 @@ export default function Transactions({
 	}, [activeElement]);
 
 	// SHUGAH
-	const componentClasses = classNames('overflow-hidden', className);
+	const componentClasses = classNames(
+		'overflow-auto max-h-[500px] relative z-0',
+		className,
+	);
 	const props = {
 		activeElement: internalActiveElement,
 		setActiveElement: setActiveElement ?? setInternalActiveElement,

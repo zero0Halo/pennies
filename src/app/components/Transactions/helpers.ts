@@ -1,10 +1,7 @@
 import classNames from 'classnames';
 
 export const tableClasses = (tableClassName?: string) =>
-	classNames(
-		'table table-fixed overflow-hidden rounded-lg  mt-0',
-		tableClassName,
-	);
+	classNames('table table-fixed rounded-lg  mt-0', tableClassName);
 
 export const tdOverflow = (tdClassName?: string) =>
 	classNames(

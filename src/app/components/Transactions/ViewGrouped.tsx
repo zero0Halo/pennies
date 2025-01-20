@@ -14,7 +14,7 @@ export default function ViewGrouped({
 }: ViewGroupedProps): React.ReactNode {
 	return (
 		<table className={tableClasses(tableClassName)}>
-			<thead>
+			<thead className="sticky top-0 z-50 mt-0">
 				<tr className="bg-neutral">
 					<th className="w-[20px]" />
 					<th className={thClasses(8)}>Description</th>
