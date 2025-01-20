@@ -1,8 +1,10 @@
+import { MONTHS } from '@/app/constants';
 import type {
 	TransactionWithDateData,
 	TransactionWithGroupData,
 } from '@/app/types';
-import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
 
 interface UseHubProps {
 	transactionsData: TransactionWithDateData[] | null;
@@ -12,13 +14,24 @@ type UseHubData = {
 	noAutopay: TransactionWithGroupData[] | null;
 	recurring: TransactionWithGroupData[] | null;
 	sumForDate: number | null;
-	todayDate: number;
+	today: { date: number; month: number; monthName: string; year: number };
 	transactions: TransactionWithGroupData[] | null;
 	transactionsForDate: TransactionWithDateData[] | null;
 };
 
 export default function useHub({ transactionsData }: UseHubProps): UseHubData {
-	const todayDate = 5; // +new Date().getDate();
+	const today = useMemo(() => {
+		const arr = dayjs()
+			.format('D MM YYYY')
+			.split(' ')
+			.map((m) => +m);
+		return {
+			date: arr[0],
+			month: arr[1],
+			monthName: MONTHS[arr[1]],
+			year: arr[2],
+		};
+	}, []);
 
 	// STATE
 	const [transactionsForDate, setTransactionsForDate] = useState<
@@ -35,11 +48,10 @@ export default function useHub({ transactionsData }: UseHubProps): UseHubData {
 		TransactionWithGroupData[] | null
 	>();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (Array.isArray(transactionsData)) {
 			const [_, _transactionsForDate] = transactionsData.find(
-				([{ date }]) => date === todayDate,
+				([{ date }]) => date === today.date,
 			) || [null, null];
 			const _sumForDate =
 				_transactionsForDate?.reduce((acc, { amount }) => acc + amount, 0) ?? 0;
@@ -64,13 +76,13 @@ export default function useHub({ transactionsData }: UseHubProps): UseHubData {
 			setTransactions(_transactions);
 			setTransactionsForDate(transactionsData);
 		}
-	}, [todayDate, transactionsData]);
+	}, [today, transactionsData]);
 
 	return {
 		noAutopay: Array.isArray(noAutopay) ? noAutopay : null,
 		recurring: Array.isArray(recurring) ? recurring : null,
 		sumForDate,
-		todayDate,
+		today,
 		transactions: Array.isArray(transactions) ? transactions : null,
 		transactionsForDate: Array.isArray(transactionsForDate)
 			? transactionsForDate

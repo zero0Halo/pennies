@@ -21,12 +21,23 @@ export default function Hub({
 	year,
 }: HubProps): React.ReactNode {
 	// CUSTOM HOOKS
-	const { noAutopay, recurring, sumForDate, todayDate, transactions } = useHub({
+	const { noAutopay, recurring, sumForDate, today, transactions } = useHub({
 		transactionsData,
 	});
 
 	const statsArray = [
-		{ label: 'Day', value: `${todayDate} ${monthName}, ${year}` },
+		{
+			label: {
+				className: '!text-accent font-bold',
+				displayText: 'Today',
+			},
+			value: {
+				className: '!text-accent font-bold',
+				displayText: `${today.date} ${today.monthName}, ${today.year}`,
+			},
+		},
+
+		{ label: 'Day', value: `${today.date} ${monthName}, ${year}` },
 		{ label: 'Day Total', value: formatAmount(sumForDate ?? 0) },
 		{
 			label: 'Month Total',
