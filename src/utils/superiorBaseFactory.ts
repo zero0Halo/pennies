@@ -225,16 +225,17 @@ class SuperiorBase {
 		return this;
 	}
 
-	upsertCheck<T>(data: T): boolean {
+	upsertIsGood<T>(data: T): boolean {
 		const { use_upsert_check, messagePieces } = this;
+		let response = true;
 
-		return (
-			data &&
-			Array.isArray(data) &&
-			use_upsert_check &&
-			messagePieces.operation === UPSERT &&
-			messagePieces.payloadSize !== data.length
-		);
+		if (messagePieces.operation !== UPSERT) return response;
+
+		if (data && Array.isArray(data) && use_upsert_check) {
+			response = messagePieces.payloadSize !== data.length;
+		}
+
+		return response;
 	}
 
 	whenUpdated<T>(data: T): T | T[] | null {
@@ -258,21 +259,32 @@ class SuperiorBase {
 		const response: SuperiorBaseResponse<T> = {
 			...superiorBaseResponse,
 		};
+		const upsertIsGood = this.upsertIsGood(data);
 
-		// TODO: NEED TO ACTUALLY ROLLBACK THE UPSERT AND NOT JUST THROW AN ERROR
-		// const upsertCheck = this.upsertCheck(data);
-		// if (upsertCheck) console.error('Shit. Upsert size is wrong.');
-
-		if (data) {
+		if (data && upsertIsGood) {
 			response.data = data;
 			response.success = responseSuccess({
 				message: this.successMsg ?? this.buildMessage({ success: true }),
 				data,
 			});
-		} else if (error) {
+		} else if (error !== null || !upsertIsGood) {
+			let _errorMsg = this.errorMsg ?? (error as PostgrestError).message; //this.buildMessage({ success: false });
+			let _errorData:
+				| PostgrestError
+				| null
+				| { sent: number | undefined; received: number } = error;
+
+			if (!upsertIsGood) {
+				_errorMsg = 'Upsert length does not equal returned length';
+				_errorData = {
+					sent: messagePieces.payloadSize,
+					received: Array.isArray(data) ? data.length : 0,
+				};
+			}
+
 			response.error = responseError({
-				data: null,
-				message: this.errorMsg ?? this.buildMessage({ success: false }),
+				data: _errorData,
+				message: _errorMsg,
 			});
 		}
 
