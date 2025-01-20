@@ -44,7 +44,7 @@ const superiorBaseResponse = {
 	success: null,
 };
 
-class SuperiorBase {
+export class SuperiorBase {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	private query: any;
 	private client: SupabaseClient;
@@ -232,7 +232,7 @@ class SuperiorBase {
 		if (messagePieces.operation !== UPSERT) return response;
 
 		if (data && Array.isArray(data) && use_upsert_check) {
-			response = messagePieces.payloadSize !== data.length;
+			response = messagePieces.payloadSize === data.length;
 		}
 
 		return response;
@@ -268,7 +268,7 @@ class SuperiorBase {
 				data,
 			});
 		} else if (error !== null || !upsertIsGood) {
-			let _errorMsg = this.errorMsg ?? (error as PostgrestError).message; //this.buildMessage({ success: false });
+			let _errorMsg = this.errorMsg ?? (error as PostgrestError)?.message; //this.buildMessage({ success: false });
 			let _errorData:
 				| PostgrestError
 				| null

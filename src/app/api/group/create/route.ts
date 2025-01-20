@@ -8,8 +8,10 @@ import type {
 	TransferData,
 } from '@/app/types';
 import superiorBaseFactory from '@/utils/superiorBaseFactory';
-import { responseError } from '@/utils/api/responseFactory';
-import { createMonthlySumPayload } from '@/app/types/MonthlySumData';
+import groupSetup from './groupSetup';
+import monthlySumsSetup from './monthlySumsSetup';
+import transactionsSetup from './transactionsSetup';
+import transfersSetup from './transfersSetup';
 
 export async function POST(req: Request) {
 	try {
@@ -22,163 +24,89 @@ export async function POST(req: Request) {
 			transfers: TransferData[];
 			transactions: TransactionData[];
 		} = await req.json();
-		const { account_uid, hash, user_uid } = group;
 		const superiorBase = await superiorBaseFactory();
-		console.log({ transfers }, '#######');
-		const rollbacks = {
-			groups: async () =>
-				await superiorBase
-					.from(GROUPS)
-					.delete()
-					.eq('uid', group.uid)
-					.eq('user_uid', group.user_uid)
-					.go(),
-			transactions: async () =>
-				await superiorBase
-					.from(TRANSACTIONS)
-					.delete()
-					.in(
-						'uid',
-						transactions.map((m) => m.uid),
-					)
-					.go(),
-			transfers: async () =>
-				await superiorBase
-					.from(TRANSFERS)
-					.delete()
-					.in(
-						'uid',
-						transfers.map((m) => m.uid),
-					)
-					.go(),
-			monthlySums: async ({
-				payload,
-				snapshot,
-			}: { payload: MonthlySumData[]; snapshot: MonthlySumData[] }) => {
-				const { error } = await superiorBase
-					.from(MONTHLY_SUMS)
-					.delete()
-					.in(
-						'uid',
-						payload.map((m) => m.uid),
-					)
-					.go();
+		const groupMethods = groupSetup({ group, superiorBase });
+		const monthlySumsMethods = monthlySumsSetup({
+			group,
+			superiorBase,
+			transactions,
+			transfers,
+		});
+		const transactionsMethods = transactionsSetup({
+			superiorBase,
+			transactions,
+		});
+		const transfersMethods = transfersSetup({
+			superiorBase,
+			transfers,
+		});
 
-				return await superiorBase.from(MONTHLY_SUMS).upsert(snapshot).go();
-			},
-		};
+		// MAKE SURE THE GROUP HAS A UNIQUE HASH THAT DOESN'T EXIST IN THE DB
+		const { error: notUniqueResponse } = await groupMethods.uniqueCheck();
+		if (notUniqueResponse) return notUniqueResponse;
 
-		// CHECK AND SEE IF THERE IS ALREADY A HASH THAT MATCHES WHAT WE'RE ABOUT TO TRY AND CREATE.
-		// FAIL IF IT DOES EXIST, OR IF THERE IS A DB ERROR.
-		const { data: existingGroup, error: existingGroupError } =
-			await superiorBase
-				.from(GROUPS)
-				.select('*')
-				.eq('hash', hash)
-				.eq('user_uid', user_uid)
-				.eq('account_uid', account_uid)
-				.successMessage("Can't create Group. Existing Hash")
-				.go<GroupData>();
-
-		if (Array.isArray(existingGroup) && existingGroup.length > 0)
-			return responseError({
-				message: "Can't create Group. Existing Hash",
-				data: existingGroup,
-			});
-		if (existingGroupError) return existingGroupError;
-
-		// INSERT THE GROUP
-		const { error: groupInsertError } = await superiorBase
-			.from(GROUPS)
-			.insert({ ...group })
-			.go();
+		// INSERT THE NEW GROUP
+		const { error: groupInsertError } = await groupMethods.insert();
 		if (groupInsertError) return groupInsertError;
 
-		// GET A SNAPSHOT OF MONTHLY_SUMS
-		const { data: monthlySumsSnapshot, error: monthlySumsSnapshotError } =
-			await superiorBase
-				.from(MONTHLY_SUMS)
-				.select('*')
-				.eq('user_uid', user_uid)
-				.eq('account_uid', account_uid)
-				.order('month_uid_key', { ascending: false })
-				.go<MonthlySumData[]>();
+		// GET A SNAPSHOT OF MONTHLY_SUMS TO USE TO RESET IN CASE OF ERRORS
+		const { error: monthlySumsSnapshotError } =
+			await monthlySumsMethods.snapshot();
 		if (monthlySumsSnapshotError) return monthlySumsSnapshotError;
 
 		// INSERT THE TRANSACTIONS
-		const { error: insertTransactionsError } = await superiorBase
-			.from(TRANSACTIONS)
-			.insert(transactions)
-			.go<TransactionData[]>();
+		const { error: insertTransactionsError } =
+			await transactionsMethods.insert();
 
 		// ROLLBACK 1: IF THERE WAS A PROBLEM INSERTING THE TRANSACTIONS, ROLLBACK GROUP
 		if (insertTransactionsError) {
-			const { error: groupRollbackError } = await rollbacks.groups();
+			const { error: groupRollbackError } = await groupMethods.rollback();
 
 			if (groupRollbackError) return groupRollbackError;
 			if (insertTransactionsError) return insertTransactionsError;
 		}
 
 		// INSERT THE TRANSFERS
-		const { error: insertTransfersError } = await superiorBase
-			.from(TRANSFERS)
-			.insert(transfers)
-			.go();
+		const { error: insertTransfersError } = await transfersMethods.insert();
 
 		// ROLLBACK 2: IF THERE WAS A PROBLEM INSERTING TRANSFERS, ROLLBACK TRANSACTIONS & GROUP
 		if (insertTransfersError) {
 			const { error: transactionsRollbackError } =
-				await rollbacks.transactions();
-			const { error: groupRollbackError } = await rollbacks.groups();
+				await transactionsMethods.rollback();
+			const { error: groupRollbackError } = await groupMethods.rollback();
 
 			if (transactionsRollbackError) return transactionsRollbackError;
 			if (groupRollbackError) return groupRollbackError;
 			if (insertTransfersError) return insertTransfersError;
 		}
 
-		// UPSERT/UPDATE THE MONTHLY_SUMS TABLE WITH THIS PAYLOAD
-		const monthlySumPayload = createMonthlySumPayload({
-			snapshot: monthlySumsSnapshot,
-			transfers,
-			transactions,
-		});
+		// UPSERT THE NEW/UPDATED MONTHLY SUMS DATA
+		const { error: upsertMonthlySumsError } = await monthlySumsMethods.upsert();
 
-		if (monthlySumPayload !== null) {
-			const { error: upsertMonthlySumsDataError } = await superiorBase
-				.from(MONTHLY_SUMS)
-				.select('*')
-				.upsert(monthlySumPayload, { onConflict: 'month_uid_key' })
-				.go();
+		// ROLLBACK 3: IF THERE WAS A PROBLEM UPSERTING MONTHLY SUMS, ROLLBACK TRANSACTIONS, TRANSFERS & GROUP
+		if (upsertMonthlySumsError) {
+			const { error: transactionsRollbackError } =
+				await transactionsMethods.rollback();
+			const { error: groupsRollbackError } = await groupMethods.rollback();
+			const { error: transfersRollbackError } =
+				await transfersMethods.rollback();
+			const { error: monthlySumsRollbackError } =
+				await monthlySumsMethods.rollback();
 
-			// ROLLBACK 3: If the upsert fails, rollback everything
-			if (upsertMonthlySumsDataError && monthlySumsSnapshot) {
-				const { error: transactionsRollbackError } =
-					await rollbacks.transactions();
-				const { error: groupsRollbackError } = await rollbacks.groups();
-				const { error: transfersRollbackError } = await rollbacks.transfers();
-				const { error: monthlySumsRollbackError } = await rollbacks.monthlySums(
-					{ payload: monthlySumPayload, snapshot: monthlySumsSnapshot },
-				);
-
-				if (transactionsRollbackError) return transactionsRollbackError;
-				if (groupsRollbackError) return groupsRollbackError;
-				if (transfersRollbackError) return transfersRollbackError;
-				if (monthlySumsRollbackError) return monthlySumsRollbackError;
-				if (upsertMonthlySumsDataError) return upsertMonthlySumsDataError;
-			}
+			if (transactionsRollbackError) return transactionsRollbackError;
+			if (groupsRollbackError) return groupsRollbackError;
+			if (transfersRollbackError) return transfersRollbackError;
+			if (monthlySumsRollbackError) return monthlySumsRollbackError;
+			if (upsertMonthlySumsError) return upsertMonthlySumsError;
 		}
 
 		// CREATE THE RESPONSE TO RETURN WITH MONTHLY SUMS DATA
-		const { error: monthlySumsError, success: response } = await superiorBase
-			.from(MONTHLY_SUMS)
-			.select('*')
-			.eq('account_uid', account_uid)
-			.eq('user_uid', user_uid)
-			.go<MonthlySumData>();
+		const { error: monthlySumsSnapshot2Error, success } =
+			await monthlySumsMethods.snapshot();
+		if (monthlySumsSnapshot2Error || success === null)
+			return monthlySumsSnapshot2Error;
 
-		if (monthlySumsError || response === null) return monthlySumsError;
-
-		return response;
+		return success;
 	} catch (error: unknown) {
 		console.error(error);
 		const errorMessage =
