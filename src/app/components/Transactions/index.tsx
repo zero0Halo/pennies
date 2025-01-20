@@ -30,6 +30,7 @@ interface TransactionsProps {
 	setActiveElement?: (arg: number | boolean) => void;
 	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	showHeader?: boolean;
+	showNone?: boolean;
 	tableClassName?: string;
 	title?: string;
 	transactions: TransactionData[] | TransactionWithGroupData[];
@@ -43,12 +44,13 @@ export default function Transactions({
 	setActiveElement,
 	setCSVData,
 	showHeader,
+	showNone,
 	tableClassName = '',
 	title,
 	transactions,
 	view = STANDARD,
 }: TransactionsProps): React.ReactNode {
-	if (!transactions.length) return null;
+	if (!showNone && !transactions.length) return null;
 
 	// STATE
 	const [internalActiveElement, setInternalActiveElement] = useState<
@@ -77,43 +79,46 @@ export default function Transactions({
 	// JSX
 	return (
 		<div className={componentClasses}>
-			{title && <h3>{title}</h3>}
+			{title && <h3 className="mt-3">{title}</h3>}
 
-			{(() => {
-				switch (view) {
-					case GROUPED:
-						return (
-							<ViewGrouped
-								transactions={transactions as TransactionData[]}
-								{...props}
-							/>
-						);
-					case SINGLETON:
-						return (
-							<ViewSingleton
-								setCSVData={setCSVData}
-								transactions={transactions as TransactionData[]}
-								{...props}
-							/>
-						);
-					case SINGLETON_COMPLETE:
-						return (
-							<ViewSingletonComplete
-								transactions={transactions as TransactionWithGroupData[]}
-								{...props}
-							/>
-						);
-					case STANDARD:
-						return (
-							<ViewStandard
-								transactions={transactions as TransactionWithGroupData[]}
-								{...props}
-							/>
-						);
-					default:
-						null;
-				}
-			})()}
+			{transactions.length > 0 &&
+				(() => {
+					switch (view) {
+						case GROUPED:
+							return (
+								<ViewGrouped
+									transactions={transactions as TransactionData[]}
+									{...props}
+								/>
+							);
+						case SINGLETON:
+							return (
+								<ViewSingleton
+									setCSVData={setCSVData}
+									transactions={transactions as TransactionData[]}
+									{...props}
+								/>
+							);
+						case SINGLETON_COMPLETE:
+							return (
+								<ViewSingletonComplete
+									transactions={transactions as TransactionWithGroupData[]}
+									{...props}
+								/>
+							);
+						case STANDARD:
+							return (
+								<ViewStandard
+									transactions={transactions as TransactionWithGroupData[]}
+									{...props}
+								/>
+							);
+						default:
+							null;
+					}
+				})()}
+
+			{showNone && transactions.length === 0 && <h5>None</h5>}
 		</div>
 	);
 }

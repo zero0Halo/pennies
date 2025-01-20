@@ -14,6 +14,7 @@ interface HubProps {
 	year: number;
 }
 
+// COMPONENT
 export default function Hub({
 	monthName,
 	monthlySumData,
@@ -25,6 +26,7 @@ export default function Hub({
 		transactionsData,
 	});
 
+	// SHUGAH
 	const statsArray = [
 		{
 			label: {
@@ -45,25 +47,35 @@ export default function Hub({
 		},
 	];
 
+	// JSX
 	return (
 		<section>
 			<StatRow stats={statsArray} />
 
-			<h4>Manual Pay</h4>
-			<Transactions transactions={noAutopay || []} view="standard" />
-			{!noAutopay && <h5>None</h5>}
+			<Transactions
+				showNone
+				title="Manual Pay"
+				transactions={noAutopay || []}
+				view="standard"
+			/>
 
 			<div className="divider" />
 
-			<h4>Recurring</h4>
-			<Transactions transactions={recurring || []} view="standard" />
-			{!recurring && <h5>None</h5>}
+			<Transactions
+				showNone
+				title="Recurring"
+				transactions={recurring || []}
+				view="standard"
+			/>
 
 			<div className="divider" />
 
-			<h4>Singletons</h4>
-			<Transactions transactions={transactions || []} view="standard" />
-			{!transactions && <h5>None</h5>}
+			<Transactions
+				showNone
+				title="Singletons"
+				transactions={transactions || []}
+				view="standard"
+			/>
 		</section>
 	);
 }
