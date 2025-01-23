@@ -35,6 +35,7 @@ export const RECURRING = 'recurring';
 export const SAVINGS = 'Savings';
 export const SELECT = 'select';
 export const SERVER = 'SERVER';
+export const TODAY = 'TODAY';
 export const TRANSACTIONS = 'transactions';
 export const TRANSFER = 'Transfer';
 export const TRANSFERS = 'transfers';
