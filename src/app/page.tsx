@@ -1,22 +1,23 @@
-import { useIsLoggedIn, useServerCookie } from '@/app/hooks/server';
+import { useIsLoggedIn } from '@/app/hooks/server';
 import type {
 	AccountData,
 	MonthlySumData,
 	TransactionWithDateData,
 	UserData,
 } from './types';
-import { MONTHLY_SUMS, USER } from '@/app/constants';
+import { MONTHLY_SUMS } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
 import TransactionsMonth from './components/home/TransactionsMonth';
 import useAccountsCookie from './hooks/server/useAccountsCookie';
 import { FormMessagingWrapper } from './components/FormMessaging';
 import ToLocalStorage from './components/ToLocalStorage';
+import useUserCookie from './hooks/server/useUserCookie';
 
 interface GetInitialDataArguments {
 	defaultAccount: AccountData | null;
 	defaultDate: string;
-	userData: UserData | boolean | null;
+	userData: UserData | null;
 }
 
 async function getInitialData({
@@ -69,10 +70,9 @@ export default async function Home() {
 	// CUSTOM HOOKS
 	const isLoggedIn = useIsLoggedIn();
 	const { defaultAccount, noAccounts } = useAccountsCookie();
-	const [userData] = useServerCookie<UserData>(USER);
+	const { categories, userData } = useUserCookie();
 
 	// SHUGAH
-	const noCategories = typeof userData === 'object' && !userData?.categories;
 	const defaultDate = new Date().toDateString();
 
 	// DATA CALL
@@ -126,7 +126,7 @@ export default async function Home() {
 			)}
 
 			{/* Logged in, has accounts but no categories */}
-			{isLoggedIn && !noAccounts && noCategories && (
+			{isLoggedIn && !noAccounts && !categories && (
 				<HeroStep
 					link="categories"
 					linkText="Go To Categories"
@@ -137,7 +137,7 @@ export default async function Home() {
 			{/* Logged in, has accounts, has categories, but no valid call to get transactions */}
 			{isLoggedIn &&
 				!noAccounts &&
-				!noCategories &&
+				categories &&
 				transactions === undefined && (
 					<HeroStep
 						link="csv-upload"
