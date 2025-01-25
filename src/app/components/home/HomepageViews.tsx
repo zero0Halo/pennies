@@ -50,11 +50,13 @@ export default function HomepageViews({
 
 	return (
 		<FormMessagingWrapper>
-			<ButtonToggles
-				className="mx-auto my-0 self-end"
-				setToggleState={setToggleState}
-				toggleState={toggleState}
-			/>
+			<div className="flex items-center justify-center">
+				<ButtonToggles
+					className=""
+					setToggleState={setToggleState}
+					toggleState={toggleState}
+				/>
+			</div>
 
 			{/* Today View */}
 			<section className={toggleState.today ? 'block' : 'hidden'}>

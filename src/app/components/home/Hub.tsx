@@ -38,8 +38,6 @@ export default function Hub({
 				displayText: `${today.date} ${today.monthName}, ${today.year}`,
 			},
 		},
-
-		{ label: 'Day', value: `${today.date} ${today.monthName}, ${today.year}` },
 		{ label: 'Day Total', value: formatAmount(sumForDate ?? 0) },
 		{
 			label: 'Month Total',

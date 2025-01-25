@@ -15,10 +15,7 @@ import Button from '../Button';
 import Transactions from '@/app/components/Transactions';
 import { MONTHS, YEARS } from '@/app/constants';
 import { FormMessaging, useFormMessagingContext } from '../FormMessaging';
-import Hub from './Hub';
-import ButtonToggles, { type ToggleStateData } from '../ButtonToggles';
 import StatRow from '../StatRow';
-import classNames from 'classnames';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | null;
@@ -54,10 +51,10 @@ export default function TransactionsMonth({
 	});
 
 	// MEMO
-	const sum = useMemo(() => {
+	const sum: number | boolean = useMemo(() => {
 		if (!transactionsData || transactionsData.length === 0) return 0;
 
-		const _sum = transactionsData
+		let _sum = transactionsData
 			.map(([_, transactions]) => transactions)
 			.reduce(
 				// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
@@ -65,10 +62,11 @@ export default function TransactionsMonth({
 				[],
 			)
 			.reduce((acc, { amount }) => acc + amount, 0);
+		_sum = Number(_sum.toFixed(2));
 
 		if (monthlySumData?.sum !== _sum) {
 			console.error(`Values do not match: ${_sum} and ${monthlySumData?.sum}`);
-			return 0;
+			return false;
 		}
 
 		return _sum;
@@ -154,8 +152,12 @@ export default function TransactionsMonth({
 	const statsArray = [
 		{ label: 'Month', value: `${getValues('month')}, ${getValues('year')}` },
 		{
+			label: 'Account',
+			value: `${accountOptions.length > 1 && getAccountByUid(watch('account'))?.name}`,
+		},
+		{
 			label: 'Month Total',
-			value: formatAmount(sum),
+			value: sum === false ? 'Incorrect Match' : formatAmount(sum),
 		},
 	];
 
@@ -166,19 +168,10 @@ export default function TransactionsMonth({
 
 			<FormMessaging />
 
-			<h2>
-				Transactions:{' '}
-				<span className="text-neutral">
-					{watch('month')}, {watch('year')}
-				</span>{' '}
-				<span className="text-sm">from</span>{' '}
-				<span className="text-neutral text-sm">
-					{accountOptions.length > 1 && getAccountByUid(watch('account'))?.name}
-				</span>
-			</h2>
+			<StatRow stats={statsArray} />
 
 			{/* TOGGLES & BUTTONS */}
-			<div className="pb-2 flex">
+			<div className="pb-2 mb-6 flex">
 				<div className="self-end join join-horizontal">
 					<Select
 						className="select-primary join-item select-xs"
@@ -203,7 +196,7 @@ export default function TransactionsMonth({
 					</Button>
 				</div>
 
-				<div className="join">
+				<div className="join ml-auto">
 					<Button
 						className="join-item bg-primary btn-xs self-end text-black"
 						onClick={() => handleMonthStep(-1)}
@@ -219,10 +212,10 @@ export default function TransactionsMonth({
 				</div>
 			</div>
 
+			{/* <div className="divider" /> */}
+
 			{/* Month View */}
 			<section>
-				<StatRow stats={statsArray} />
-
 				{transactionsData?.map(([dayMeta, transactions]) => (
 					<div key={dayMeta.date} className="flex mb-8">
 						<div className="relative">
