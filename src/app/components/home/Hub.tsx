@@ -6,6 +6,9 @@ import Transactions from '../Transactions';
 import { formatAmount } from '@/utils/app';
 import type { MonthlySumData, TransactionWithDateData } from '@/app/types';
 import StatRow from '../StatRow';
+import { useMemo } from 'react';
+import dayjs from 'dayjs';
+import { MONTHS } from '@/app/constants';
 
 interface HubProps {
 	monthName: string;
@@ -14,15 +17,35 @@ interface HubProps {
 	year: number;
 }
 
+export type TodayData = {
+	date: number;
+	month: number;
+	monthName: string;
+	year: number;
+};
+
 // COMPONENT
 export default function Hub({
-	monthName,
 	monthlySumData,
 	transactionsData,
-	year,
 }: HubProps): React.ReactNode {
+	// MEMO
+	const today = useMemo<TodayData>(() => {
+		const arr = dayjs()
+			.format('D MM YYYY')
+			.split(' ')
+			.map((m) => +m);
+		return {
+			date: arr[0],
+			month: arr[1],
+			monthName: MONTHS[arr[1]],
+			year: arr[2],
+		};
+	}, []);
+
 	// CUSTOM HOOKS
-	const { noAutopay, recurring, sumForDate, today, transactions } = useHub({
+	const { noAutopay, recurring, sumForDate, transactions } = useHub({
+		today,
 		transactionsData,
 	});
 
@@ -39,7 +62,7 @@ export default function Hub({
 			},
 		},
 
-		{ label: 'Day', value: `${today.date} ${monthName}, ${year}` },
+		{ label: 'Day', value: `${today.date} ${today.monthName}, ${today.year}` },
 		{ label: 'Day Total', value: formatAmount(sumForDate ?? 0) },
 		{
 			label: 'Month Total',

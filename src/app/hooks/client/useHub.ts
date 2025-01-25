@@ -1,12 +1,12 @@
-import { MONTHS } from '@/app/constants';
+import type { TodayData } from '@/app/components/home/Hub';
 import type {
 	TransactionWithDateData,
 	TransactionWithGroupData,
 } from '@/app/types';
-import dayjs from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface UseHubProps {
+	today: TodayData;
 	transactionsData: TransactionWithDateData[] | null;
 }
 
@@ -19,20 +19,10 @@ type UseHubData = {
 	transactionsForDate: TransactionWithDateData[] | null;
 };
 
-export default function useHub({ transactionsData }: UseHubProps): UseHubData {
-	const today = useMemo(() => {
-		const arr = dayjs()
-			.format('D MM YYYY')
-			.split(' ')
-			.map((m) => +m);
-		return {
-			date: arr[0],
-			month: arr[1],
-			monthName: MONTHS[arr[1]],
-			year: arr[2],
-		};
-	}, []);
-
+export default function useHub({
+	today,
+	transactionsData,
+}: UseHubProps): UseHubData {
 	// STATE
 	const [transactionsForDate, setTransactionsForDate] = useState<
 		TransactionWithDateData[] | null
