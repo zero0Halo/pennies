@@ -6,43 +6,20 @@ import Transactions from '../Transactions';
 import { formatAmount } from '@/utils/app';
 import type { MonthlySumData, TransactionWithDateData } from '@/app/types';
 import StatRow from '../StatRow';
-import { useMemo } from 'react';
-import dayjs from 'dayjs';
-import { MONTHS } from '@/app/constants';
+import type { GetTodayData } from '@/utils/app/getToday';
 
 interface HubProps {
-	monthName: string;
 	monthlySumData: MonthlySumData | null;
+	today: GetTodayData;
 	transactionsData: TransactionWithDateData[] | null;
-	year: number;
 }
-
-export type TodayData = {
-	date: number;
-	month: number;
-	monthName: string;
-	year: number;
-};
 
 // COMPONENT
 export default function Hub({
 	monthlySumData,
+	today,
 	transactionsData,
 }: HubProps): React.ReactNode {
-	// MEMO
-	const today = useMemo<TodayData>(() => {
-		const arr = dayjs()
-			.format('D MM YYYY')
-			.split(' ')
-			.map((m) => +m);
-		return {
-			date: arr[0],
-			month: arr[1],
-			monthName: MONTHS[arr[1]],
-			year: arr[2],
-		};
-	}, []);
-
 	// CUSTOM HOOKS
 	const { noAutopay, recurring, sumForDate, transactions } = useHub({
 		today,

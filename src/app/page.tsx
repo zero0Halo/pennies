@@ -13,6 +13,7 @@ import useAccountsCookie from './hooks/server/useAccountsCookie';
 import { FormMessagingWrapper } from './components/FormMessaging';
 import ToLocalStorage from './components/ToLocalStorage';
 import useUserCookie from './hooks/server/useUserCookie';
+import HomepageViews from './components/home/HomepageViews';
 
 interface GetInitialDataArguments {
 	defaultAccount: AccountData | null;
@@ -97,13 +98,12 @@ export default async function Home() {
 
 			{/* Logged in, show transactions */}
 			{transactions !== undefined && isLoggedIn && (
-				<FormMessagingWrapper>
-					<TransactionsMonth
-						defaultAccount={defaultAccount}
-						defaultDate={defaultDate}
-						defaultTransactionsData={transactions}
-					/>
-				</FormMessagingWrapper>
+				<HomepageViews
+					defaultAccount={defaultAccount}
+					defaultDate={defaultDate}
+					defaultMonthlySums={monthlySums}
+					defaultTransactionsData={transactions}
+				/>
 			)}
 
 			{/* If not logged in */}

@@ -41,10 +41,6 @@ export default function TransactionsMonth({
 	const [transactionsData, setTransactionsData] = useState(
 		defaultTransactionsData,
 	);
-	const [toggleState, setToggleState] = useState<ToggleStateData>({
-		today: true,
-		month: false,
-	});
 
 	// REACT FORM
 	const { getValues, register, setValue, watch } = useForm();
@@ -207,12 +203,6 @@ export default function TransactionsMonth({
 					</Button>
 				</div>
 
-				<ButtonToggles
-					className="mx-auto my-0 self-end"
-					setToggleState={setToggleState}
-					toggleState={toggleState}
-				/>
-
 				<div className="join">
 					<Button
 						className="join-item bg-primary btn-xs self-end text-black"
@@ -229,18 +219,8 @@ export default function TransactionsMonth({
 				</div>
 			</div>
 
-			{/* Today View */}
-			<section className={toggleState.today ? 'block' : 'hidden'}>
-				<Hub
-					monthName={getValues('month')}
-					monthlySumData={monthlySumData}
-					transactionsData={transactionsData}
-					year={+getValues('year')}
-				/>
-			</section>
-
 			{/* Month View */}
-			<section className={toggleState.month ? 'block' : 'hidden'}>
+			<section>
 				<StatRow stats={statsArray} />
 
 				{transactionsData?.map(([dayMeta, transactions]) => (

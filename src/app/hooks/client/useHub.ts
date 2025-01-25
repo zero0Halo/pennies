@@ -1,12 +1,12 @@
-import type { TodayData } from '@/app/components/home/Hub';
 import type {
 	TransactionWithDateData,
 	TransactionWithGroupData,
 } from '@/app/types';
+import type { GetTodayData } from '@/utils/app/getToday';
 import { useEffect, useState } from 'react';
 
 interface UseHubProps {
-	today: TodayData;
+	today: GetTodayData;
 	transactionsData: TransactionWithDateData[] | null;
 }
 
@@ -14,7 +14,7 @@ type UseHubData = {
 	noAutopay: TransactionWithGroupData[] | null;
 	recurring: TransactionWithGroupData[] | null;
 	sumForDate: number | null;
-	today: { date: number; month: number; monthName: string; year: number };
+	today: GetTodayData;
 	transactions: TransactionWithGroupData[] | null;
 	transactionsForDate: TransactionWithDateData[] | null;
 };
