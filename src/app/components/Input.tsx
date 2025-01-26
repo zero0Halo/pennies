@@ -1,15 +1,18 @@
 import React from 'react';
 
+type Sizes = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
 type InputProps = {
 	className?: string;
+	sizeSuffix?: Sizes;
 	type: 'text' | 'checkbox';
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-	({ className = '', type = 'text', ...rest }, ref) => {
+	({ className = '', sizeSuffix = 'md', type = 'text', ...rest }, ref) => {
 		const typeClasses = {
-			checkbox: 'checkbox checkbox-sm',
-			text: 'grow font-normal',
+			checkbox: `checkbox checkbox-${sizeSuffix}`,
+			text: `grow font-normal text-${sizeSuffix}`,
 		};
 		const classes = [typeClasses[type], className].join(' ');
 

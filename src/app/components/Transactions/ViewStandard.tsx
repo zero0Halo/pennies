@@ -12,7 +12,7 @@ import TransactionName from './TransactionName';
 import Button from '../Button';
 import { useFormMessagingContext } from '../FormMessaging';
 import { Fragment, useState } from 'react';
-import GroupEdit from './GroupEdit';
+import GroupUpdate from './GroupUpdate';
 
 type ViewStandardProps = {
 	activeElement: number | boolean | { parent: number; child: number };
@@ -145,7 +145,7 @@ export default function ViewStandard({
 							{showEditGroup && (
 								<tr>
 									<td colSpan={7}>
-										<GroupEdit
+										<GroupUpdate
 											group={groupToEdit}
 											setActiveElement={() => setActiveElement(false)}
 											transactions={groupTransactions}
