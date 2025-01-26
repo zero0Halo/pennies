@@ -25,8 +25,9 @@ type Views =
 	| typeof STANDARD;
 
 interface TransactionsProps {
-	activeElement?: number | boolean | [number, number];
+	activeElement?: number | boolean | { parent: number; child: number };
 	className?: string;
+	disabled?: boolean;
 	setActiveElement?: (arg: number | boolean) => void;
 	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	showHeader?: boolean;
@@ -41,6 +42,7 @@ interface TransactionsProps {
 export default function Transactions({
 	activeElement,
 	className,
+	disabled,
 	setActiveElement,
 	setCSVData,
 	showHeader,
@@ -54,7 +56,7 @@ export default function Transactions({
 
 	// STATE
 	const [internalActiveElement, setInternalActiveElement] = useState<
-		number | boolean | [number, number]
+		number | boolean | { parent: number; child: number }
 	>(activeElement ?? false);
 
 	// EFFECTS
@@ -70,6 +72,7 @@ export default function Transactions({
 		className,
 	);
 	const props = {
+		disabled,
 		activeElement: internalActiveElement,
 		setActiveElement: setActiveElement ?? setInternalActiveElement,
 		showHeader,

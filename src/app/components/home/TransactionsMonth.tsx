@@ -34,7 +34,7 @@ export default function TransactionsMonth({
 
 	// STATE
 	const [activeElement, setActiveElement] = useState<
-		boolean | [number, number]
+		boolean | { parent: number; child: number }
 	>(false);
 
 	// CONTEXT
@@ -220,36 +220,46 @@ export default function TransactionsMonth({
 
 			{/* Month View */}
 			<section>
-				{transactionsData?.map(([dayMeta, transactions]) => (
-					<div
-						key={dayMeta.date}
-						className={classNames(
-							'flex mb-8',
-							Array.isArray(activeElement) && activeElement[0] !== dayMeta.date
-								? 'opacity-50 pointer-events-none'
-								: '',
-						)}
-					>
-						<div className="relative">
-							<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
-								{dayMeta.date}
+				{transactionsData?.map(([dayMeta, transactions]) => {
+					// Because there are multiple Transaction components being displayed there is logic for
+					// Both the parent Transaction and its children to be disabled
+					const disabled =
+						typeof activeElement === 'object' &&
+						activeElement.parent !== dayMeta.date;
+					const disabledClasses = disabled
+						? 'opacity-50 pointer-events-none'
+						: '';
+					const fn = (val: number | boolean) =>
+						setActiveElement(
+							typeof val === 'boolean'
+								? val
+								: { parent: dayMeta.date, child: val },
+						);
+
+					return (
+						<div
+							key={dayMeta.date}
+							className={classNames('flex mb-8', disabledClasses)}
+						>
+							<div className="relative">
+								<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
+									{dayMeta.date}
+								</div>
+								<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
+									{dayMeta.day}
+								</div>
 							</div>
-							<div className="h-7 leading-7 text-xs text-center opacity-80 uppercase">
-								{dayMeta.day}
-							</div>
+
+							<Transactions
+								activeElement={activeElement}
+								disabled={disabled}
+								setActiveElement={fn}
+								tableClassName="rounded-tl-none"
+								transactions={transactions}
+							/>
 						</div>
-						<Transactions
-							activeElement={activeElement}
-							setActiveElement={(val: number | boolean) =>
-								setActiveElement(
-									typeof val === 'boolean' ? val : [dayMeta.date, val],
-								)
-							}
-							tableClassName="rounded-tl-none"
-							transactions={transactions}
-						/>
-					</div>
-				))}
+					);
+				})}
 
 				{!transactionsData ||
 					(transactionsData.length === 0 && (

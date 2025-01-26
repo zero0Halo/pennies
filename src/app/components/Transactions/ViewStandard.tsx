@@ -15,7 +15,8 @@ import { Fragment, useState } from 'react';
 import GroupEdit from './GroupEdit';
 
 type ViewStandardProps = {
-	activeElement: number | boolean | [number, number];
+	activeElement: number | boolean | { parent: number; child: number };
+	disabled?: boolean;
 	setActiveElement: (arg: number | boolean) => void;
 	showHeader?: boolean;
 	tableClassName: string;
@@ -25,6 +26,7 @@ type ViewStandardProps = {
 // COMPONENT
 export default function ViewStandard({
 	activeElement,
+	disabled,
 	setActiveElement,
 	showHeader = true,
 	tableClassName = '',
@@ -88,65 +90,72 @@ export default function ViewStandard({
 			)}
 
 			<tbody>
-				{transactions.map((transaction, index) => (
-					<Fragment key={transaction.uid}>
-						<tr className={zebra(index, transaction)}>
-							<td className={tdClasses(3)}>
-								<div className="flex">
-									<TransactionName transaction={transaction} />
+				{transactions.map((transaction, index) => {
+					const activeObject =
+						typeof activeElement === 'object' ? activeElement : false;
+					const showEditGroup =
+						activeObject && activeObject.child === index && !disabled;
 
-									{transaction.prime && (
-										<span className="tooltip cursor-help" data-tip="Prime">
-											<Image
-												alt="A King's Crown"
-												className="my-0 ml-2"
-												height="16"
-												src="/images/prime.svg"
-												width="16"
-											/>
-										</span>
+					return (
+						<Fragment key={transaction.uid}>
+							<tr className={zebra(index, transaction)}>
+								<td className={tdClasses(3)}>
+									<div className="flex">
+										<TransactionName transaction={transaction} />
+
+										{transaction.prime && (
+											<span className="tooltip cursor-help" data-tip="Prime">
+												<Image
+													alt="A King's Crown"
+													className="my-0 ml-2"
+													height="16"
+													src="/images/prime.svg"
+													width="16"
+												/>
+											</span>
+										)}
+									</div>
+								</td>
+								<td className={classNames([tdOverflow(), tdClasses(6)])}>
+									{transaction.description}
+								</td>
+								<td className={tdClasses(1)}>
+									{formatAmount(transaction.amount)}
+								</td>
+								<td className={tdClasses(1)}>{transaction.category}</td>
+								<td className={tdClasses(1)}>{formatRecurring(transaction)}</td>
+								<td className={tdClasses(1)}>
+									{transaction.group_recurring_autopay && 'Yes'}
+								</td>
+								<td className={tdClasses(1)}>
+									{transaction.group_uid && (
+										<Button
+											className="btn-primary btn-xs text-black"
+											disabled={!!activeObject}
+											onClick={() =>
+												handleGetData(transaction.group_uid, index)
+											}
+										>
+											Edit Group
+										</Button>
 									)}
-								</div>
-							</td>
-							<td className={classNames([tdOverflow(), tdClasses(6)])}>
-								{transaction.description}
-							</td>
-							<td className={tdClasses(1)}>
-								{formatAmount(transaction.amount)}
-							</td>
-							<td className={tdClasses(1)}>{transaction.category}</td>
-							<td className={tdClasses(1)}>{formatRecurring(transaction)}</td>
-							<td className={tdClasses(1)}>
-								{transaction.group_recurring_autopay && 'Yes'}
-							</td>
-							<td className={tdClasses(1)}>
-								{transaction.group_uid && (
-									<Button
-										className="btn-primary btn-xs text-black"
-										disabled={
-											Array.isArray(activeElement) && activeElement[1] !== index
-										}
-										onClick={() => handleGetData(transaction.group_uid, index)}
-									>
-										Edit Group
-									</Button>
-								)}
-							</td>
-						</tr>
-
-						{Array.isArray(activeElement) && activeElement[1] === index && (
-							<tr>
-								<td colSpan={7}>
-									<GroupEdit
-										group={groupToEdit}
-										setActiveElement={() => setActiveElement(false)}
-										transactions={groupTransactions}
-									/>
 								</td>
 							</tr>
-						)}
-					</Fragment>
-				))}
+
+							{showEditGroup && (
+								<tr>
+									<td colSpan={7}>
+										<GroupEdit
+											group={groupToEdit}
+											setActiveElement={() => setActiveElement(false)}
+											transactions={groupTransactions}
+										/>
+									</td>
+								</tr>
+							)}
+						</Fragment>
+					);
+				})}
 			</tbody>
 		</table>
 	);
