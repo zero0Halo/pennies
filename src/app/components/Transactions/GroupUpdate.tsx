@@ -5,7 +5,7 @@ import type React from 'react';
 import Button from '../Button';
 import Label from '../Label';
 import Input from '../Input';
-import { useAccountsCookie } from '@/app/hooks/client';
+import { useAccountsCookie, useLoading } from '@/app/hooks/client';
 import { TRANSFER } from '@/app/constants';
 import { useForm } from 'react-hook-form';
 import { apiCall } from '@/utils/app';
@@ -28,11 +28,7 @@ export default function GroupUpdate({
 	const { setError, setSuccess } = useFormMessagingContext();
 
 	// CUSTOM HOOKS
-	const { getAccountByUid } = useAccountsCookie();
-	const accountName = getAccountByUid(group.account_uid)?.name;
-	const transferToAccountName = getAccountByUid(
-		group?.to_account_uid ?? '',
-	)?.name;
+	const { Loading, props, setLoading } = useLoading();
 
 	// REACT FORM
 	const { handleSubmit, register } = useForm<{
@@ -50,9 +46,12 @@ export default function GroupUpdate({
 		notes,
 		siteurl,
 	}: { notes?: string; siteurl?: string }): Promise<void> => {
-		const payload = { ...group, notes, siteurl };
+		setLoading(true);
 
+		const payload = { ...group, notes, siteurl };
 		const response = await apiCall<GroupData>('api/group/update', { payload });
+
+		setLoading(false);
 
 		if (response.error) {
 			console.error(response.data);
@@ -66,6 +65,8 @@ export default function GroupUpdate({
 
 	return (
 		<div className="bg-primary pt-1 p-8 rounded-lg relative">
+			<Loading {...props} />
+
 			<h3 className="mt-4">Edit Group: {group.name}</h3>
 
 			<form className="form-control" onSubmit={handleSubmit(handleGroupUpdate)}>
