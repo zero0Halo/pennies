@@ -16,6 +16,7 @@ import Transactions from '@/app/components/Transactions';
 import { MONTHS, YEARS } from '@/app/constants';
 import { FormMessaging, useFormMessagingContext } from '../FormMessaging';
 import StatRow from '../StatRow';
+import classNames from 'classnames';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | null;
@@ -30,6 +31,11 @@ export default function TransactionsMonth({
 	defaultTransactionsData,
 }: TransactionsMonthProps) {
 	if (defaultAccount === null) return null;
+
+	// STATE
+	const [activeElement, setActiveElement] = useState<
+		boolean | [number, number]
+	>(false);
 
 	// CONTEXT
 	const { setError, setSuccess } = useFormMessagingContext();
@@ -215,7 +221,15 @@ export default function TransactionsMonth({
 			{/* Month View */}
 			<section>
 				{transactionsData?.map(([dayMeta, transactions]) => (
-					<div key={dayMeta.date} className="flex mb-8">
+					<div
+						key={dayMeta.date}
+						className={classNames(
+							'flex mb-8',
+							Array.isArray(activeElement) && activeElement[0] !== dayMeta.date
+								? 'opacity-50 pointer-events-none'
+								: '',
+						)}
+					>
 						<div className="relative">
 							<div className="badge badge-lg badge-primary py-1 h-7 rounded-l-lg rounded-r-none mr-1 font-bold text-white w-10">
 								{dayMeta.date}
@@ -225,6 +239,12 @@ export default function TransactionsMonth({
 							</div>
 						</div>
 						<Transactions
+							activeElement={activeElement}
+							setActiveElement={(val: number | boolean) =>
+								setActiveElement(
+									typeof val === 'boolean' ? val : [dayMeta.date, val],
+								)
+							}
 							tableClassName="rounded-tl-none"
 							transactions={transactions}
 						/>

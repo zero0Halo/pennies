@@ -11,10 +11,11 @@ import classNames from 'classnames';
 import TransactionName from './TransactionName';
 import Button from '../Button';
 import { useFormMessagingContext } from '../FormMessaging';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
+import GroupEdit from './GroupEdit';
 
 type ViewStandardProps = {
-	activeElement: number | boolean;
+	activeElement: number | boolean | [number, number];
 	setActiveElement: (arg: number | boolean) => void;
 	showHeader?: boolean;
 	tableClassName: string;
@@ -43,6 +44,8 @@ export default function ViewStandard({
 		group_uid: string | undefined,
 		index: number,
 	): Promise<void> => {
+		setActiveElement(index);
+
 		// GET THE GROUP AND THE TRANSACTIONS FOR THAT GROUP
 		const results = await Promise.all([
 			apiCall('api/group/select', {
@@ -60,11 +63,10 @@ export default function ViewStandard({
 			return;
 		}
 
-		setSuccess('Successfully retrieved Group data');
-
 		// Break the results up
 		const [group, transactions] = results.map((m) => m.data);
 
+		setSuccess('Successfully retrieved Group data');
 		setGroupToEdit(group);
 		setGroupTransactions(transactions);
 	};
@@ -87,48 +89,63 @@ export default function ViewStandard({
 
 			<tbody>
 				{transactions.map((transaction, index) => (
-					<tr className={zebra(index, transaction)} key={transaction.uid}>
-						<td className={tdClasses(3)}>
-							<div className="flex">
-								<TransactionName transaction={transaction} />
+					<Fragment key={transaction.uid}>
+						<tr className={zebra(index, transaction)}>
+							<td className={tdClasses(3)}>
+								<div className="flex">
+									<TransactionName transaction={transaction} />
 
-								{transaction.prime && (
-									<span className="tooltip cursor-help" data-tip="Prime">
-										<Image
-											alt="A King's Crown"
-											className="my-0 ml-2"
-											height="16"
-											src="/images/prime.svg"
-											width="16"
-										/>
-									</span>
+									{transaction.prime && (
+										<span className="tooltip cursor-help" data-tip="Prime">
+											<Image
+												alt="A King's Crown"
+												className="my-0 ml-2"
+												height="16"
+												src="/images/prime.svg"
+												width="16"
+											/>
+										</span>
+									)}
+								</div>
+							</td>
+							<td className={classNames([tdOverflow(), tdClasses(6)])}>
+								{transaction.description}
+							</td>
+							<td className={tdClasses(1)}>
+								{formatAmount(transaction.amount)}
+							</td>
+							<td className={tdClasses(1)}>{transaction.category}</td>
+							<td className={tdClasses(1)}>{formatRecurring(transaction)}</td>
+							<td className={tdClasses(1)}>
+								{transaction.group_recurring_autopay && 'Yes'}
+							</td>
+							<td className={tdClasses(1)}>
+								{transaction.group_uid && (
+									<Button
+										className="btn-primary btn-xs text-black"
+										disabled={
+											Array.isArray(activeElement) && activeElement[1] !== index
+										}
+										onClick={() => handleGetData(transaction.group_uid, index)}
+									>
+										Edit Group
+									</Button>
 								)}
-							</div>
-						</td>
-						<td className={classNames([tdOverflow(), tdClasses(6)])}>
-							{transaction.description}
-						</td>
-						<td className={tdClasses(1)}>{formatAmount(transaction.amount)}</td>
-						<td className={tdClasses(1)}>{transaction.category}</td>
-						<td className={tdClasses(1)}>{formatRecurring(transaction)}</td>
-						<td className={tdClasses(1)}>
-							{transaction.group_recurring_autopay && 'Yes'}
-						</td>
-						<td className={tdClasses(1)}>
-							{transaction.group_uid && (
-								<Button
-									className="btn-primary btn-xs text-black"
-									disabled={
-										typeof activeElement !== 'boolean' &&
-										activeElement !== index
-									}
-									onClick={() => handleGetData(transaction.group_uid, index)}
-								>
-									Edit Group
-								</Button>
-							)}
-						</td>
-					</tr>
+							</td>
+						</tr>
+
+						{Array.isArray(activeElement) && activeElement[1] === index && (
+							<tr>
+								<td colSpan={7}>
+									<GroupEdit
+										group={groupToEdit}
+										setActiveElement={() => setActiveElement(false)}
+										transactions={groupTransactions}
+									/>
+								</td>
+							</tr>
+						)}
+					</Fragment>
 				))}
 			</tbody>
 		</table>

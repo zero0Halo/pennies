@@ -7,7 +7,7 @@ import TransactionCreate from '@/app/csv-upload/CsvUpload/TransactionCreate';
 import { tableClasses, tdOverflow, thClasses } from './helpers';
 
 type ViewSingletonProps = {
-	activeElement: number | boolean;
+	activeElement: number | boolean | [number, number];
 	setActiveElement: (arg: number | boolean) => void;
 	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	tableClassName: string;

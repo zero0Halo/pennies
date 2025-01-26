@@ -25,7 +25,7 @@ type Views =
 	| typeof STANDARD;
 
 interface TransactionsProps {
-	activeElement?: number | boolean;
+	activeElement?: number | boolean | [number, number];
 	className?: string;
 	setActiveElement?: (arg: number | boolean) => void;
 	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
@@ -54,7 +54,7 @@ export default function Transactions({
 
 	// STATE
 	const [internalActiveElement, setInternalActiveElement] = useState<
-		number | boolean
+		number | boolean | [number, number]
 	>(activeElement ?? false);
 
 	// EFFECTS
