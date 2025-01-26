@@ -1,11 +1,17 @@
 import type React from 'react';
 import Image from 'next/image';
-import type { TransactionWithGroupData } from '@/app/types';
+import type {
+	GroupData,
+	TransactionData,
+	TransactionWithGroupData,
+} from '@/app/types';
 import { apiCall, formatAmount, formatRecurring, zebra } from '@/utils/app';
 import { tableClasses, tdClasses, tdOverflow, thClasses } from './helpers';
 import classNames from 'classnames';
 import TransactionName from './TransactionName';
 import Button from '../Button';
+import { useFormMessagingContext } from '../FormMessaging';
+import { useState } from 'react';
 
 type ViewStandardProps = {
 	activeElement: number | boolean;
@@ -15,6 +21,7 @@ type ViewStandardProps = {
 	transactions: TransactionWithGroupData[];
 };
 
+// COMPONENT
 export default function ViewStandard({
 	activeElement,
 	setActiveElement,
@@ -22,16 +29,44 @@ export default function ViewStandard({
 	tableClassName = '',
 	transactions,
 }: ViewStandardProps): React.ReactNode {
+	// STATE
+	const [groupToEdit, setGroupToEdit] = useState<GroupData | null>(null);
+	const [groupTransactions, setGroupTransactions] = useState<
+		TransactionData[] | null
+	>(null);
+
+	// CONTEXT
+	const { setError, setSuccess } = useFormMessagingContext();
+
 	// HANDLERS
 	const handleGetData = async (
 		group_uid: string | undefined,
 		index: number,
-	) => {
-		const response = await apiCall('api/group/select', {
-			payload: { uid: group_uid },
-		});
-		setActiveElement(index);
-		console.log(response);
+	): Promise<void> => {
+		// GET THE GROUP AND THE TRANSACTIONS FOR THAT GROUP
+		const results = await Promise.all([
+			apiCall('api/group/select', {
+				payload: { uid: group_uid },
+			}),
+			apiCall('api/transactions/select/by-group', {
+				payload: { group_uid },
+			}),
+		]);
+
+		// If there's errors in either response, return nothing
+		if (!results.every((e) => !e.error)) {
+			console.error({ results });
+			setError('There was an error retrieving the group');
+			return;
+		}
+
+		setSuccess('Successfully retrieved Group data');
+
+		// Break the results up
+		const [group, transactions] = results.map((m) => m.data);
+
+		setGroupToEdit(group);
+		setGroupTransactions(transactions);
 	};
 
 	return (
