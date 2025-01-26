@@ -212,8 +212,6 @@ export default function TransactionsMonth({
 				</div>
 			</div>
 
-			{/* <div className="divider" /> */}
-
 			{/* Month View */}
 			<section>
 				{transactionsData?.map(([dayMeta, transactions]) => (
