@@ -18,6 +18,7 @@ import { useTransactionsMonthContext } from '../context/TransactionsMonth';
 
 interface GroupUpdateProps {
 	group: GroupData | null;
+	handleReset: () => void;
 	setActiveElement: () => void;
 	transaction: TransactionWithGroupData | null;
 	transactions: TransactionWithGroupData[] | null;
@@ -25,6 +26,7 @@ interface GroupUpdateProps {
 
 export default function GroupUpdate({
 	group,
+	handleReset,
 	setActiveElement,
 	transaction,
 	transactions,
@@ -83,6 +85,7 @@ export default function GroupUpdate({
 
 			setSuccess('Successfully updated group!');
 			setTransactions(selectResponse.data);
+			handleReset();
 			setActiveElement();
 		});
 	};

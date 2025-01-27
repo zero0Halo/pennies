@@ -1,10 +1,8 @@
+'use client';
+
 import type React from 'react';
 import Image from 'next/image';
-import type {
-	GroupData,
-	TransactionData,
-	TransactionWithGroupData,
-} from '@/app/types';
+import type { GroupData, TransactionWithGroupData } from '@/app/types';
 import { apiCall, formatAmount, formatRecurring, zebra } from '@/utils/app';
 import { tableClasses, tdClasses, tdOverflow, thClasses } from './helpers';
 import classNames from 'classnames';
@@ -74,6 +72,11 @@ export default function ViewStandard({
 		setGroupToEdit(group);
 		setGroupTransaction(transaction);
 		setGroupTransactions(transactions);
+	};
+	const handleReset = () => {
+		setGroupToEdit(null);
+		setGroupTransaction(null);
+		setGroupTransactions(null);
 	};
 
 	return (
@@ -148,6 +151,7 @@ export default function ViewStandard({
 									<td colSpan={7}>
 										<GroupUpdate
 											group={groupToEdit}
+											handleReset={handleReset}
 											setActiveElement={() => setActiveElement(false)}
 											transaction={groupTransaction}
 											transactions={groupTransactions}
