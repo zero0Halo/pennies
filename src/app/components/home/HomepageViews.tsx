@@ -10,10 +10,11 @@ import { useMemo, useState } from 'react';
 import type { ToggleStateData } from '../ButtonToggles';
 import Hub from './Hub';
 import ButtonToggles from '../ButtonToggles';
-import { FormMessagingWrapper } from '../FormMessaging';
-import TransactionsMonth from './TransactionsMonth';
+import { FormMessagingWrapper } from '../context/FormMessaging';
+import TransactionsMonth from '../context/TransactionsMonth/TransactionsMonth';
 import getToday from '@/utils/app/getToday';
 import { useMonthlySumLS } from '@/app/hooks/client';
+import { TransactionsMonthWrapper } from '../context/TransactionsMonth';
 
 const today = getToday();
 
@@ -30,11 +31,13 @@ export default function HomepageViews({
 	defaultMonthlySums,
 	defaultTransactionsData,
 }: HomepageViewsProps): React.ReactNode {
+	// STATE
 	const [toggleState, setToggleState] = useState<ToggleStateData>({
 		today: true,
 		month: false,
 	});
 
+	// MEMOIZED
 	const todaysTransactions = useMemo(() => {
 		if (defaultTransactionsData !== null) {
 			return defaultTransactionsData.filter(([x]) => x.isToday) ?? null;
@@ -48,32 +51,35 @@ export default function HomepageViews({
 		_monthlySumsData: defaultMonthlySums,
 	});
 
+	// COMPONENT
 	return (
 		<FormMessagingWrapper>
-			<div className="flex items-center justify-center">
-				<ButtonToggles
-					className=""
-					setToggleState={setToggleState}
-					toggleState={toggleState}
-				/>
-			</div>
+			<TransactionsMonthWrapper>
+				<div className="flex items-center justify-center">
+					<ButtonToggles
+						className=""
+						setToggleState={setToggleState}
+						toggleState={toggleState}
+					/>
+				</div>
+				{/* Today View */}
+				<section className={toggleState.today ? 'block' : 'hidden'}>
+					<Hub
+						today={today}
+						monthlySumData={monthlySumData}
+						transactionsData={todaysTransactions}
+					/>
+				</section>
 
-			{/* Today View */}
-			<section className={toggleState.today ? 'block' : 'hidden'}>
-				<Hub
-					today={today}
-					monthlySumData={monthlySumData}
-					transactionsData={todaysTransactions}
-				/>
-			</section>
-
-			<section className={toggleState.month ? 'block' : 'hidden'}>
-				<TransactionsMonth
-					defaultAccount={defaultAccount}
-					defaultDate={defaultDate}
-					defaultTransactionsData={defaultTransactionsData}
-				/>
-			</section>
+				{/* Month View */}
+				<section className={toggleState.month ? 'block' : 'hidden'}>
+					<TransactionsMonth
+						defaultAccount={defaultAccount}
+						defaultDate={defaultDate}
+						defaultTransactionsData={defaultTransactionsData}
+					/>
+				</section>
+			</TransactionsMonthWrapper>
 		</FormMessagingWrapper>
 	);
 }

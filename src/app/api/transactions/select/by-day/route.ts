@@ -8,6 +8,7 @@ import type {
 	TransactionWithDateData,
 	TransactionWithGroupData,
 } from '@/app/types';
+import { TRANSACTIONS_WITH_GROUP } from '@/app/constants';
 
 export async function POST(req: Request) {
 	const { account_uid, date } = await req.json();
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
 	// Get transactions for the specified month
 	const { data: transactionsData, error: transactionsDataError } =
 		await superiorBase
-			.from('transactions_with_group')
+			.from(TRANSACTIONS_WITH_GROUP)
 			.select('*')
 			.eq('account_uid', account_uid)
 			.gte('timestamp', startDate)

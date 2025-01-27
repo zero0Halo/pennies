@@ -1,6 +1,6 @@
 'use client';
 
-import type { GroupData, TransactionData } from '@/app/types';
+import type { GroupData, TransactionWithGroupData } from '@/app/types';
 import type React from 'react';
 import Button from '../Button';
 import Label from '../Label';
@@ -8,12 +8,13 @@ import Input from '../Input';
 import { useLoading } from '@/app/hooks/client';
 import { useForm } from 'react-hook-form';
 import { apiCall } from '@/utils/app';
-import { useFormMessagingContext } from '../FormMessaging';
+import { useFormMessagingContext } from '../context/FormMessaging';
+import Transactions from '.';
 
 interface GroupUpdateProps {
 	group: GroupData | null;
 	setActiveElement: () => void;
-	transactions: TransactionData[] | null;
+	transactions: TransactionWithGroupData[] | null;
 }
 
 export default function GroupUpdate({
@@ -50,16 +51,16 @@ export default function GroupUpdate({
 		const payload = { ...group, notes, siteurl };
 		const response = await apiCall<GroupData>('api/group/update', { payload });
 
-		setLoading(false);
+		setLoading(false, () => {
+			if (response.error) {
+				console.error(response.data);
+				setError('There was an error updating the group');
+				return;
+			}
 
-		if (response.error) {
-			console.error(response.data);
-			setError('There was an error updating the group');
-			return;
-		}
-
-		setSuccess('Successfully updated group!');
-		setActiveElement();
+			setSuccess('Successfully updated group!');
+			setActiveElement();
+		});
 	};
 
 	return (
@@ -79,7 +80,15 @@ export default function GroupUpdate({
 					<Input type="text" {...register('notes')} />
 				</Label>
 
-				<div className="join">
+				<h4>This change will affect the following transactions:</h4>
+
+				<Transactions
+					className="mb-4"
+					transactions={transactions}
+					view="grouped"
+				/>
+
+				<div className="join flex justify-end">
 					<Button className="btn-warning join-item" onClick={setActiveElement}>
 						Cancel
 					</Button>

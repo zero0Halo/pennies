@@ -10,7 +10,7 @@ import { tableClasses, tdClasses, tdOverflow, thClasses } from './helpers';
 import classNames from 'classnames';
 import TransactionName from './TransactionName';
 import Button from '../Button';
-import { useFormMessagingContext } from '../FormMessaging';
+import { useFormMessagingContext } from '../context/FormMessaging';
 import { Fragment, useState } from 'react';
 import GroupUpdate from './GroupUpdate';
 

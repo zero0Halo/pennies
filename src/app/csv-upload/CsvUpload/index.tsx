@@ -10,8 +10,8 @@ import { useAccountsCookie, useClientCookie } from '@/app/hooks/client';
 import parseCsv from './scripts/parseCsv';
 import { USER } from '@/app/constants';
 import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
-import { useFormMessagingContext } from '@/app/components/FormMessaging/FormMessagingProvider';
-import FormMessaging from '@/app/components/FormMessaging/FormMessaging';
+import { useFormMessagingContext } from '@/app/components/context/FormMessaging/FormMessagingProvider';
+import FormMessaging from '@/app/components/context/FormMessaging/FormMessaging';
 import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
 import ButtonToggles, {
 	type ToggleStateData,

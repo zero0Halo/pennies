@@ -37,6 +37,7 @@ export const SELECT = 'select';
 export const SERVER = 'SERVER';
 export const TODAY = 'TODAY';
 export const TRANSACTIONS = 'transactions';
+export const TRANSACTIONS_WITH_GROUP = 'transactions_with_group';
 export const TRANSFER = 'Transfer';
 export const TRANSFERS = 'transfers';
 export const UPDATE = 'update';

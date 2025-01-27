@@ -1,5 +1,7 @@
 'use client';
 
+// Used for SSR components to take data and put it into local storage for the client
+
 import storage from '@/utils/app/storage';
 import type React from 'react';
 import { useEffect, useRef } from 'react';

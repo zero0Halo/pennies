@@ -8,15 +8,16 @@ import {
 	useLoading,
 	useMonthlySumLS,
 } from '@/app/hooks/client';
-import Select from '../Select';
+import Select from '../../Select';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Button from '../Button';
+import Button from '../../Button';
 import Transactions from '@/app/components/Transactions';
 import { MONTHS, YEARS } from '@/app/constants';
 import { FormMessaging, useFormMessagingContext } from '../FormMessaging';
-import StatRow from '../StatRow';
+import StatRow from '../../StatRow';
 import classNames from 'classnames';
+import { useTransactionsMonthContext } from './TransactionsMonthProvider';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | null;
@@ -39,11 +40,7 @@ export default function TransactionsMonth({
 
 	// CONTEXT
 	const { setError, setSuccess } = useFormMessagingContext();
-
-	// STATE
-	const [transactionsData, setTransactionsData] = useState(
-		defaultTransactionsData,
-	);
+	const { setTransactions, transactions } = useTransactionsMonthContext();
 
 	// REACT FORM
 	const { getValues, register, setValue, watch } = useForm();
@@ -58,10 +55,10 @@ export default function TransactionsMonth({
 
 	// MEMO
 	const sum: number | boolean = useMemo(() => {
-		if (!transactionsData || transactionsData.length === 0) return 0;
+		if (!transactions || transactions.length === 0) return 0;
 
-		let _sum = transactionsData
-			.map(([_, transactions]) => transactions)
+		let _sum = transactions
+			.map(([_, _transactions]) => _transactions)
 			.reduce(
 				// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
 				(acc, arrayOfTransactions) => [...acc, ...arrayOfTransactions],
@@ -76,7 +73,7 @@ export default function TransactionsMonth({
 		}
 
 		return _sum;
-	}, [monthlySumData?.sum, transactionsData]);
+	}, [monthlySumData?.sum, transactions]);
 
 	// EFFECTS
 	useEffect(() => {
@@ -94,8 +91,6 @@ export default function TransactionsMonth({
 
 	// HANDLERS
 	const handleGetTransactions = async () => {
-		// setLoading(true);
-
 		const account = getValues('account');
 		const month = getValues('month');
 		const year = getValues('year');
@@ -105,8 +100,8 @@ export default function TransactionsMonth({
 		});
 
 		setLoading(false, () => {
-			if (!response.error) {
-				setTransactionsData(response.data);
+			if (!response.error && response.data) {
+				setTransactions(response.data);
 				setSuccess('Successfully Retrieved Transactions');
 			} else if (response.error) {
 				setError('Error Retreieving Transactions');
@@ -142,7 +137,7 @@ export default function TransactionsMonth({
 
 		setLoading(false, () => {
 			if (response.data) {
-				setTransactionsData(response.data);
+				setTransactions(response.data);
 				setValue('month', MONTHS[updatedMonth]);
 				setValue('year', updatedYear);
 				setSuccess(
@@ -220,9 +215,9 @@ export default function TransactionsMonth({
 
 			{/* Month View */}
 			<section>
-				{transactionsData?.map(([dayMeta, transactions]) => {
+				{transactions?.map(([dayMeta, _transactions]) => {
 					// Because there are multiple Transaction components being displayed there is logic for
-					// Both the parent Transaction and its children to be disabled
+					// both the parent Transaction and its children to be disabled
 					const disabled =
 						typeof activeElement === 'object' &&
 						activeElement.parent !== dayMeta.date;
@@ -252,17 +247,18 @@ export default function TransactionsMonth({
 
 							<Transactions
 								activeElement={activeElement}
+								className="overflow-y-visible max-h-max"
 								disabled={disabled}
 								setActiveElement={fn}
 								tableClassName="rounded-tl-none"
-								transactions={transactions}
+								transactions={_transactions}
 							/>
 						</div>
 					);
 				})}
 
-				{!transactionsData ||
-					(transactionsData.length === 0 && (
+				{!transactions ||
+					(transactions.length === 0 && (
 						<>
 							<h4>Transactions</h4>
 							<h5>None</h5>

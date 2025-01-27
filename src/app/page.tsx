@@ -8,9 +8,9 @@ import type {
 import { MONTHLY_SUMS } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
-import TransactionsMonth from './components/home/TransactionsMonth';
+import TransactionsMonth from './components/context/TransactionsMonth/TransactionsMonth';
 import useAccountsCookie from './hooks/server/useAccountsCookie';
-import { FormMessagingWrapper } from './components/FormMessaging';
+import { FormMessagingWrapper } from './components/context/FormMessaging';
 import ToLocalStorage from './components/ToLocalStorage';
 import useUserCookie from './hooks/server/useUserCookie';
 import HomepageViews from './components/home/HomepageViews';

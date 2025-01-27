@@ -19,7 +19,7 @@ import type {
 	CreateTransferPayloadData,
 } from '@/app/types';
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
-import { useFormMessagingContext } from '@/app/components/FormMessaging';
+import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
 import Transactions from '@/app/components/Transactions';
 
 interface GroupCreateProps {
