@@ -34,8 +34,10 @@ export default function ViewStandard({
 }: ViewStandardProps): React.ReactNode {
 	// STATE
 	const [groupToEdit, setGroupToEdit] = useState<GroupData | null>(null);
+	const [groupTransaction, setGroupTransaction] =
+		useState<TransactionWithGroupData | null>(null);
 	const [groupTransactions, setGroupTransactions] = useState<
-		TransactionData[] | null
+		TransactionWithGroupData[] | null
 	>(null);
 
 	// CONTEXT
@@ -43,7 +45,7 @@ export default function ViewStandard({
 
 	// HANDLERS
 	const handleGetData = async (
-		group_uid: string | undefined,
+		transaction: TransactionWithGroupData,
 		index: number,
 	): Promise<void> => {
 		setActiveElement(index);
@@ -51,10 +53,10 @@ export default function ViewStandard({
 		// GET THE GROUP AND THE TRANSACTIONS FOR THAT GROUP
 		const results = await Promise.all([
 			apiCall('api/group/select', {
-				payload: { uid: group_uid },
+				payload: { uid: transaction.group_uid },
 			}),
 			apiCall('api/transactions/select/by-group', {
-				payload: { group_uid },
+				payload: { group_uid: transaction.group_uid },
 			}),
 		]);
 
@@ -70,6 +72,7 @@ export default function ViewStandard({
 
 		setSuccess('Successfully retrieved Group data');
 		setGroupToEdit(group);
+		setGroupTransaction(transaction);
 		setGroupTransactions(transactions);
 	};
 
@@ -132,9 +135,7 @@ export default function ViewStandard({
 										<Button
 											className="btn-primary btn-xs text-black"
 											disabled={!!activeObject}
-											onClick={() =>
-												handleGetData(transaction.group_uid, index)
-											}
+											onClick={() => handleGetData(transaction, index)}
 										>
 											Edit Group
 										</Button>
@@ -148,6 +149,7 @@ export default function ViewStandard({
 										<GroupUpdate
 											group={groupToEdit}
 											setActiveElement={() => setActiveElement(false)}
+											transaction={groupTransaction}
 											transactions={groupTransactions}
 										/>
 									</td>

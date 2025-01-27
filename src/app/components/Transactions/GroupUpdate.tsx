@@ -1,6 +1,10 @@
 'use client';
 
-import type { GroupData, TransactionWithGroupData } from '@/app/types';
+import type {
+	GroupData,
+	TransactionWithDateData,
+	TransactionWithGroupData,
+} from '@/app/types';
 import type React from 'react';
 import Button from '../Button';
 import Label from '../Label';
@@ -10,22 +14,26 @@ import { useForm } from 'react-hook-form';
 import { apiCall } from '@/utils/app';
 import { useFormMessagingContext } from '../context/FormMessaging';
 import Transactions from '.';
+import { useTransactionsMonthContext } from '../context/TransactionsMonth';
 
 interface GroupUpdateProps {
 	group: GroupData | null;
 	setActiveElement: () => void;
+	transaction: TransactionWithGroupData | null;
 	transactions: TransactionWithGroupData[] | null;
 }
 
 export default function GroupUpdate({
 	group,
 	setActiveElement,
+	transaction,
 	transactions,
 }: GroupUpdateProps): React.ReactNode {
 	if (group === null || transactions === null) return null;
 
 	// CONTEXT
 	const { setError, setSuccess } = useFormMessagingContext();
+	const { setTransactions } = useTransactionsMonthContext();
 
 	// CUSTOM HOOKS
 	const { Loading, props, setLoading } = useLoading();
@@ -48,17 +56,33 @@ export default function GroupUpdate({
 	}: { notes?: string; siteurl?: string }): Promise<void> => {
 		setLoading(true);
 
-		const payload = { ...group, notes, siteurl };
-		const response = await apiCall<GroupData>('api/group/update', { payload });
+		const updatePayload = { ...group, notes, siteurl };
+		const selectPayload = {
+			account_uid: transaction?.account_uid,
+			date: transaction?.timestamp,
+		};
+		const updateResponse = await apiCall<GroupData>('api/group/update', {
+			payload: updatePayload,
+		});
+		const selectResponse = await apiCall<TransactionWithDateData[]>(
+			'api/transactions/select/by-day',
+			{ payload: selectPayload },
+		);
 
 		setLoading(false, () => {
-			if (response.error) {
-				console.error(response.data);
+			if (updateResponse.error) {
+				console.error(updateResponse.data);
 				setError('There was an error updating the group');
+				return;
+			}
+			if (selectResponse.error || selectResponse.data === null) {
+				console.error(selectResponse.data);
+				setError('There was an error retrieving transacctions');
 				return;
 			}
 
 			setSuccess('Successfully updated group!');
+			setTransactions(selectResponse.data);
 			setActiveElement();
 		});
 	};

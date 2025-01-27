@@ -89,6 +89,13 @@ export default function TransactionsMonth({
 		}
 	}, [defaultAccount, defaultDate, getValues, accountOptions, setValue]);
 
+	useEffect(() => {
+		// On mounting set transactions to what's passed for defaultTransactions
+		if (transactions === undefined && defaultTransactionsData !== null) {
+			setTransactions(defaultTransactionsData);
+		}
+	}, [defaultTransactionsData, setTransactions, transactions]);
+
 	// HANDLERS
 	const handleGetTransactions = async () => {
 		const account = getValues('account');
@@ -217,7 +224,7 @@ export default function TransactionsMonth({
 			<section>
 				{transactions?.map(([dayMeta, _transactions]) => {
 					// Because there are multiple Transaction components being displayed there is logic for
-					// both the parent Transaction and its children to be disabled
+					// both the parent Transaction and its children to be disabled when editing
 					const disabled =
 						typeof activeElement === 'object' &&
 						activeElement.parent !== dayMeta.date;

@@ -1,4 +1,4 @@
-// src/app/api/transactions/select/route.ts
+// src/app/api/transactions/select/by-day
 import dayjs from 'dayjs';
 import { responseSuccess } from '@/utils/api/responseFactory';
 import superiorBaseFactory from '@/utils/superiorBaseFactory';
