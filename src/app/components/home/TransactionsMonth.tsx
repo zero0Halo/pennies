@@ -105,7 +105,7 @@ export default function TransactionsMonth({
 		});
 
 		setLoading(false, () => {
-			if (response.data) {
+			if (!response.error) {
 				setTransactionsData(response.data);
 				setSuccess('Successfully Retrieved Transactions');
 			} else if (response.error) {
