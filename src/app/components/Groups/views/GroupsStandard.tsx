@@ -1,4 +1,4 @@
-import GroupCreate from '@/app/csv-upload/CsvUpload/Groups/Group/GroupCreate';
+import GroupCreate from '@/app/components/Groups/GroupCreate';
 import type { FindGroupsData, GroupsData } from '@/app/types';
 import type React from 'react';
 import Button from '../../Button';
