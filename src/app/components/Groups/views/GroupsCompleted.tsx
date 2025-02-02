@@ -2,7 +2,7 @@ import useAccountsCookie from '@/app/hooks/client/useAccountsCookie';
 import type { GroupData, GroupsData } from '@/app/types';
 import type React from 'react';
 import { getCategoryText as _getCategoryText } from '../helpers';
-import GroupStaticField from '../GroupStaticField';
+import InputStatic from '../../InputStatic';
 import Transactions from '../../Transactions';
 
 interface GroupsCompletedProps {
@@ -61,23 +61,23 @@ export default function GroupsCompleted({
 						)}
 					</div>
 
-					<GroupStaticField label="Description" value={group.description} />
+					<InputStatic label="Description" value={group.description} />
 
 					<div className="join join-horizontal mb-2 w-full">
-						<GroupStaticField
+						<InputStatic
 							className="join-item !mb-0 mr-1 w-1/2"
 							label="Account"
 							value={getAccountByUid?.(group.account_uid)?.name ?? ''}
 						/>
-						<GroupStaticField
+						<InputStatic
 							className="join-item w-1/2"
 							label="Category"
 							value={getCategoryText(group)}
 						/>
 					</div>
-					<GroupStaticField label="Terms" value={group.terms} />
-					<GroupStaticField label="Site Url" value={group.siteurl ?? ''} />
-					<GroupStaticField label="Notes" value={group.notes ?? ''} />
+					<InputStatic label="Terms" value={group.terms} />
+					<InputStatic label="Site Url" value={group.siteurl ?? ''} />
+					<InputStatic label="Notes" value={group.notes ?? ''} />
 
 					<div
 						// biome-ignore lint/a11y/noNoninteractiveTabindex: <explanation>

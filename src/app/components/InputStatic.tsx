@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import type React from 'react';
 
-const GroupStaticField: React.FC<{
+const InputStatic: React.FC<{
 	className?: string;
 	label: string;
 	value: string | string[];
@@ -21,4 +21,4 @@ const GroupStaticField: React.FC<{
 	);
 };
 
-export default GroupStaticField;
+export default InputStatic;
