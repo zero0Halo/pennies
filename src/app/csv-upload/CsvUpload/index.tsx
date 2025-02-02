@@ -17,8 +17,9 @@ import ButtonToggles, {
 	type ToggleStateData,
 } from '@/app/components/ButtonToggles';
 import TabList from '@/app/components/TabList';
-import Groups from './Groups';
-import GroupsCompleted from './GroupsCompleted';
+// import Groups from './Groups';
+import Groups from '../../components/Groups';
+// import GroupsCompleted from './GroupsCompleted';
 import Transactions from '@/app/components/Transactions';
 
 export default function CsvUpload() {
@@ -200,12 +201,13 @@ export default function CsvUpload() {
 									toggleState={toggleState}
 								/>
 
-								<GroupsCompleted
+								<Groups
 									className={
 										toggleState.groups || toggleState.all ? 'block' : 'hidden'
 									}
 									groupsData={organizedCsvData.completed.groups}
 									title="Groups Completed"
+									view="groupsComplete"
 								/>
 
 								<div

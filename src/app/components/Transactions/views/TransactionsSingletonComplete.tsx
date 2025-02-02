@@ -1,17 +1,17 @@
 import type React from 'react';
 import type { TransactionWithGroupData } from '@/app/types';
 import { formatAmount, formatDate, zebra } from '@/utils/app';
-import { tableClasses, tdOverflow, thClasses } from './helpers';
+import { tableClasses, tdOverflow, thClasses } from '../helpers';
 
-type ViewSingletonCompleteProps = {
+type TransactionsSingletonCompleteProps = {
 	tableClassName: string;
 	transactions: TransactionWithGroupData[];
 };
 
-export default function ViewSingletonComplete({
+export default function TransactionsSingletonComplete({
 	tableClassName,
 	transactions,
-}: ViewSingletonCompleteProps): React.ReactNode {
+}: TransactionsSingletonCompleteProps): React.ReactNode {
 	return (
 		<table className={tableClasses(tableClassName)}>
 			<thead>

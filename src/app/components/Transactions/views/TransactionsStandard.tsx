@@ -4,15 +4,15 @@ import type React from 'react';
 import Image from 'next/image';
 import type { GroupData, TransactionWithGroupData } from '@/app/types';
 import { apiCall, formatAmount, formatRecurring, zebra } from '@/utils/app';
-import { tableClasses, tdClasses, tdOverflow, thClasses } from './helpers';
+import { tableClasses, tdClasses, tdOverflow, thClasses } from '../helpers';
 import classNames from 'classnames';
-import TransactionName from './TransactionName';
-import Button from '../Button';
-import { useFormMessagingContext } from '../context/FormMessaging';
+import TransactionName from '../TransactionName';
+import Button from '../../Button';
+import { useFormMessagingContext } from '../../context/FormMessaging';
 import { Fragment, useState } from 'react';
-import GroupUpdate from './GroupUpdate';
+import GroupUpdate from '../GroupUpdate';
 
-type ViewStandardProps = {
+type TransactionsStandardProps = {
 	activeElement: number | boolean | { parent: number; child: number };
 	disabled?: boolean;
 	setActiveElement: (arg: number | boolean) => void;
@@ -22,14 +22,14 @@ type ViewStandardProps = {
 };
 
 // COMPONENT
-export default function ViewStandard({
+export default function TransactionsStandard({
 	activeElement,
 	disabled,
 	setActiveElement,
 	showHeader = true,
 	tableClassName = '',
 	transactions,
-}: ViewStandardProps): React.ReactNode {
+}: TransactionsStandardProps): React.ReactNode {
 	// STATE
 	const [groupToEdit, setGroupToEdit] = useState<GroupData | null>(null);
 	const [groupTransaction, setGroupTransaction] =

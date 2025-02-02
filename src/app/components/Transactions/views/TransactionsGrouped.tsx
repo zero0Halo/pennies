@@ -1,17 +1,17 @@
 import type React from 'react';
 import type { TransactionData } from '@/app/types';
 import { formatAmount, formatDate, zebra } from '@/utils/app';
-import { tableClasses, tdOverflow, thClasses } from './helpers';
+import { tableClasses, tdOverflow, thClasses } from '../helpers';
 
-type ViewGroupedProps = {
+type TransactionsGroupedProps = {
 	tableClassName: string;
 	transactions: TransactionData[];
 };
 
-export default function ViewGrouped({
+export default function TransactionsGrouped({
 	tableClassName,
 	transactions,
-}: ViewGroupedProps): React.ReactNode {
+}: TransactionsGroupedProps): React.ReactNode {
 	return (
 		<table className={tableClasses(tableClassName)}>
 			<thead className="sticky top-0 z-50 mt-0">

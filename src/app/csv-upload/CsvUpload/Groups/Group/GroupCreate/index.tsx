@@ -24,25 +24,33 @@ import Transactions from '@/app/components/Transactions';
 
 interface GroupCreateProps {
 	group: GroupData;
-	setActiveElement: React.Dispatch<React.SetStateAction<number | undefined>>;
-	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setActiveElement?: (arg: number | boolean) => void;
+	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
 	transactions: TransactionData[];
 }
 
+// COMPONENT
 export default function GroupCreate({
 	group,
 	setActiveElement,
 	setCSVData,
 	transactions,
 }: GroupCreateProps) {
+	// CONTEXT
 	const { setError, setSuccess } = useFormMessagingContext();
+
+	// CUSTOM HOOKS
 	const { options } = useAccountsCookie();
+	const { categories } = useCategories();
+	const { props, setLoading, Loading } = useLoading();
+
+	// MEMO
 	const selectOptions = useMemo(
 		() => options.filter((g) => g.value !== group.account_uid),
 		[options, group],
 	);
-	const { categories } = useCategories();
-	const { props, setLoading, Loading } = useLoading();
+
+	// REACT FORM
 	const {
 		formState: { errors },
 		handleSubmit,
@@ -65,9 +73,10 @@ export default function GroupCreate({
 	const watchRecurringStill = watch('recurring_still');
 	const watchCategory: string = watch('category');
 
-	// The options are pulled from a cookie, and react-hook-form has problems setting a default value
-	// because of it
+	// EFFECTS
 	React.useEffect(() => {
+		// The options are pulled from a cookie, and react-hook-form has problems setting a default value
+		// because of it
 		if (group.account_uid && options.length) {
 			setValue('account_uid', group.account_uid);
 		}
@@ -79,7 +88,10 @@ export default function GroupCreate({
 		}
 	}, [group.account_uid, options, selectOptions, setValue, watchCategory]);
 
+	// HANDLERS
 	async function handleCreateGroup(formData: GroupData) {
+		if (setActiveElement === undefined || setCSVData === undefined) return null;
+
 		if (Object.keys(errors).length === 0) {
 			setLoading(true);
 
@@ -98,22 +110,27 @@ export default function GroupCreate({
 					setLoading(false);
 					setSuccess(msg);
 					setCSVData((state) => {
-						const updatedState = updateState({
-							state,
-							payload,
-						});
+						if (state) {
+							const updatedState = updateState({
+								state,
+								payload,
+							});
 
-						localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
+							localStorage.setItem(CSV_UPLOAD, JSON.stringify(updatedState));
 
-						return updatedState;
+							return updatedState;
+						}
+
+						return undefined;
 					});
-					setActiveElement(undefined);
+					setActiveElement(false);
 				},
 				payload,
 			});
 		}
 	}
 
+	// JSX
 	return (
 		<div className={'bg-primary pt-1 p-8 rounded-lg relative'}>
 			<Loading {...props} />
@@ -220,8 +237,7 @@ export default function GroupCreate({
 					<Button
 						className="btn-warning join-item mr-1 w-1/2"
 						onClick={() =>
-							typeof setActiveElement === 'function' &&
-							setActiveElement(undefined)
+							typeof setActiveElement === 'function' && setActiveElement(false)
 						}
 					>
 						Cancel

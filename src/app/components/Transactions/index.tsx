@@ -7,11 +7,11 @@ import type {
 	TransactionData,
 	TransactionWithGroupData,
 } from '@/app/types';
-import ViewSingleton from './ViewSingleton';
-import ViewSingletonComplete from './ViewSingletonComplete';
-import ViewStandard from './ViewStandard';
+import TransactionsSingleton from './views/TransactionsSingleton';
+import TransactionsSingletonComplete from './views/TransactionsSingletonComplete';
+import TransactionsStandard from './views/TransactionsStandard';
 import { useEffect, useState } from 'react';
-import ViewGrouped from './ViewGrouped';
+import ViewGrouped from './views/TransactionsGrouped';
 
 const GROUPED = 'grouped';
 const SINGLETON = 'singleton';
@@ -96,7 +96,7 @@ export default function Transactions({
 							);
 						case SINGLETON:
 							return (
-								<ViewSingleton
+								<TransactionsSingleton
 									setCSVData={setCSVData}
 									transactions={transactions as TransactionData[]}
 									{...props}
@@ -104,14 +104,14 @@ export default function Transactions({
 							);
 						case SINGLETON_COMPLETE:
 							return (
-								<ViewSingletonComplete
+								<TransactionsSingletonComplete
 									transactions={transactions as TransactionWithGroupData[]}
 									{...props}
 								/>
 							);
 						case STANDARD:
 							return (
-								<ViewStandard
+								<TransactionsStandard
 									transactions={transactions as TransactionWithGroupData[]}
 									{...props}
 								/>

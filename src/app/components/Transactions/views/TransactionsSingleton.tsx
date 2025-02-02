@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import { formatAmount, formatDate, zebra } from '@/utils/app';
 import Button from '@/app/components/Button';
 import TransactionCreate from '@/app/csv-upload/CsvUpload/TransactionCreate';
-import { tableClasses, tdOverflow, thClasses } from './helpers';
+import { tableClasses, tdOverflow, thClasses } from '../helpers';
 
-type ViewSingletonProps = {
+type TransactionsSingletonProps = {
 	activeElement: number | boolean | { parent: number; child: number };
 	disabled?: boolean;
 	setActiveElement: (arg: number | boolean) => void;
@@ -15,13 +15,13 @@ type ViewSingletonProps = {
 	transactions: TransactionData[];
 };
 
-export default function ViewSingleton({
+export default function TransactionsSingleton({
 	activeElement,
 	setActiveElement,
 	setCSVData,
 	tableClassName,
 	transactions,
-}: ViewSingletonProps): React.ReactNode {
+}: TransactionsSingletonProps): React.ReactNode {
 	// SHUGAH
 	const isCreating = (index: number) => index === activeElement;
 
