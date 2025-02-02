@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import Stats from './Stats';
 import { useAccountsCookie, useClientCookie } from '@/app/hooks/client';
 import parseCsv from './scripts/parseCsv';
 import { USER } from '@/app/constants';
@@ -21,6 +20,7 @@ import TabList from '@/app/components/TabList';
 import Groups from '../../components/Groups';
 // import GroupsCompleted from './GroupsCompleted';
 import Transactions from '@/app/components/Transactions';
+import StatRow from '@/app/components/StatRow';
 
 export default function CsvUpload() {
 	// STATE
@@ -98,6 +98,16 @@ export default function CsvUpload() {
 		}
 	}
 
+	// SHUGAH
+	const statsArray = [
+		{ label: '# of Transactions', value: CSVData?.total },
+		{ label: '# of Groups', value: CSVData?.groups.length },
+		{
+			label: '# of Singletons',
+			value: CSVData?.singletons.length,
+		},
+	];
+
 	// JSX
 	return (
 		<section className="px-4 relative">
@@ -152,7 +162,7 @@ export default function CsvUpload() {
 			)}
 
 			{/* Show CSV stats */}
-			{CSVData && <Stats groupsData={CSVData} />}
+			{CSVData && <StatRow stats={statsArray} />}
 
 			{/* Show not completed groups & transactions */}
 			{organizedCsvData &&

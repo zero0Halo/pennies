@@ -12,7 +12,7 @@ type StatItemData =
 type StatData = {
 	className?: string;
 	label: StatItemData;
-	value: StatItemData;
+	value: StatItemData | undefined;
 };
 
 interface StatRowProps {
@@ -40,7 +40,7 @@ export default function StatRow({
 
 				return (
 					<div
-						className={classNames('stat', stat?.className)}
+						className={classNames('stat justify-items-center', stat?.className)}
 						key={labelAndkey}
 					>
 						<span className={classNames('stat-title text-white', labelClasses)}>
