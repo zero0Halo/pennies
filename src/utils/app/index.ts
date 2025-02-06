@@ -1,4 +1,5 @@
 export { default as apiCall } from './apiCall';
+export { default as clone } from './clone';
 export { default as formatDate } from './formatDate';
 export { default as formatAmount } from './formatAmount';
 export { default as formatRecurring } from './formatRecurring';

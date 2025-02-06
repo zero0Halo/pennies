@@ -5,12 +5,13 @@ import { formatAmount, formatDate, zebra } from '@/utils/app';
 import Button from '@/app/components/Button';
 import TransactionCreate from '@/app/csv-upload/CsvUpload/TransactionCreate';
 import { tableClasses, tdOverflow, thClasses } from '../helpers';
+import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
 
 type TransactionsSingletonProps = {
 	activeElement: number | boolean | { parent: number; child: number };
 	disabled?: boolean;
 	setActiveElement: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	tableClassName: string;
 	transactions: TransactionData[];
 };

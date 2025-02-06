@@ -17,10 +17,11 @@ import {
 import type { FindGroupsData, TransactionData } from '@/app/types';
 import { apiCall, formatDate, formatAmount } from '@/utils/app';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
+import type { ParseCSVData } from './ParseCSV/types';
 
 interface TransactionCreateProps {
 	setActiveElement: (arg: boolean) => void;
-	setCSVData: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setCSVData: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	transaction: TransactionData;
 }
 
@@ -109,12 +110,16 @@ export default function TransactionCreate({
 
 		setCSVData((state) => {
 			if (state !== undefined) {
-				const transactionIndex = state?.singletons.findIndex(
+				const transactionIndex = state?.singletons?.findIndex(
 					(f) => f.uid === transaction.uid,
 				);
 
 				const updatedState = produce(state, (draft) => {
-					if (draft !== undefined && transactionIndex !== undefined)
+					if (
+						draft !== undefined &&
+						draft.singletons !== null &&
+						transactionIndex !== undefined
+					)
 						draft.singletons[transactionIndex] = payload;
 				});
 

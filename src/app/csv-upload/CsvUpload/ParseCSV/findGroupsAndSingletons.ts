@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import clone from './clone';
+
 import getDescriptionScore from './getDescriptionScore';
 import {
 	type FindGroupsData,
@@ -8,7 +8,7 @@ import {
 	type GroupsData,
 	createGroupData,
 } from '@/app/types';
-import { stringToHash } from '@/utils/app';
+import { clone, stringToHash } from '@/utils/app';
 
 export default function findGroups(rowData: TransactionData[]): FindGroupsData {
 	const groups: GroupsData[] = [];

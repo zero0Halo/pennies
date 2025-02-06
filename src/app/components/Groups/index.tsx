@@ -6,6 +6,7 @@ import type { FindGroupsData, GroupsData } from '@/app/types';
 import GroupsStandard from './views/GroupsStandard';
 import GroupsCompleted from './views/GroupsCompleted';
 import { useEffect, useState } from 'react';
+import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
 
 const GROUPS_COMPLETE = 'groupsComplete';
 const STANDARD = 'standard';
@@ -16,7 +17,7 @@ interface GroupsProps {
 	activeElement?: number | boolean;
 	className?: string;
 	setActiveElement?: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	title?: string;
 	groupsData: GroupsData[];
 	view?: Views;

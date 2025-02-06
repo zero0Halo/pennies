@@ -6,7 +6,7 @@ import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import { useAccountsCookie, useClientCookie } from '@/app/hooks/client';
-import parseCsv from './scripts/parseCsv';
+import ParseCSV from './ParseCSV';
 import { USER } from '@/app/constants';
 import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging/FormMessagingProvider';
@@ -21,10 +21,11 @@ import Groups from '../../components/Groups';
 // import GroupsCompleted from './GroupsCompleted';
 import Transactions from '@/app/components/Transactions';
 import StatRow from '@/app/components/StatRow';
+import type { ParseCSVData } from './ParseCSV/types';
 
 export default function CsvUpload() {
 	// STATE
-	const [CSVData, setCSVData] = useState<FindGroupsData | undefined>(undefined);
+	const [CSVData, setCSVData] = useState<ParseCSVData | undefined>(undefined);
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
 	>(undefined);
@@ -83,11 +84,8 @@ export default function CsvUpload() {
 			}
 
 			const accountUid = formData.account;
-			const parsedData: FindGroupsData | boolean = await parseCsv(
-				fileData,
-				userData,
-				accountUid,
-			);
+			const parseCSV = new ParseCSV({ fileData, userData, accountUid });
+			const parsedData = await parseCSV.go();
 
 			if (typeof parsedData !== 'boolean') {
 				setSuccess('CSV Data Parsed!');
@@ -101,10 +99,10 @@ export default function CsvUpload() {
 	// SHUGAH
 	const statsArray = [
 		{ label: '# of Transactions', value: CSVData?.total },
-		{ label: '# of Groups', value: CSVData?.groups.length },
+		{ label: '# of Groups', value: CSVData?.groups?.length },
 		{
 			label: '# of Singletons',
-			value: CSVData?.singletons.length,
+			value: CSVData?.singletons?.length,
 		},
 	];
 

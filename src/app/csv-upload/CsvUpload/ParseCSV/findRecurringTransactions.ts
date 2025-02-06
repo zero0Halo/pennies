@@ -1,12 +1,15 @@
 import type { TransactionData } from '@/app/types';
 import { BIWEEKLY, MONTHLY, WEEKLY } from '@/app/constants';
 import dayjs from 'dayjs';
+import type { FindRecurringTransactionsData, RecurringTypeData } from './types';
 
 const isWeekly = (diff: number): 1 | 0 => (8 >= diff && diff >= 6 ? 1 : 0);
 const isBiWeekly = (diff: number): 1 | 0 => (16 >= diff && diff >= 12 ? 1 : 0);
 const isMonthly = (diff: number): 1 | 0 => (34 >= diff && diff >= 25 ? 1 : 0);
 
-export default function findRecurring(transactions: TransactionData[]) {
+export default function findRecurringTransactions(
+	transactions: TransactionData[],
+): FindRecurringTransactionsData | false {
 	if (transactions.length === 0) return false;
 
 	const matches = {
@@ -35,9 +38,9 @@ export default function findRecurring(transactions: TransactionData[]) {
 		.sort((a, b) => b.count - a.count);
 
 	// Returns the name of the interval if the percentage of matches meets the passed threshold.
-	const checkRecurring = (threshold: number) =>
+	const checkRecurring = (threshold: number): RecurringTypeData | undefined =>
 		Math.ceil((maxInterval.count / transactions.length) * 100) >= threshold
-			? maxInterval.name
+			? (maxInterval.name as RecurringTypeData)
 			: undefined;
 
 	const recurring_type = checkRecurring(51);

@@ -1,8 +1,10 @@
+import ParseCSV from '@/app/csv-upload/CsvUpload/ParseCSV';
+import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
 import type { FindGroupsData, GroupsData, TransactionData } from '@/app/types';
 import { useEffect, useState } from 'react';
 
 interface UseOrganizedCsvDataProps {
-	CSVData: FindGroupsData | undefined;
+	CSVData: ParseCSVData | undefined;
 }
 
 type OrganizedTransactionsData = {
@@ -26,6 +28,8 @@ export default function useOrganizedCsvData({
 	useEffect(() => {
 		if (CSVData !== undefined) {
 			const { groups, singletons } = CSVData;
+			if (groups === null || singletons === null) return;
+
 			const completedGroups = groups.filter(
 				({ group }) => group.name.length > 0,
 			);

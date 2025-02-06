@@ -3,13 +3,14 @@ import type { FindGroupsData, GroupsData } from '@/app/types';
 import type React from 'react';
 import Button from '../../Button';
 import Transactions from '../../Transactions';
+import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
 
 interface GroupsStandardProps {
 	activeElement?: number | boolean;
 	className?: string;
 	groupsData: GroupsData[] | undefined;
 	setActiveElement?: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	title?: string;
 }
 

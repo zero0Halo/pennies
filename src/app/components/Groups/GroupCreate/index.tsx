@@ -21,11 +21,12 @@ import type {
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
 import Transactions from '@/app/components/Transactions';
+import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
 
 interface GroupCreateProps {
 	group: GroupData;
 	setActiveElement?: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<FindGroupsData | undefined>>;
+	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	transactions: TransactionData[];
 }
 
