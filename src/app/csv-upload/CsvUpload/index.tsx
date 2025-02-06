@@ -16,19 +16,18 @@ import ButtonToggles, {
 	type ToggleStateData,
 } from '@/app/components/ButtonToggles';
 import TabList from '@/app/components/TabList';
-// import Groups from './Groups';
 import Groups from '../../components/Groups';
-// import GroupsCompleted from './GroupsCompleted';
 import Transactions from '@/app/components/Transactions';
 import StatRow from '@/app/components/StatRow';
 import type { ParseCSVData } from './ParseCSV/types';
+import useUserCookie from '@/app/hooks/client/useUserCookie';
 
 export default function CsvUpload() {
 	// STATE
-	const [CSVData, setCSVData] = useState<ParseCSVData | undefined>(undefined);
+	const [CSVData, setCSVData] = useState<ParseCSVData | undefined>();
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
-	>(undefined);
+	>();
 	const [toggleState, setToggleState] = useState<ToggleStateData>({
 		all: true,
 		groups: false,
@@ -39,8 +38,7 @@ export default function CsvUpload() {
 	const { setError, setSuccess } = useFormMessagingContext();
 
 	// CUSTOM HOOKS
-	const { data: userData, error: userDataError } =
-		useClientCookie<UserData>(USER);
+	const { user: userData, userError } = useUserCookie();
 	const { defaultAccount, options } = useAccountsCookie();
 	const organizedCsvData = useOrganizedCsvData({ CSVData });
 
@@ -48,8 +46,8 @@ export default function CsvUpload() {
 	const { watch, handleSubmit, register, setValue } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
 
-	if (userDataError) {
-		console.error(userDataError);
+	if (userError) {
+		console.error(userError);
 		return null;
 	}
 

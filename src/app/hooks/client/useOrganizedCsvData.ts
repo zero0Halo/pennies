@@ -1,6 +1,5 @@
-import ParseCSV from '@/app/csv-upload/CsvUpload/ParseCSV';
 import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
-import type { FindGroupsData, GroupsData, TransactionData } from '@/app/types';
+import type { GroupsData, TransactionData } from '@/app/types';
 import { useEffect, useState } from 'react';
 
 interface UseOrganizedCsvDataProps {
