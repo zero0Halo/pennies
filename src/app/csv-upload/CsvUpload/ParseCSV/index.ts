@@ -3,7 +3,10 @@ import fauxPapaParseAsync from './papaParseAsync';
 import findGroupsAndSingletons from './findGroupsAndSingletons';
 import formatParsedData from './formatParsedData';
 import findRecurringTransactions from './findRecurringTransactions';
+import hashCheck from './hashCheck';
 import type { ParseCSVArgs, ParseCSVData } from './types';
+import storage from '@/utils/app/storage';
+import { CSV_UPLOAD } from '@/app/constants';
 
 export default class ParseCSV {
 	private accountUid;
@@ -11,6 +14,7 @@ export default class ParseCSV {
 	private formattedData: null | TransactionData[];
 	private groups: null | GroupsData[];
 	private parsedData: null | string[][];
+	private returnData: null | ParseCSVData;
 	private singletons: null | TransactionData[];
 	private userData;
 
@@ -20,6 +24,7 @@ export default class ParseCSV {
 		this.formattedData = null;
 		this.groups = null;
 		this.parsedData = null;
+		this.returnData = null;
 		this.singletons = null;
 		this.userData = userData;
 	}
@@ -79,6 +84,30 @@ export default class ParseCSV {
 		return true;
 	}
 
+	buildReturnData(): boolean {
+		const { formattedData, groups, singletons } = this;
+		if (!formattedData || !groups || !singletons) return false;
+
+		this.returnData = {
+			groups,
+			singletons,
+			total: formattedData.length,
+		};
+
+		return true;
+	}
+
+	async hashCheck(): Promise<boolean> {
+		if (!this.returnData) return false;
+
+		const result = await hashCheck(this.returnData);
+
+		if (!result) return false;
+
+		this.returnData = result;
+		return true;
+	}
+
 	async go(): Promise<ParseCSVData | false> {
 		const parseResults = await this.papaParseAsync();
 		const formatParsedDataResults = !parseResults
@@ -90,13 +119,16 @@ export default class ParseCSV {
 		const addRecurringData = !findGroupsAndSingletonsResults
 			? false
 			: this.addRecurringData();
+		const buildReturnDataResults = !addRecurringData
+			? false
+			: this.buildReturnData();
+		const hashCheckResults = !buildReturnDataResults
+			? false
+			: await this.hashCheck();
 
-		if (addRecurringData && this.formattedData) {
-			return {
-				groups: this.groups,
-				singletons: this.singletons,
-				total: this.formattedData.length,
-			};
+		if (hashCheckResults && this.returnData) {
+			storage.set({ keyName: CSV_UPLOAD, data: this.returnData });
+			return this.returnData;
 		}
 
 		return false;
