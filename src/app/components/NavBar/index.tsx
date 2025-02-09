@@ -9,7 +9,7 @@ export default function LoginBar() {
 	const isLoggedIn = useIsLoggedIn();
 
 	return (
-		<nav className="navbar px-8 bg-neutral">
+		<nav className="navbar px-8 bg-neutral sticky top-0 z-50">
 			<div className="flex-1">
 				<Link href="/">
 					<Image
