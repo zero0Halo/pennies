@@ -14,6 +14,7 @@ type OrganizedTransactionsData = {
 type OrganizedCsvData = {
 	completed: OrganizedTransactionsData;
 	notCompleted: OrganizedTransactionsData;
+	totalComplete: number;
 };
 
 export default function useOrganizedCsvData({
@@ -22,6 +23,7 @@ export default function useOrganizedCsvData({
 	const [payload, setPayload] = useState<OrganizedCsvData>({
 		completed: { groups: [], singletons: [] },
 		notCompleted: { groups: [], singletons: [] },
+		totalComplete: 0,
 	});
 
 	useEffect(() => {
@@ -41,6 +43,11 @@ export default function useOrganizedCsvData({
 			const notCompletedSingletons = singletons.filter(
 				(singleton) => !singleton.name.length,
 			);
+			const totalComplete =
+				completedGroups.reduce(
+					(acc, curr) => acc + curr.transactions.length,
+					0,
+				) + completedSingletons.length;
 
 			setPayload({
 				completed: { groups: completedGroups, singletons: completedSingletons },
@@ -48,6 +55,7 @@ export default function useOrganizedCsvData({
 					groups: notCompletedGroups,
 					singletons: notCompletedSingletons,
 				},
+				totalComplete,
 			});
 		}
 	}, [CSVData]);

@@ -5,22 +5,21 @@ import { useEffect, useState } from 'react';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import { useAccountsCookie, useClientCookie } from '@/app/hooks/client';
+import { useAccountsCookie } from '@/app/hooks/client';
 import ParseCSV from './ParseCSV';
-import { USER } from '@/app/constants';
-import type { UserData, CsvUploadData, FindGroupsData } from '@/app/types';
+import type { CsvUploadData, FindGroupsData } from '@/app/types';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging/FormMessagingProvider';
 import FormMessaging from '@/app/components/context/FormMessaging/FormMessaging';
 import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
 import ButtonToggles, {
 	type ToggleStateData,
 } from '@/app/components/ButtonToggles';
-import TabList from '@/app/components/TabList';
 import Groups from '../../components/Groups';
 import Transactions from '@/app/components/Transactions';
 import StatRow from '@/app/components/StatRow';
 import type { ParseCSVData } from './ParseCSV/types';
 import useUserCookie from '@/app/hooks/client/useUserCookie';
+import TabList, { TabPanel } from '@/app/components/TabList';
 
 export default function CsvUpload() {
 	// STATE
@@ -167,8 +166,10 @@ export default function CsvUpload() {
 					<>
 						<div className="divider" />
 
-						<TabList name="transaction-review-panels">
-							<section data-title="Reviewing">
+						<TabList>
+							<TabPanel
+								title={`Reviewing (${(CSVData as ParseCSVData)?.total - organizedCsvData.totalComplete})`}
+							>
 								<ButtonToggles
 									className="mb-6 mx-auto"
 									setToggleState={setToggleState}
@@ -198,9 +199,9 @@ export default function CsvUpload() {
 									transactions={organizedCsvData.notCompleted.singletons}
 									view="singleton"
 								/>
-							</section>
+							</TabPanel>
 
-							<section data-title="Completed">
+							<TabPanel title={`Completed (${organizedCsvData.totalComplete})`}>
 								<ButtonToggles
 									className="mb-6 mx-auto"
 									setToggleState={setToggleState}
@@ -230,7 +231,7 @@ export default function CsvUpload() {
 									transactions={organizedCsvData.completed.singletons}
 									view="singletonComplete"
 								/>
-							</section>
+							</TabPanel>
 						</TabList>
 					</>
 				)}

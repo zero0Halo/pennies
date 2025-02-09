@@ -1,62 +1,64 @@
-import React from 'react';
+import classNames from 'classnames';
+import React, { useState, type ReactNode } from 'react';
 
-type TabPanelData = {
-	checked?: boolean;
-	children: React.ReactNode;
-	name?: string;
-	title?: string;
+interface TabPanelProps {
+	title: string;
+	children: ReactNode;
+}
+
+export const TabPanel: React.FC<TabPanelProps> = ({ children }) => {
+	return <div>{children}</div>;
 };
 
 interface TabListProps {
-	children: React.ReactNode;
-	name: string;
+	children: ReactNode;
 }
 
-function TabPanel({
-	checked,
-	children,
-	name,
-	title,
-}: TabPanelData): React.ReactNode {
+const TabList2: React.FC<TabListProps> = ({ children }) => {
+	const [activeTab, setActiveTab] = useState(0);
+
+	const tabs = React.Children.toArray(children)
+		.filter((child) => React.isValidElement(child) && 'title' in child.props)
+		.map((child) => ({
+			title: (child as React.ReactElement<TabPanelProps>).props.title,
+			content: child,
+		}));
+
 	return (
-		<>
-			<input
-				aria-label={title}
-				className="tab after:whitespace-nowrap"
-				defaultChecked={checked}
-				name={name}
-				role="tab"
-				type="radio"
-			/>
-			<div
-				role="tabpanel"
-				className="tab-content bg-base-100 border-base-300 rounded-box px-4 py-6"
-			>
-				{children}
+		<div className="mb-8">
+			<div className="mb-[-2px] relative">
+				{tabs.map((tab, index) => (
+					<button
+						className={classNames(
+							'border-2 rounded-tl-md rounded-tr-md px-4',
+							index === activeTab
+								? 'border-b-white font-bold bg-white'
+								: 'bg-slate-200',
+						)}
+						key={`${index}-${tab.title}`}
+						onClick={() => setActiveTab(index)}
+						type="button"
+					>
+						{tab.title}
+					</button>
+				))}
 			</div>
-		</>
-	);
-}
 
-export default function TabList({
-	children,
-	name,
-}: TabListProps): React.ReactNode {
-	return (
-		<div role="tablist" className="tabs tabs-lifted">
-			{React.Children.map(children, (child, index) => {
-				if (React.isValidElement(child)) {
-					return (
-						<TabPanel
-							checked={index === 0}
-							name={name}
-							title={child.props['data-title'] ?? `Tab Title ${index + 1}`}
-						>
-							{child}
-						</TabPanel>
-					);
-				}
-			})}
+			<div className="border-2 rounded-lg rounded-tl-none">
+				{tabs.map((tab, index) => (
+					<div
+						className={classNames(
+							index === activeTab ? 'block' : 'hidden',
+							'p-4',
+						)}
+						key={`${index}-${tab.title}`}
+					>
+						{tab.content}
+					</div>
+				))}
+			</div>
 		</div>
 	);
-}
+};
+
+export default TabList2;
