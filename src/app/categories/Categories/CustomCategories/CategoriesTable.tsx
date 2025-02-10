@@ -2,46 +2,67 @@
 
 import { Fragment, useState } from 'react';
 import { apiCall, zebra } from '@/utils/app';
+import {
+	FormMessaging,
+	useFormMessagingContext,
+} from '@/app/components/context/FormMessaging';
+import { useLoading } from '@/app/hooks/client';
+import type { UserData } from '@/app/types';
 
 interface CategoriesTableProps {
 	categories: string[];
+	setCategoryData: (arg: string[]) => void;
 	uid: false | string;
 }
 
 export default function CategoriesTable({
 	categories,
+	setCategoryData,
 	uid,
 }: CategoriesTableProps) {
+	// STATE
 	const [activeRow, setActiveRow] = useState<boolean | number>(false);
-	const [error, setError] = useState<string>('');
-	const [success, setSuccess] = useState<string>('');
 
+	// CONTEXT
+	const { setError, setSuccess } = useFormMessagingContext();
+
+	// CUSTOM HOOKS
+	const { Loading, props, setLoading } = useLoading();
+
+	// HANDLERS
 	async function handleDeleteCategory(category: string) {
 		if (uid) {
-			apiCall('/api/category/delete', {
-				onError: (msg) => setError(msg),
-				onSuccess: (msg) => setSuccess(msg),
+			setLoading(true);
+
+			const response = await apiCall<UserData>('/api/category/delete', {
 				payload: {
 					category,
 					uid,
 				},
-				reload: '/categories',
+			});
+
+			setLoading(false, () => {
+				if (
+					!response.error &&
+					response.data !== null &&
+					'categories' in response.data &&
+					response.data.categories !== null
+				) {
+					setCategoryData(response.data.categories);
+					setActiveRow(false);
+					setSuccess('Categoryy successfully deleted!');
+				} else {
+					console.error(response.error);
+					setError('Error Deleting Category');
+				}
 			});
 		}
 	}
 
 	return (
-		<div className="overflow-x-auto">
-			{error.length > 0 && (
-				<div className="alert alert-error mb-6 mt-6 text-white font-bold">
-					{error}
-				</div>
-			)}
-			{success.length > 0 && (
-				<div className="alert alert-success mb-6 mt-6 text-white font-bold">
-					{success}
-				</div>
-			)}
+		<div className="overflow-x-auto relative">
+			<FormMessaging />
+			<Loading {...props} />
 
 			<table className="table">
 				<thead>

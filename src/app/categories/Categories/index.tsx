@@ -2,6 +2,7 @@ import CustomCategories from './CustomCategories';
 import { useServerCookie } from '@/app/hooks/server';
 import type { UserData } from '@/app/types';
 import { defaultCategories, USER } from '@/app/constants';
+import { FormMessagingProvider } from '@/app/components/context/FormMessaging';
 
 export default function Categories() {
 	const [userCookieData] = useServerCookie<UserData>(USER);
@@ -27,7 +28,9 @@ export default function Categories() {
 			<div className="w-9/12">
 				<h3>Custom Categories</h3>
 
-				<CustomCategories uid={uid} />
+				<FormMessagingProvider>
+					<CustomCategories uid={uid} />
+				</FormMessagingProvider>
 			</div>
 		</div>
 	);

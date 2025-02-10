@@ -1,58 +1,87 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import CategoriesTable from './CategoriesTable';
-import { useCategories } from '@/app/hooks/client';
+import { useCategories, useLoading } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
+import {
+	FormMessaging,
+	useFormMessagingContext,
+} from '@/app/components/context/FormMessaging';
+import type { UserData } from '@/app/types';
 
 interface CustomCategoriesProps {
 	uid: string | false;
 }
 
+// COMPONENT
 export default function CustomCategories({ uid }: CustomCategoriesProps) {
-	const [error, setError] = useState('');
-	const [success, setSuccess] = useState('');
+	// CONTEXT
+	const { setError, setSuccess } = useFormMessagingContext();
+
+	// REACT-FORM
 	const {
 		formState: { errors },
 		handleSubmit,
 		register,
 		reset,
 	} = useForm<{ category: string }>();
-	const { customCategories: categories } = useCategories();
 
-	function handleCreateCategory({ category }: { category: string }) {
+	// CUSTOM  HOOKS
+	const { customCategories } = useCategories();
+	const { Loading, props, setLoading } = useLoading();
+
+	// STATE
+	const [categoryData, setCategoryData] = useState<string[] | undefined>();
+
+	// HANDLERS
+	async function handleCreateCategory({ category }: { category: string }) {
 		setError('');
 		setSuccess('');
+		setLoading(true);
 
 		if (!Object.keys(errors).length && uid) {
-			apiCall('/api/category/create', {
-				onError: (msg) => setError(msg),
-				onSuccess: (msg) => {
-					setSuccess(msg);
-					reset();
-				},
+			const response = await apiCall<UserData>('/api/category/create', {
 				payload: {
-					categories: [...categories, category],
+					categories: [...(categoryData ?? []), category],
 					uid,
 				},
-				reload: '/categories',
 			});
+
+			if (
+				!response.error &&
+				response.data !== null &&
+				'categories' in response.data &&
+				response.data.categories !== null
+			) {
+				setLoading(false, () => {
+					setSuccess('Successfully Created Category');
+					setCategoryData((response.data as UserData).categories as string[]);
+					reset();
+				});
+			} else if (response.error) {
+				setLoading(false, () => {
+					console.error(response.error);
+					setError('Error Creating Category');
+				});
+			}
 		}
 	}
 
+	// EFFECTS
+	useEffect(() => {
+		if (!categoryData && customCategories.length > 0) {
+			setCategoryData(customCategories);
+		}
+	}, [categoryData, customCategories]);
+
+	// JSX
 	return (
-		<div>
-			{error.length > 0 && (
-				<div className="alert alert-error mb-6 text-white font-bold">
-					{error}
-				</div>
-			)}
-			{success.length > 0 && (
-				<div className="alert alert-success mb-6 text-white font-bold">
-					{success}
-				</div>
-			)}
+		<div className="relative">
+			<FormMessaging />
+			<Loading {...props} />
+
 			<form
 				className="form-control join join-horizontal"
 				onSubmit={handleSubmit(handleCreateCategory)}
@@ -70,7 +99,11 @@ export default function CustomCategories({ uid }: CustomCategoriesProps) {
 				</button>
 			</form>
 
-			<CategoriesTable categories={categories} uid={uid} />
+			<CategoriesTable
+				categories={categoryData ?? []}
+				uid={uid}
+				setCategoryData={setCategoryData}
+			/>
 		</div>
 	);
 }
