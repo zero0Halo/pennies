@@ -1,8 +1,6 @@
 // src/app/api/category/delete/route.ts
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase';
-import { alphaSort, cookieJar, responseFactory } from '@/utils/api';
+import { alphaSort, cookieJar } from '@/utils/api';
 import { USER, USERS } from '@/app/constants';
 import superiorBaseFactory from '@/utils/superiorBaseFactory';
 import type { UserData } from '@/app/types';
@@ -10,10 +8,7 @@ import { responseError } from '@/utils/api/responseFactory';
 
 export async function POST(req: Request) {
 	try {
-		const cookieStore = cookies();
-		const supabase = createServerClient(cookieStore);
 		const { category, uid } = await req.json();
-
 		const superiorBase = await superiorBaseFactory();
 
 		// Get the categories from the Users table
