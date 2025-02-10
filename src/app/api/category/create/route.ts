@@ -1,45 +1,37 @@
 // src/app/api/category/create/route.ts
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { createServerClient } from '@/utils/supabase';
-import { responseFactory } from '@/utils/api';
+import { cookieJar } from '@/utils/api';
 import { USER, USERS } from '@/app/constants';
+import superiorBaseFactory from '@/utils/superiorBaseFactory';
 
 export async function POST(req: Request) {
 	try {
-		const cookieStore = cookies();
-		const supabase = createServerClient(cookieStore);
 		const { categories, uid } = await req.json();
 
-		const { error: userUpdateError } = await supabase
+		const superiorBase = await superiorBaseFactory();
+
+		const { error: userUpdateError } = await superiorBase
 			.from(USERS)
 			.update({
 				categories: categories.sort((a: string, b: string) =>
 					a.toLowerCase().localeCompare(b.toLowerCase()),
 				),
 			})
-			.eq('uid', uid);
+			.eq('uid', uid)
+			.go();
 
-		if (userUpdateError)
-			return responseFactory('Error Updating Categories', userUpdateError);
+		if (userUpdateError) return userUpdateError;
 
 		// Get the user's data
-		const { data: userCookieData, error: userCookieError } = await supabase
-			.from(USERS)
-			.select('*')
-			.eq('uid', uid)
-			.single();
+		const {
+			data: userCookieData,
+			error: userCookieError,
+			success: response,
+		} = await superiorBase.from(USERS).select('*').eq('uid', uid).single().go();
 
-		if (userCookieError)
-			return responseFactory("Error Retrieving User's Data", userCookieError);
+		if (userCookieError) return userCookieError;
 
-		// Create a response and put the updated accounts data into the accounts cookie
-		const response = responseFactory('Successfully added category!', {}, 200);
-
-		response.cookies.set(USER, JSON.stringify(userCookieData), {
-			secure: process.env.NODE_ENV === 'production',
-			maxAge: 60 * 60 * 24 * 7, // 1 week
-		});
+		response?.cookies.set(...cookieJar({ name: USER, data: userCookieData }));
 
 		return response;
 	} catch (error: unknown) {

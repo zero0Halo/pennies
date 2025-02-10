@@ -2,8 +2,11 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/utils/supabase';
-import { alphaSort, responseFactory } from '@/utils/api';
+import { alphaSort, cookieJar, responseFactory } from '@/utils/api';
 import { USER, USERS } from '@/app/constants';
+import superiorBaseFactory from '@/utils/superiorBaseFactory';
+import type { UserData } from '@/app/types';
+import { responseError } from '@/utils/api/responseFactory';
 
 export async function POST(req: Request) {
 	try {
@@ -11,15 +14,17 @@ export async function POST(req: Request) {
 		const supabase = createServerClient(cookieStore);
 		const { category, uid } = await req.json();
 
+		const superiorBase = await superiorBaseFactory();
+
 		// Get the categories from the Users table
-		const { data: userData, error: userDataError } = await supabase
+		const { data: userData, error: userDataError } = await superiorBase
 			.from(USERS)
 			.select('categories')
 			.eq('uid', uid)
-			.single();
-		// console.log(userData?.categories);
-		if (userDataError)
-			return responseFactory('Error Retrieving Categories', userDataError);
+			.single()
+			.go<UserData>();
+
+		if (userDataError || userData === null) return userDataError;
 
 		// Remove the category from the array of categories
 		const categories: string[] | boolean = Array.isArray(userData.categories)
@@ -27,38 +32,40 @@ export async function POST(req: Request) {
 			: false;
 
 		if (categories === false)
-			return responseFactory(`Category "${category}" Does Not Exist`);
+			return responseError({
+				message: `Category "${category}" Does Not Exist`,
+			});
 
 		const sortedCategories = alphaSort(categories);
 
 		// Update the categories minus the one removed
-		const { error: userUpdateError } = await supabase
+		const { error: userUpdateError } = await superiorBase
 			.from(USERS)
 			.update({
 				categories: sortedCategories,
 			})
-			.eq('uid', uid);
+			.eq('uid', uid)
+			.go();
 
-		if (userUpdateError)
-			return responseFactory('Error Removing Category', userUpdateError);
+		if (userUpdateError) return userUpdateError;
 
 		// Get the user's data
-		const { data: userCookieData, error: userCookieError } = await supabase
+		const {
+			data: userCookieData,
+			error: userCookieError,
+			success: response,
+		} = await superiorBase
 			.from(USERS)
 			.select('*')
 			.eq('uid', uid)
-			.single();
+			.single()
+			.successMessage('Successfully Deleted Category!')
+			.go();
 
-		if (userCookieError)
-			return responseFactory("Error Retrieving User's Data", userCookieError);
+		if (userCookieError || response === null) return userCookieError;
 
 		// Create a response and put the updated accounts data into the accounts cookie
-		const response = responseFactory('Successfully Deleted Category!', {}, 200);
-
-		response.cookies.set(USER, JSON.stringify(userCookieData), {
-			secure: process.env.NODE_ENV === 'production',
-			maxAge: 60 * 60 * 24 * 7, // 1 week
-		});
+		response.cookies.set(...cookieJar({ name: USER, data: userCookieData }));
 
 		return response;
 	} catch (error: unknown) {
