@@ -8,33 +8,31 @@ import type {
 import { MONTHLY_SUMS } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
-import TransactionsMonth from './components/context/TransactionsMonth/TransactionsMonth';
 import useAccountsCookie from './hooks/server/useAccountsCookie';
-import { FormMessagingWrapper } from './components/context/FormMessaging';
 import ToLocalStorage from './components/ToLocalStorage';
-import useUserCookie from './hooks/server/useUserCookie';
+import useUserCookie from './hooks/useUserCookie/server';
 import HomepageViews from './components/home/HomepageViews';
 
 interface GetInitialDataArguments {
 	defaultAccount: AccountData | null;
 	defaultDate: string;
-	userData: UserData | null;
+	user: UserData | null;
 }
 
 async function getInitialData({
 	defaultAccount,
 	defaultDate,
-	userData,
+	user,
 }: GetInitialDataArguments): Promise<{
 	monthlySums: MonthlySumData[] | null;
 	transactions: TransactionWithDateData[] | null;
 }> {
 	const response = { monthlySums: null, transactions: null };
 
-	if (defaultAccount === null || userData === null) return response;
+	if (defaultAccount === null || user === null) return response;
 
-	const accountCheck: boolean = userData.accounts
-		? userData.accounts.includes(defaultAccount.uid)
+	const accountCheck: boolean = user.accounts
+		? user.accounts.includes(defaultAccount.uid)
 		: false;
 	if (!accountCheck) return response;
 
@@ -53,7 +51,7 @@ async function getInitialData({
 		{
 			payload: {
 				account_uid: defaultAccount.uid,
-				user_uid: userData.uid,
+				user_uid: user.uid,
 			},
 		},
 	);
@@ -71,7 +69,7 @@ export default async function Home() {
 	// CUSTOM HOOKS
 	const isLoggedIn = useIsLoggedIn();
 	const { defaultAccount, noAccounts } = useAccountsCookie();
-	const { categories, userData } = useUserCookie();
+	const { categories, user } = useUserCookie();
 
 	// SHUGAH
 	const defaultDate = new Date().toDateString();
@@ -86,7 +84,7 @@ export default async function Home() {
 	} = await getInitialData({
 		defaultAccount,
 		defaultDate,
-		userData,
+		user,
 	});
 
 	// JSX

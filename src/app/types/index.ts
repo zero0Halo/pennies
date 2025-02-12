@@ -129,6 +129,12 @@ export type UpsertOptions = {
 	count?: 'exact' | 'planned' | 'estimated';
 };
 
+export type UserCookieData = {
+	user: UserData | null;
+	userError: string | null;
+	categories: string[] | null;
+};
+
 export interface UserData {
 	accounts: string[] | null;
 	categories: string[] | null;

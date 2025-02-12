@@ -18,7 +18,7 @@ import Groups from '../../components/Groups';
 import Transactions from '@/app/components/Transactions';
 import StatRow from '@/app/components/StatRow';
 import type { ParseCSVData } from './ParseCSV/types';
-import useUserCookie from '@/app/hooks/client/useUserCookie';
+import useUserCookie from '@/app/hooks/useUserCookie/client';
 import TabList, { TabPanel } from '@/app/components/TabList';
 
 export default function CsvUpload() {
