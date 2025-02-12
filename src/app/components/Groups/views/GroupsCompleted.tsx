@@ -1,4 +1,4 @@
-import useAccountsCookie from '@/app/hooks/client/useAccountsCookie';
+import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
 import type { GroupData, GroupsData } from '@/app/types';
 import type React from 'react';
 import { getCategoryText as _getCategoryText } from '../helpers';

@@ -4,16 +4,11 @@ import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Input from '@/app/components/Input';
 import Select from '@/app/components/Select';
-import {
-	useAccountsCookie,
-	useCategories,
-	useLoading,
-} from '@/app/hooks/client';
+import { useCategories, useLoading } from '@/app/hooks/client';
 import { apiCall } from '@/utils/app';
 import formatPayload from './scripts/formatPayload';
 import updateState from './scripts/updateState';
 import type {
-	FindGroupsData,
 	TransactionData,
 	GroupData,
 	CreateTransferPayloadData,
@@ -22,6 +17,7 @@ import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
 import Transactions from '@/app/components/Transactions';
 import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
+import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
 
 interface GroupCreateProps {
 	group: GroupData;
@@ -42,6 +38,9 @@ export default function GroupCreate({
 
 	// CUSTOM HOOKS
 	const { options } = useAccountsCookie();
+	if (options === null) return null; // To shut up TS
+
+	// CUSTOM HOOKS cont.
 	const { categories } = useCategories();
 	const { props, setLoading, Loading } = useLoading();
 

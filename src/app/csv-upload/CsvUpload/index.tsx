@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import { useAccountsCookie } from '@/app/hooks/client';
 import ParseCSV from './ParseCSV';
 import type { CsvUploadData, FindGroupsData } from '@/app/types';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging/FormMessagingProvider';
@@ -20,6 +19,7 @@ import StatRow from '@/app/components/StatRow';
 import type { ParseCSVData } from './ParseCSV/types';
 import useUserCookie from '@/app/hooks/useUserCookie/client';
 import TabList, { TabPanel } from '@/app/components/TabList';
+import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
 
 export default function CsvUpload() {
 	// STATE
@@ -39,6 +39,9 @@ export default function CsvUpload() {
 	// CUSTOM HOOKS
 	const { user: userData, userError } = useUserCookie();
 	const { defaultAccount, options } = useAccountsCookie();
+
+	if (options === null) return null; // To shut up TS
+
 	const organizedCsvData = useOrganizedCsvData({ CSVData });
 
 	// REACT FORM

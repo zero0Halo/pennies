@@ -8,7 +8,7 @@ import type {
 import { MONTHLY_SUMS } from '@/app/constants';
 import HeroStep from './components/home/HeroStep';
 import { apiCall } from '@/utils/app';
-import useAccountsCookie from './hooks/server/useAccountsCookie';
+import useAccountsCookie from './hooks/useAccountsCookie/server';
 import ToLocalStorage from './components/ToLocalStorage';
 import useUserCookie from './hooks/useUserCookie/server';
 import HomepageViews from './components/home/HomepageViews';

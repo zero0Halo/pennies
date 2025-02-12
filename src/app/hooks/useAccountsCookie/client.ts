@@ -5,14 +5,14 @@ import { ACCOUNTS } from '@/app/constants';
 import type { AccountData } from '@/app/types';
 import { useEffect, useState } from 'react';
 
-interface UseAccountsCookieData {
-	accounts: AccountData[];
+type UseAccountsCookieData = {
+	accounts: AccountData[] | null | boolean;
 	defaultAccount: AccountData | null;
-	getAccountByName: (arg: string) => AccountData | null;
-	getAccountByUid: (arg: string) => AccountData | null;
+	getAccountByName: ((arg: string) => AccountData | null) | null;
+	getAccountByUid: ((arg: string) => AccountData | null) | null;
 	noAccounts: boolean;
-	options: { name: string; value: string }[];
-}
+	options: { name: string; value: string }[] | null;
+};
 
 export default function useAccountsCookie(): UseAccountsCookieData {
 	// CUSTOM HOOKS

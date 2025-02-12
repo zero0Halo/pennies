@@ -9,15 +9,12 @@ import Input from '@/app/components/Input';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
-import {
-	useAccountsCookie,
-	useCategories,
-	useLoading,
-} from '@/app/hooks/client';
-import type { FindGroupsData, TransactionData } from '@/app/types';
+import { useCategories, useLoading } from '@/app/hooks/client';
+import type { TransactionData } from '@/app/types';
 import { apiCall, formatDate, formatAmount } from '@/utils/app';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
 import type { ParseCSVData } from './ParseCSV/types';
+import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
 
 interface TransactionCreateProps {
 	setActiveElement: (arg: boolean) => void;
@@ -35,6 +32,8 @@ export default function TransactionCreate({
 	const { options } = useAccountsCookie();
 	const { setError, setSuccess } = useFormMessagingContext();
 	const { Loading, props, setLoading } = useLoading();
+
+	if (options === null) return null;
 
 	// MEMO
 	const selectOptions = useMemo(

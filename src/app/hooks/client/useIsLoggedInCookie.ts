@@ -1,3 +1,5 @@
+'use client';
+
 import { IS_LOGGED_IN } from '@/app/constants';
 import useClientCookie from './useClientCookie';
 import { useEffect, useState } from 'react';

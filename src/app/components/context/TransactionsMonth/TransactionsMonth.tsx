@@ -3,11 +3,7 @@
 import dayjs from 'dayjs';
 import { apiCall, formatAmount } from '@/utils/app';
 import type { AccountData, TransactionWithDateData } from '@/app/types';
-import {
-	useAccountsCookie,
-	useLoading,
-	useMonthlySumLS,
-} from '@/app/hooks/client';
+import { useLoading, useMonthlySumLS } from '@/app/hooks/client';
 import Select from '../../Select';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -18,6 +14,7 @@ import { FormMessaging, useFormMessagingContext } from '../FormMessaging';
 import StatRow from '../../StatRow';
 import classNames from 'classnames';
 import { useTransactionsMonthContext } from './TransactionsMonthProvider';
+import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
 
 interface TransactionsMonthProps {
 	defaultAccount: AccountData | null;
@@ -47,6 +44,10 @@ export default function TransactionsMonth({
 
 	// CUSTOM HOOKS
 	const { getAccountByUid, options: accountOptions } = useAccountsCookie();
+
+	if (getAccountByUid === null || accountOptions === null) return null; // This is to shut up TS
+
+	// CUSTOM HOOKS cont.
 	const { Loading, props, setLoading } = useLoading();
 	const { monthlySumData } = useMonthlySumLS({
 		month: MONTHS.indexOf(getValues('month')),

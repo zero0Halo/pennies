@@ -2,7 +2,7 @@
 
 import type React from 'react';
 import classNames from 'classnames';
-import type { FindGroupsData, GroupsData } from '@/app/types';
+import type { GroupsData } from '@/app/types';
 import GroupsStandard from './views/GroupsStandard';
 import GroupsCompleted from './views/GroupsCompleted';
 import { useEffect, useState } from 'react';

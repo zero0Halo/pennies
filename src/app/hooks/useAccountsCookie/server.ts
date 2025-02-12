@@ -1,4 +1,4 @@
-import useServerCookie from './useServerCookie';
+import useServerCookie from '../server/useServerCookie';
 import { ACCOUNTS } from '@/app/constants';
 import type { AccountData } from '@/app/types';
 
