@@ -38,20 +38,18 @@ export default function CsvUpload() {
 
 	// CUSTOM HOOKS
 	const { user: userData, userError } = useUserCookie();
-	const { defaultAccount, options } = useAccountsCookie();
+	if ((console.error(userError), userError)) return null; // abusing comma operator for brevity
 
+	// CUSTOM HOOKS cont.
+	const { defaultAccount, options } = useAccountsCookie();
 	if (options === null) return null; // To shut up TS
 
+	// CUSTOM HOOKS cont.
 	const organizedCsvData = useOrganizedCsvData({ CSVData });
 
 	// REACT FORM
 	const { watch, handleSubmit, register, setValue } = useForm<CsvUploadData>();
 	const noFileChosen = watch('csvfile') === undefined;
-
-	if (userError) {
-		console.error(userError);
-		return null;
-	}
 
 	// EFFECTS
 	useEffect(() => {

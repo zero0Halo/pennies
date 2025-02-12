@@ -29,6 +29,9 @@
 			},
 			"correctness": {
 				"noUndeclaredVariables": "error"
+			},
+			"style": {
+				"noCommaOperator": "off"
 			}
 		}
 	}
