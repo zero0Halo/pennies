@@ -1,10 +1,19 @@
-import { createTransactionData, type TransactionData } from '@/app/types';
+import {
+	createTransactionData,
+	type ParsedData,
+	type TransactionData,
+} from '@/app/types';
 import blacklist from './blacklist';
 import regex from './regex';
-import type { FormatParsedDataArgs } from './types';
 import { getIsoDate } from '@/utils/general';
 import { v4 } from 'uuid';
 import { stringToHash } from '@/utils/app';
+
+export interface FormatParsedDataArgs {
+	accountUid: string;
+	parsedData: ParsedData;
+	user_uid: string;
+}
 
 export default function formatParsedData({
 	accountUid,

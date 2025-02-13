@@ -1,7 +1,10 @@
 import type { TransactionData } from '@/app/types';
 import { BIWEEKLY, MONTHLY, WEEKLY } from '@/app/constants';
 import dayjs from 'dayjs';
-import type { FindRecurringTransactionsData, RecurringTypeData } from './types';
+import type {
+	FindRecurringTransactionsData,
+	RecurringTypeData,
+} from '../../types/ParseCSV';
 
 const isWeekly = (diff: number): 1 | 0 => (8 >= diff && diff >= 6 ? 1 : 0);
 const isBiWeekly = (diff: number): 1 | 0 => (16 >= diff && diff >= 12 ? 1 : 0);

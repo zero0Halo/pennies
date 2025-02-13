@@ -16,7 +16,7 @@ import type {
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
 import Transactions from '@/app/components/Transactions';
-import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
+import type { ParseCSVData } from '@/app/types/ParseCSV';
 import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
 
 interface GroupCreateProps {

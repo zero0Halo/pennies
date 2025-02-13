@@ -13,7 +13,7 @@ import { useCategories, useLoading } from '@/app/hooks/client';
 import type { TransactionData } from '@/app/types';
 import { apiCall, formatDate, formatAmount } from '@/utils/app';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
-import type { ParseCSVData } from './ParseCSV/types';
+import type { ParseCSVData } from '../types/ParseCSV';
 import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
 
 interface TransactionCreateProps {

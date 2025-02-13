@@ -1,12 +1,18 @@
-import type { GroupsData, TransactionData } from '@/app/types';
+import type { GroupsData, TransactionData, UserData } from '@/app/types';
 import fauxPapaParseAsync from './papaParseAsync';
 import findGroupsAndSingletons from './findGroupsAndSingletons';
 import formatParsedData from './formatParsedData';
 import findRecurringTransactions from './findRecurringTransactions';
 import hashCheck from './hashCheck';
-import type { ParseCSVArgs, ParseCSVData } from './types';
+import type { ParseCSVData } from '../../types/ParseCSV';
 import storage from '@/utils/app/storage';
 import { CSV_UPLOAD } from '@/app/constants';
+
+interface ParseCSVArgs {
+	fileData: File;
+	userData: UserData | null;
+	accountUid: string | undefined;
+}
 
 export default class ParseCSV {
 	private accountUid;

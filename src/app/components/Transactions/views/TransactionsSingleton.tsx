@@ -3,9 +3,9 @@ import type { FindGroupsData, TransactionData } from '@/app/types';
 import classNames from 'classnames';
 import { formatAmount, formatDate, zebra } from '@/utils/app';
 import Button from '@/app/components/Button';
-import TransactionCreate from '@/app/csv-upload/CsvUpload/TransactionCreate';
+import TransactionCreate from '@/app/csv-upload/TransactionCreate';
 import { tableClasses, tdOverflow, thClasses } from '../helpers';
-import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
+import type { ParseCSVData } from '@/app/types/ParseCSV';
 
 type TransactionsSingletonProps = {
 	activeElement: number | boolean | { parent: number; child: number };

@@ -12,7 +12,7 @@ import TransactionsSingletonComplete from './views/TransactionsSingletonComplete
 import TransactionsStandard from './views/TransactionsStandard';
 import { useEffect, useState } from 'react';
 import ViewGrouped from './views/TransactionsGrouped';
-import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
+import type { ParseCSVData } from '@/app/types/ParseCSV';
 
 const GROUPED = 'grouped';
 const SINGLETON = 'singleton';

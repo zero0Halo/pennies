@@ -1,5 +1,8 @@
 import { redirect } from 'next/navigation';
-import CsvUpload from './CsvUpload';
+import {
+	CSVUpload,
+	CSVUploadWrapper,
+} from '@/app/components/context/CSVUpload';
 import { useIsLoggedIn } from '@/app/hooks/server';
 import { FormMessagingWrapper } from '../components/context/FormMessaging';
 
@@ -12,7 +15,9 @@ export default function CsvUploadPage() {
 		<div>
 			<h2>CSV Upload</h2>
 			<FormMessagingWrapper>
-				<CsvUpload />
+				<CSVUploadWrapper>
+					<CSVUpload />
+				</CSVUploadWrapper>
 			</FormMessagingWrapper>
 		</div>
 	);

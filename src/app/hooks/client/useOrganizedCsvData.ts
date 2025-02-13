@@ -1,4 +1,4 @@
-import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
+import type { ParseCSVData } from '@/app/types/ParseCSV';
 import type { GroupsData, TransactionData } from '@/app/types';
 import { useEffect, useState } from 'react';
 

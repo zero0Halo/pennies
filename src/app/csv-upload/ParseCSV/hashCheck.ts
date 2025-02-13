@@ -1,4 +1,4 @@
-import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
+import type { ParseCSVData } from '@/app/types/ParseCSV';
 import type { GroupData, TransactionData } from '@/app/types';
 import { apiCall } from '@/utils/app';
 

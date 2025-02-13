@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import type { ParsedData } from './types';
+import type { ParsedData } from '../../types/ParseCSV';
 
 export default function papaParseAsync(fileData: File): Promise<ParsedData> {
 	return new Promise((resolve, reject) => {

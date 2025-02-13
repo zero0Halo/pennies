@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
-import ParseCSV from './ParseCSV';
+import ParseCSV from '@/app/csv-upload/ParseCSV';
 import type { CsvUploadData, FindGroupsData } from '@/app/types';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging/FormMessagingProvider';
 import FormMessaging from '@/app/components/context/FormMessaging/FormMessaging';
@@ -13,17 +13,17 @@ import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
 import ButtonToggles, {
 	type ToggleStateData,
 } from '@/app/components/ButtonToggles';
-import Groups from '../../components/Groups';
+import Groups from '@/app/components/Groups';
 import Transactions from '@/app/components/Transactions';
 import StatRow from '@/app/components/StatRow';
-import type { ParseCSVData } from './ParseCSV/types';
+import type { ParseCSVData } from '@/app/types';
 import useUserCookie from '@/app/hooks/useUserCookie/client';
 import TabList, { TabPanel } from '@/app/components/TabList';
 import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
+import { useCSVUploadContext } from './CSVUploadProvider';
 
 export default function CsvUpload() {
 	// STATE
-	const [CSVData, setCSVData] = useState<ParseCSVData | undefined>();
 	const [previousData, setPreviousData] = useState<
 		FindGroupsData | false | undefined
 	>();
@@ -34,6 +34,7 @@ export default function CsvUpload() {
 	});
 
 	// CONTEXT
+	const { CSVData, setCSVData } = useCSVUploadContext();
 	const { setError, setSuccess } = useFormMessagingContext();
 
 	// CUSTOM HOOKS

@@ -1,5 +1,5 @@
 import type { BIWEEKLY, MONTHLY, WEEKLY } from '@/app/constants';
-import type { GroupsData, TransactionData, UserData } from '@/app/types';
+import type { GroupsData, TransactionData } from '@/app/types';
 
 export type RecurringTypeData =
 	| typeof MONTHLY
@@ -11,18 +11,6 @@ export type FindRecurringTransactionsData = {
 	recurring_type: RecurringTypeData | undefined;
 	recurring_still: boolean;
 };
-
-export interface FormatParsedDataArgs {
-	accountUid: string;
-	parsedData: ParsedData;
-	user_uid: string;
-}
-
-export interface ParseCSVArgs {
-	fileData: File;
-	userData: UserData | null;
-	accountUid: string | undefined;
-}
 
 export type ParseCSVData = {
 	groups: GroupsData[] | null;

@@ -6,7 +6,7 @@ import type { GroupsData } from '@/app/types';
 import GroupsStandard from './views/GroupsStandard';
 import GroupsCompleted from './views/GroupsCompleted';
 import { useEffect, useState } from 'react';
-import type { ParseCSVData } from '@/app/csv-upload/CsvUpload/ParseCSV/types';
+import type { ParseCSVData } from '@/app/types/ParseCSV';
 
 const GROUPS_COMPLETE = 'groupsComplete';
 const STANDARD = 'standard';
