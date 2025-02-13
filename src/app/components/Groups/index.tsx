@@ -6,7 +6,6 @@ import type { GroupsData } from '@/app/types';
 import GroupsStandard from './views/GroupsStandard';
 import GroupsCompleted from './views/GroupsCompleted';
 import { useEffect, useState } from 'react';
-import type { ParseCSVData } from '@/app/types/ParseCSV';
 
 const GROUPS_COMPLETE = 'groupsComplete';
 const STANDARD = 'standard';
@@ -17,7 +16,6 @@ interface GroupsProps {
 	activeElement?: number | boolean;
 	className?: string;
 	setActiveElement?: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	title?: string;
 	groupsData: GroupsData[];
 	view?: Views;
@@ -28,7 +26,6 @@ export default function Groups({
 	activeElement,
 	className,
 	setActiveElement,
-	setCSVData,
 	title,
 	groupsData,
 	view = STANDARD,
@@ -65,13 +62,7 @@ export default function Groups({
 						case GROUPS_COMPLETE:
 							return <GroupsCompleted groupsData={groupsData} {...props} />;
 						case STANDARD:
-							return (
-								<GroupsStandard
-									groupsData={groupsData}
-									setCSVData={setCSVData}
-									{...props}
-								/>
-							);
+							return <GroupsStandard groupsData={groupsData} {...props} />;
 						default:
 							null;
 					}

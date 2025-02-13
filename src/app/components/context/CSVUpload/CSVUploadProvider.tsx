@@ -7,7 +7,9 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 // Define the shape of the context
 export interface CSVUploadContextData {
 	CSVData: ParseCSVData | undefined;
-	setCSVData: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
+	setCSVData:
+		| React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>
+		| undefined;
 }
 
 // Create the context with a default value
@@ -35,7 +37,7 @@ export default CSVUploadProvider;
 export const useCSVUploadContext = (): CSVUploadContextData => {
 	const context = useContext(CSVUploadContext);
 	if (!context) {
-		throw new Error('useMyContext must be used within a MyProvider');
+		return { CSVData: undefined, setCSVData: undefined };
 	}
 	return context;
 };

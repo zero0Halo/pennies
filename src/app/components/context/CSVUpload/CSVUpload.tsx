@@ -6,7 +6,7 @@ import Button from '@/app/components/Button';
 import Label from '@/app/components/Label';
 import Select from '@/app/components/Select';
 import ParseCSV from '@/app/csv-upload/ParseCSV';
-import type { CsvUploadData, FindGroupsData } from '@/app/types';
+import type { CsvUploadData, ParseCSVData } from '@/app/types';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging/FormMessagingProvider';
 import FormMessaging from '@/app/components/context/FormMessaging/FormMessaging';
 import useOrganizedCsvData from '@/app/hooks/client/useOrganizedCsvData';
@@ -16,7 +16,6 @@ import ButtonToggles, {
 import Groups from '@/app/components/Groups';
 import Transactions from '@/app/components/Transactions';
 import StatRow from '@/app/components/StatRow';
-import type { ParseCSVData } from '@/app/types';
 import useUserCookie from '@/app/hooks/useUserCookie/client';
 import TabList, { TabPanel } from '@/app/components/TabList';
 import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
@@ -25,7 +24,7 @@ import { useCSVUploadContext } from './CSVUploadProvider';
 export default function CsvUpload() {
 	// STATE
 	const [previousData, setPreviousData] = useState<
-		FindGroupsData | false | undefined
+		ParseCSVData | false | undefined
 	>();
 	const [toggleState, setToggleState] = useState<ToggleStateData>({
 		all: true,
@@ -88,7 +87,7 @@ export default function CsvUpload() {
 
 			if (typeof parsedData !== 'boolean') {
 				setSuccess('CSV Data Parsed!');
-				setCSVData(parsedData);
+				setCSVData?.(parsedData);
 			}
 		} catch (err) {
 			setError((err as Error).message);
@@ -124,7 +123,7 @@ export default function CsvUpload() {
 						</Button>
 						<Button
 							className="btn-success join-item"
-							onClick={() => setCSVData(previousData)}
+							onClick={() => setCSVData?.(previousData)}
 						>
 							Yes
 						</Button>
@@ -183,7 +182,6 @@ export default function CsvUpload() {
 										toggleState.groups || toggleState.all ? 'block' : 'hidden'
 									}
 									groupsData={organizedCsvData.notCompleted.groups}
-									setCSVData={setCSVData}
 								/>
 
 								<div
@@ -196,7 +194,6 @@ export default function CsvUpload() {
 											? 'block'
 											: 'hidden'
 									}
-									setCSVData={setCSVData}
 									title="Singletons"
 									transactions={organizedCsvData.notCompleted.singletons}
 									view="singleton"

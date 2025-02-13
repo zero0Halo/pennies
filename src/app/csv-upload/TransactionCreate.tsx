@@ -13,18 +13,16 @@ import { useCategories, useLoading } from '@/app/hooks/client';
 import type { TransactionData } from '@/app/types';
 import { apiCall, formatDate, formatAmount } from '@/utils/app';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
-import type { ParseCSVData } from '../types/ParseCSV';
 import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
+import { useCSVUploadContext } from '../components/context/CSVUpload';
 
 interface TransactionCreateProps {
 	setActiveElement: (arg: boolean) => void;
-	setCSVData: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	transaction: TransactionData;
 }
 
 export default function TransactionCreate({
 	setActiveElement,
-	setCSVData,
 	transaction,
 }: TransactionCreateProps) {
 	// CUSTOM HOOKS
@@ -34,6 +32,9 @@ export default function TransactionCreate({
 	const { Loading, props, setLoading } = useLoading();
 
 	if (options === null) return null;
+
+	// CONTEXT
+	const { setCSVData } = useCSVUploadContext();
 
 	// MEMO
 	const selectOptions = useMemo(
@@ -107,7 +108,7 @@ export default function TransactionCreate({
 		setSuccess(`Transaction "${formData.name}" created successfully!`);
 		setActiveElement(false);
 
-		setCSVData((state) => {
+		setCSVData?.((state) => {
 			if (state !== undefined) {
 				const transactionIndex = state?.singletons?.findIndex(
 					(f) => f.uid === transaction.uid,

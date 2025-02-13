@@ -25,12 +25,6 @@ export interface CsvUploadData {
 	csvfile: FileList;
 }
 
-export interface FindGroupsData {
-	groups: GroupsData[];
-	singletons: TransactionData[];
-	total: number;
-}
-
 // Group
 export {
 	type GroupData,

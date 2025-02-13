@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import getDescriptionScore from './getDescriptionScore';
 import {
-	type FindGroupsData,
+	type ParseCSVData,
 	type TransactionData,
 	type GroupData,
 	type GroupsData,
@@ -10,7 +10,7 @@ import {
 } from '@/app/types';
 import { clone, stringToHash } from '@/utils/app';
 
-export default function findGroups(rowData: TransactionData[]): FindGroupsData {
+export default function findGroups(rowData: TransactionData[]): ParseCSVData {
 	const groups: GroupsData[] = [];
 	const singletons: TransactionData[] = [];
 	let transactionsPool: TransactionData[] = rowData.map(

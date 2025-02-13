@@ -12,17 +12,17 @@ import type {
 	TransactionData,
 	GroupData,
 	CreateTransferPayloadData,
+	ParseCSVData,
 } from '@/app/types';
 import { CSV_UPLOAD, TRANSFER } from '@/app/constants';
 import { useFormMessagingContext } from '@/app/components/context/FormMessaging';
 import Transactions from '@/app/components/Transactions';
-import type { ParseCSVData } from '@/app/types/ParseCSV';
 import useAccountsCookie from '@/app/hooks/useAccountsCookie/client';
+import { useCSVUploadContext } from '../../context/CSVUpload';
 
 interface GroupCreateProps {
 	group: GroupData;
 	setActiveElement?: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	transactions: TransactionData[];
 }
 
@@ -30,10 +30,10 @@ interface GroupCreateProps {
 export default function GroupCreate({
 	group,
 	setActiveElement,
-	setCSVData,
 	transactions,
 }: GroupCreateProps) {
 	// CONTEXT
+	const { setCSVData } = useCSVUploadContext();
 	const { setError, setSuccess } = useFormMessagingContext();
 
 	// CUSTOM HOOKS
@@ -109,10 +109,10 @@ export default function GroupCreate({
 				onSuccess: (msg) => {
 					setLoading(false);
 					setSuccess(msg);
-					setCSVData((state) => {
-						if (state) {
+					setCSVData?.((state) => {
+						if (state !== undefined) {
 							const updatedState = updateState({
-								state,
+								state: state as ParseCSVData,
 								payload,
 							});
 

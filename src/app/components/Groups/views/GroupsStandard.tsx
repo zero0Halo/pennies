@@ -1,16 +1,14 @@
 import GroupCreate from '@/app/components/Groups/GroupCreate';
-import type { FindGroupsData, GroupsData } from '@/app/types';
+import type { GroupsData } from '@/app/types';
 import type React from 'react';
 import Button from '../../Button';
 import Transactions from '../../Transactions';
-import type { ParseCSVData } from '@/app/types/ParseCSV';
 
 interface GroupsStandardProps {
 	activeElement?: number | boolean;
 	className?: string;
 	groupsData: GroupsData[] | undefined;
 	setActiveElement?: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	title?: string;
 }
 
@@ -19,15 +17,9 @@ export default function GroupsStandard({
 	className,
 	groupsData,
 	setActiveElement,
-	setCSVData,
 	title,
 }: GroupsStandardProps): React.ReactNode {
-	if (
-		groupsData === undefined ||
-		setCSVData === undefined ||
-		setActiveElement === undefined
-	)
-		return null;
+	if (groupsData === undefined || setActiveElement === undefined) return null;
 
 	return (
 		<div className={className}>
@@ -39,7 +31,6 @@ export default function GroupsStandard({
 						<GroupCreate
 							group={group}
 							setActiveElement={setActiveElement}
-							setCSVData={setCSVData}
 							transactions={transactions}
 						/>
 					)}

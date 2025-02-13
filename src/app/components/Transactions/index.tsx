@@ -2,17 +2,12 @@
 
 import type React from 'react';
 import classNames from 'classnames';
-import type {
-	FindGroupsData,
-	TransactionData,
-	TransactionWithGroupData,
-} from '@/app/types';
+import type { TransactionData, TransactionWithGroupData } from '@/app/types';
 import TransactionsSingleton from './views/TransactionsSingleton';
 import TransactionsSingletonComplete from './views/TransactionsSingletonComplete';
 import TransactionsStandard from './views/TransactionsStandard';
 import { useEffect, useState } from 'react';
 import ViewGrouped from './views/TransactionsGrouped';
-import type { ParseCSVData } from '@/app/types/ParseCSV';
 
 const GROUPED = 'grouped';
 const SINGLETON = 'singleton';
@@ -30,7 +25,6 @@ interface TransactionsProps {
 	className?: string;
 	disabled?: boolean;
 	setActiveElement?: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	showHeader?: boolean;
 	showNone?: boolean;
 	tableClassName?: string;
@@ -45,7 +39,6 @@ export default function Transactions({
 	className,
 	disabled,
 	setActiveElement,
-	setCSVData,
 	showHeader,
 	showNone,
 	tableClassName = '',
@@ -98,7 +91,6 @@ export default function Transactions({
 						case SINGLETON:
 							return (
 								<TransactionsSingleton
-									setCSVData={setCSVData}
 									transactions={transactions as TransactionData[]}
 									{...props}
 								/>

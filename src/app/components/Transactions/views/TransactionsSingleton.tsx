@@ -1,17 +1,15 @@
 import React from 'react';
-import type { FindGroupsData, TransactionData } from '@/app/types';
+import type { ParseCSVData, TransactionData } from '@/app/types';
 import classNames from 'classnames';
 import { formatAmount, formatDate, zebra } from '@/utils/app';
 import Button from '@/app/components/Button';
 import TransactionCreate from '@/app/csv-upload/TransactionCreate';
 import { tableClasses, tdOverflow, thClasses } from '../helpers';
-import type { ParseCSVData } from '@/app/types/ParseCSV';
 
 type TransactionsSingletonProps = {
 	activeElement: number | boolean | { parent: number; child: number };
 	disabled?: boolean;
 	setActiveElement: (arg: number | boolean) => void;
-	setCSVData?: React.Dispatch<React.SetStateAction<ParseCSVData | undefined>>;
 	tableClassName: string;
 	transactions: TransactionData[];
 };
@@ -19,7 +17,6 @@ type TransactionsSingletonProps = {
 export default function TransactionsSingleton({
 	activeElement,
 	setActiveElement,
-	setCSVData,
 	tableClassName,
 	transactions,
 }: TransactionsSingletonProps): React.ReactNode {
@@ -62,12 +59,11 @@ export default function TransactionsSingleton({
 							</td>
 						</tr>
 
-						{isCreating(index) && setCSVData !== undefined && (
+						{isCreating(index) && (
 							<tr className="bg-slate-200">
 								<td colSpan={5}>
 									<TransactionCreate
 										setActiveElement={setActiveElement}
-										setCSVData={setCSVData}
 										transaction={transaction}
 									/>
 								</td>

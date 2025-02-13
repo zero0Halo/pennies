@@ -1,15 +1,21 @@
-import type { CreateTransferPayloadData, FindGroupsData } from '@/app/types';
+import type { CreateTransferPayloadData, ParseCSVData } from '@/app/types';
 
 interface UpdateStateArgs {
 	payload: CreateTransferPayloadData;
-	state: FindGroupsData | undefined;
+	state: ParseCSVData | undefined;
 }
 
 export default function updateState({
 	payload: { group: updatedGroup, transactions: updatedTransactions },
 	state,
-}: UpdateStateArgs) {
-	if (state && updatedGroup && updatedTransactions) {
+}: UpdateStateArgs): ParseCSVData | undefined {
+	if (
+		state !== undefined &&
+		state.groups !== null &&
+		state.singletons !== null &&
+		updatedGroup &&
+		updatedTransactions
+	) {
 		const newState = {
 			groups: [...state.groups],
 			singletons: [...state.singletons],
