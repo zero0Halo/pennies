@@ -26,23 +26,23 @@ export default function useHub({
 	// STATE
 	const [transactionsForDate, setTransactionsForDate] = useState<
 		TransactionWithDateData[] | null
-	>();
+	>(null);
 	const [sumForDate, setSumForDate] = useState(0);
 	const [transactions, setTransactions] = useState<
 		TransactionWithGroupData[] | null
-	>();
+	>(null);
 	const [recurring, setRecurring] = useState<
 		TransactionWithGroupData[] | null
-	>();
+	>(null);
 	const [noAutopay, setNoAutopay] = useState<
 		TransactionWithGroupData[] | null
-	>();
+	>(null);
 
 	useEffect(() => {
 		if (Array.isArray(transactionsData)) {
 			const [_, _transactionsForDate] = transactionsData.find(
 				([{ date }]) => date === today.date,
-			) || [null, null];
+			) ?? [null, null];
 			const _sumForDate =
 				_transactionsForDate?.reduce((acc, { amount }) => acc + amount, 0) ?? 0;
 			const _transactions =
