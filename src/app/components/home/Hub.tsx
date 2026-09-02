@@ -53,7 +53,7 @@ export default function Hub({
 			<Transactions
 				className="!overflow-visible p-3 border-double border-accent border-8 rounded-xl shadow-lg bg-neutral-100 mt-4 mb-7"
 				title="Pay Today!"
-				transactions={noAutopay || []}
+				transactions={noAutopay ?? []}
 				view="standard"
 			/>
 
@@ -62,7 +62,7 @@ export default function Hub({
 			<Transactions
 				showNone
 				title="Recurring"
-				transactions={recurring || []}
+				transactions={recurring ?? []}
 				view="standard"
 			/>
 
@@ -71,7 +71,7 @@ export default function Hub({
 			<Transactions
 				showNone
 				title="Singletons"
-				transactions={transactions || []}
+				transactions={transactions ?? []}
 				view="standard"
 			/>
 		</section>
