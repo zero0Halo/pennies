@@ -63,11 +63,11 @@ export default function GroupUpdate({
 			account_uid: transaction?.account_uid,
 			date: transaction?.timestamp,
 		};
-		const updateResponse = await apiCall<GroupData>('api/group/update', {
+		const updateResponse = await apiCall<GroupData>('/api/group/update', {
 			payload: updatePayload,
 		});
 		const selectResponse = await apiCall<TransactionWithDateData[]>(
-			'api/transactions/select/by-day',
+			'/api/transactions/select/by-day',
 			{ payload: selectPayload },
 		);
 
@@ -79,7 +79,7 @@ export default function GroupUpdate({
 			}
 			if (selectResponse.error || selectResponse.data === null) {
 				console.error(selectResponse.data);
-				setError('There was an error retrieving transacctions');
+				setError('There was an error retrieving transactions');
 				return;
 			}
 
