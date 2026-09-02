@@ -16,8 +16,6 @@ import getToday from '@/utils/app/getToday';
 import { useMonthlySumLS } from '@/app/hooks/client';
 import { TransactionsMonthWrapper } from '../context/TransactionsMonth';
 
-const today = getToday();
-
 interface HomepageViewsProps {
 	defaultAccount: AccountData | null;
 	defaultDate: string;
@@ -40,10 +38,13 @@ export default function HomepageViews({
 	// MEMOIZED
 	const todaysTransactions = useMemo(() => {
 		if (defaultTransactionsData !== null) {
-			return defaultTransactionsData.filter(([x]) => x.isToday) ?? null;
+			return defaultTransactionsData.filter(([x]) => x.isToday);
 		}
 		return null;
 	}, [defaultTransactionsData]);
+
+	// SHUGAH
+	const today = getToday();
 
 	const { monthlySumData } = useMonthlySumLS({
 		month: today.month,
