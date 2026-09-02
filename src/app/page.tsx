@@ -31,9 +31,8 @@ async function getInitialData({
 
 	if (defaultAccount === null || user === null) return response;
 
-	const accountCheck: boolean = user.accounts
-		? user.accounts.includes(defaultAccount.uid)
-		: false;
+	const accountCheck = user.accounts?.includes(defaultAccount.uid) ?? false;
+
 	if (!accountCheck) return response;
 
 	const transactionResponse = await apiCall<TransactionWithDateData[]>(
@@ -95,7 +94,7 @@ export default async function Home() {
 			)}
 
 			{/* Logged in, show transactions */}
-			{transactions !== undefined && isLoggedIn && (
+			{transactions !== null && isLoggedIn && (
 				<HomepageViews
 					defaultAccount={defaultAccount}
 					defaultDate={defaultDate}
@@ -136,7 +135,7 @@ export default async function Home() {
 			{isLoggedIn &&
 				!noAccounts &&
 				categories &&
-				transactions === undefined && (
+				transactions === null && (
 					<HeroStep
 						link="csv-upload"
 						linkText="Go To CSV Upload"
