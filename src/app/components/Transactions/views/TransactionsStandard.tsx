@@ -50,10 +50,10 @@ export default function TransactionsStandard({
 
 		// GET THE GROUP AND THE TRANSACTIONS FOR THAT GROUP
 		const results = await Promise.all([
-			apiCall('api/group/select', {
+			apiCall('/api/group/select', {
 				payload: { uid: transaction.group_uid },
 			}),
-			apiCall('api/transactions/select/by-group', {
+			apiCall('/api/transactions/select/by-group', {
 				payload: { group_uid: transaction.group_uid },
 			}),
 		]);
