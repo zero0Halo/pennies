@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ParseCSVData, TransactionData } from '@/app/types';
+import type { TransactionData } from '@/app/types';
 import classNames from 'classnames';
 import { formatAmount, formatDate, zebra } from '@/utils/app';
 import Button from '@/app/components/Button';
