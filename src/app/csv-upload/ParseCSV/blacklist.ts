@@ -1,5 +1,4 @@
 export default [
-	'austin',
 	'authorized',
 	'inst',
 	'for',
@@ -7,12 +6,8 @@ export default [
 	'on',
 	'payment',
 	'paypal',
-	'pflugerville',
 	'pp',
 	'purchase',
-	'steve',
-	'steven',
-	'swanson',
 	'transfer',
 	'tx',
 	'xfer',
