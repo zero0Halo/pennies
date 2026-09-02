@@ -46,8 +46,6 @@ export default function Transactions({
 	transactions,
 	view = STANDARD,
 }: TransactionsProps): React.ReactNode {
-	if (!showNone && !transactions.length) return null;
-
 	// STATE
 	const [internalActiveElement, setInternalActiveElement] = useState<
 		number | boolean | { parent: number; child: number }
@@ -59,6 +57,8 @@ export default function Transactions({
 			setInternalActiveElement(activeElement);
 		}
 	}, [activeElement]);
+
+	if (!showNone && !transactions.length) return null;
 
 	// SHUGAH
 	const componentClasses = classNames(
