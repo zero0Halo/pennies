@@ -5,7 +5,7 @@ export const tableClasses = (tableClassName?: string) =>
 
 export const tdOverflow = (tdClassName?: string) =>
 	classNames(
-		'overflow-x-hidden whitespace-nowrap text-ellipsisclassNames',
+		'overflow-x-hidden whitespace-nowrap text-ellipsis',
 		tdClassName,
 	);
 
